@@ -29,17 +29,17 @@
       }
     </style>
 
-    <template is="dom-if" if="[[isEqualTo(mode, 'display')]]">
+    <template is="dom-if" if="[[isInMode(mode, 'display')]]">
       <template is="dom-if" if="{{!user.id}}">
         <p>You have not selected a user</p>
       </template>
     </template>
 
-    <template is="dom-if" if="[[isEqualTo(mode, 'display')]]">
+    <template is="dom-if" if="[[isInMode(mode, 'display')]]">
       <template is="dom-if" if="[[user.id]]">
 
         <hgroup class="default-card" on-click="toggleCollapse">
-          <h2 class="name">[[user.first]] [[user.last]]</h2>
+          <h1 class="name">Profile: [[user.first]] [[user.last]]</h1>
           <template is="dom-if" if="[[!collapsed]]">
             <h3 class="id">ID: [[user.id]]</h3>
             <h3 class="phone">[[user.phone]]</h3>
@@ -58,8 +58,52 @@
       </template>
     </template>
 
-    <template is="dom-if" if="[[isEqualTo(mode, 'edit')]]">
+    <template is="dom-if" if="[[isInMode(mode, 'edit')]]">
+			<h1>Edit: [[user.first]], [[user.last]]</h1>
+      <div class="form-box">
+        <form autocomplete="on">
+          <div id="editUserFields" class="default-card">
+             <!-- bplint-disable no-auto-binding -->
+            <fieldset>
+              <legend>
+                Name:
+              </legend>
+              <input id="fName" type="text" class="first-name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+               required>
+              <input id="lName" type="text" class="last-name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+               required>
+            </fieldset>
+            <fieldset>
+              <legend>Contact:</legend>
+              <label for="email">
+                <input id="email" type="email" placeholder="email" autocomplete="email" value="{{user.email::change}}" name="email" required>
+              </label>
+              <br>
+              <label for="phone">
+                <input id="phone" type="tel" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
+              </label>
+            </fieldset>
+            <fieldset>
+              <legend>Other:</legend>
+              <label for="department">
+                <input id="department" placeholder="Department" value="{{user.department::change}}" required>
+              </label>
+            </fieldset>
+            <!-- bplint-enable no-auto-binding -->
 
+            <div class="submit-button-box">
+              <button class="form-button" on-click="save" type="submit">Submit</button>
+              <template is="dom-if" if="[[user.id]]">
+                <button class="form-button" on-click="deleteUser" type="submit">Delete</button>
+              </template>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </template>
+    <template is="dom-if" if="[[isInMode(mode, 'create')]]">
+			<h1>Create New User:</h1>
       <div class="form-box">
         <form autocomplete="on">
           <div id="editUserFields" class="default-card">
@@ -156,13 +200,12 @@
         this.noSelectedUserToDisplay = !this.user.id && !this.editMode;
       }
 
-      isEqualTo(mode, display) {
-        return (display === mode);
+      isInMode(currentMode, expectedMode) {
+        return (currentMode === expectedMode);
       }
 
       setEmptyMessage() {
         if (!this.user.id && this.mode === 'display') {
-
         }
       }
 

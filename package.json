@@ -4,7 +4,7 @@
   "description": "## Description This app allows you to create and edit user profiles, each of which have an ID, Name, Number, and Email Address.",
   "main": "index.js",
   "scripts": {
-    "wow": "ux-lint src/*/*.html",
+    "prestart": "ux-lint src/*/*.html",
     "build": "webpack --mode production",
     "start": "webpack-dev-server --https --port 1820 --mode development",
     "help": "npm-scripts-help",
