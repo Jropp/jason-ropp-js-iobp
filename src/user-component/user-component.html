@@ -1,242 +1,244 @@
-<!-- User component card has three settings mode="display" mode="edit" mode="create"
-  <user-component mode="display"> Displays the user passed into it.
-
-  <user-component mode="editMode"> Brings up autofilled input boxes with the current users information
-    change and submit the data to update the users information
-
-  <user-component mode="create"> Opens up a form to enter a new users information. This box auto-generates a 9 character id
--->
-
 <link rel="import" href="polymer.html">
 <dom-module id="user-component">
-	<template>
-		<style>
-			:host {
-				display: block;
-			}
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
 
-			.default-card {
-				background-color: #B1A296;
-				min-width: 300px;
-				width: fit-content;
-				padding: 15px;
-				margin: 5px;
-				border-radius: 5px;
-				box-shadow: 3px 3px 2px lightgrey;
-			}
+      .default-card {
+        background-color: #B1A296;
+        min-width: 300px;
+        width: fit-content;
+        padding: 15px;
+        margin: 5px;
+        border-radius: 5px;
+        box-shadow: 3px 3px 2px lightgrey;
+      }
 
-			.default-card>input .first-name .last-name {
-				width: 20px;
-			}
+      .default-card>input .first-name .last-name {
+        width: 20px;
+      }
 
-			input {
-				margin: 5px;
-			}
+      input {
+        margin: 5px;
+      }
 
-			button {
-				margin: 5px;
-			}
+      button {
+        margin: 5px;
+      }
+    </style>
 
-		</style>
+    <template is="dom-if" if="[[isEqualTo(mode, 'display')]]">
+      <template is="dom-if" if="{{!user.id}}">
+        <p>You have not selected a user</p>
+      </template>
+    </template>
 
-		<template is="dom-if" if="[[noSelectedUserToDisplay]]">
+    <template is="dom-if" if="[[isEqualTo(mode, 'display')]]">
+      <template is="dom-if" if="[[user.id]]">
 
-			<div class="default-card">
-				<p>You have not selected a user</p>
-			</div>
+        <hgroup class="default-card" on-click="toggleCollapse">
+          <h2 class="name">[[user.first]] [[user.last]]</h2>
+          <template is="dom-if" if="[[!collapsed]]">
+            <h3 class="id">ID: [[user.id]]</h3>
+            <h3 class="phone">[[user.phone]]</h3>
+            <h3 class="email">
+              <a href="dummy@email.com">[[user.email]]</a>
+            </h3>
+            <h3 class="department">
+              [[user.department]]
+            </h3>
+            <template is="dom-if" if="{{admin}}">
+              <button on-click="toggleMode">Edit User</button>
+            </template>
+          </template>
+        </hgroup>
 
-		</template>
+      </template>
+    </template>
 
-		<template is="dom-if" if="[[!noSelectedUserToDisplay]]">
-			<template is="dom-if" if="[[!editMode]]">
-				<template is="dom-if" if="[[user]]">
+    <template is="dom-if" if="[[isEqualTo(mode, 'edit')]]">
 
-					<hgroup class="default-card" on-click="toggleCollapse">
-						<h2 class="name">[[user.first]] [[user.last]]</h2>
-						<template is="dom-if" if="[[!collapsed]]">
-							<h3 class="id">ID: [[user.id]]</h3>
-							<h3 class="phone">[[user.phone]]</h3>
-							<h3 class="email">
-								<a href="dummy@email.com">[[user.email]]</a>
-							</h3>
-							<h3 class="department">
-								[[user.department]]
-							</h3>
-							<button on-click="toggleView">Edit User</button>
-						</template>
-					</hgroup>
+      <div class="form-box">
+        <form autocomplete="on">
+          <div id="editUserFields" class="default-card">
+             <!-- bplint-disable no-auto-binding -->
+            <fieldset>
+              <legend>
+                Name:
+              </legend>
+              <input id="fName" type="text" class="first-name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+               required>
+              <input id="lName" type="text" class="last-name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+               required>
+            </fieldset>
+            <fieldset>
+              <legend>Contact:</legend>
+              <label for="email">
+                <input id="email" type="email" placeholder="email" autocomplete="email" value="{{user.email::change}}" name="email" required>
+              </label>
+              <br>
+              <label for="phone">
+                <input id="phone" type="tel" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
+              </label>
+            </fieldset>
+            <fieldset>
+              <legend>Other:</legend>
+              <label for="department">
+                <input id="department" placeholder="Department" value="{{user.department::change}}" required>
+              </label>
+            </fieldset>
+            <!-- bplint-enable no-auto-binding -->
 
-				</template>
-			</template>
-		</template>
+            <div class="submit-button-box">
+              <button class="form-button" on-click="save" type="submit">Submit</button>
+              <template is="dom-if" if="[[user.id]]">
+                <button class="form-button" on-click="deleteUser" type="submit">Delete</button>
+              </template>
+            </div>
+          </div>
+        </form>
+      </div>
 
-		<template is="dom-if" if="[[editMode]]">
+    </template>
+  </template>
+  <script>
+    'use strict';
+    class UserComponent extends Polymer.Element {
+      static get is() { return 'user-component'; }
+      static get properties() {
+        return {
+          admin: {
+            type: Boolean,
+            value: true
+          },
+          collapsed: {
+            type: Boolean,
+            value: false,
+          },
+          // edit, display
+          mode: {
+            type: String,
+          },
+          noSelectedUserToDisplay: {
+            type: Boolean,
+          },
+          user: {
+            type: Object,
+            value: {
+              first: '',
+              last: '',
+              phone: '',
+              email: '',
+              department: '',
+              id: ''
+            }
+          },
+          users: {
+            type: Array,
+          }
+        };
+      }
 
-			<div class="form-box">
-				<form autocomplete="on">
-					<div id="editUserFields" class="default-card">
-						<!-- polymer-lint disable: no-auto-binding -->
-						<fieldset>
-							<legend>
-								Name:
-							</legend>
-							<input id="fName" type="text" class="first-name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-							 required>
-							<input id="lName" type="text" class="last-name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-							 required>
-						</fieldset>
-						<fieldset>
-							<legend>Contact:</legend>
-							<label for="email">
-								<input id="email" type="email" placeholder="email" autocomplete="email" value="{{user.email::change}}" name="email" required>
-							</label>
-							<br>
-							<label for="phone">
-								<input id="phone" type="tel" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
-							</label>
-						</fieldset>
-						<fieldset>
-							<legend>Other:</legend>
-							<label for="department">
-								<input id="department" placeholder="Department" value="{{user.department::change}}" required>
-							</label>
-						</fieldset>
-						<!-- polymer-lint enable: no-auto-binding -->
+      connectedCallback() {
+        super.connectedCallback();
 
-						<div class="submit-button-box">
-							<button class="form-button" on-click="save" type="submit">Submit</button>
-							<template is="dom-if" if="[[user.id]]">
-								<button class="form-button" on-click="deleteUser" type="submit">Delete</button>
-							</template>
-						</div>
-					</div>
-				</form>
-			</div>
+        // Sets init value for users if there are no users
+        let users = JSON.parse(localStorage.getItem('onboardProjectUsers'));
+        if (users === null) {
+          this.set('users', []);
+        } else {
+          this.set('users', users);
+        }
 
-		</template>
-	</template>
-	<script>
-		'use strict';
-		class UserComponent extends Polymer.Element {
-			static get is() { return 'user-component'; }
-			static get properties() {
-				return {
-					collapsed: {
-						type: Boolean,
-						value: false,
-					},
-					editMode: {
-						type: Boolean,
-						value: false
-					},
-					noSelectedUserToDisplay: {
-						type: Boolean,
-					},
-					user: {
-						type: Object,
-						value: {
-							first: '',
-							last: '',
-							phone: '',
-							email: '',
-							department: '',
-							id: ''
-						}
-					},
-					users: {
-						type: Array,
-					}
-				};
-			}
+        // Displays message for user-profile if a user has not been selected
+        this.noSelectedUserToDisplay = !this.user.id && !this.editMode;
+      }
 
-			connectedCallback() {
-				super.connectedCallback();
+      isEqualTo(mode, display) {
+        return (display === mode);
+      }
 
-				// Sets init value for users if there are no users
-				let users = JSON.parse(localStorage.getItem('onboardProjectUsers'));
-				if (users === null) {
-					this.set('users', []);
-				} else {
-					this.set('users', users);
-				}
+      setEmptyMessage() {
+        if (!this.user.id && this.mode === 'display') {
 
-				// Displays message for user-profile if a user has not been selected
-				this.noSelectedUserToDisplay = !this.user.id && !this.editMode;
-			}
+        }
+      }
 
-			// Makes sure all fields are filled
-			checkFields() {
-				for (let prop in this.user) {
-					if (!this.user[prop]) {
-						window.alert('Please fill out highlighted fields');
-						return false;
-					}
-				}
-				return true;
-			}
+      // Makes sure all fields are filled
+      checkFields() {
+        for (let prop in this.user) {
+          if (!this.user[prop]) {
+            window.alert('Please fill out highlighted fields');
+            return false;
+          }
+        }
+        return true;
+      }
 
-			createNewUserId() {
-				let id = '';
-				// returns 9 random letters/symbols/numbers and pushes them into the id.
-				for (let i = 0; i < 9; i++) { // eslint-disable-line no-magic-numbers
-					let number = Math.random() * (94); // eslint-disable-line no-magic-numbers
-					id += String.fromCharCode(Math.floor(number + 33)); // eslint-disable-line no-magic-numbers
-				}
+      createNewUserId() {
+        let id = '';
+        // returns 9 random letters/symbols/numbers and pushes them into the id.
+        for (let i = 0; i < 9; i++) { // eslint-disable-line no-magic-numbers
+          let number = Math.random() * (94); // eslint-disable-line no-magic-numbers
+          id += String.fromCharCode(Math.floor(number + 33)); // eslint-disable-line no-magic-numbers
+        }
 
-				// Checks to make sure id is not already in use
-				if (this.getIdIndex(id)) {
-					this.createNewUserId();
-				} else {
-					return id;
-				}
-			}
+        // Checks to make sure id is not already in use
+        if (this.getIdIndex(id)) {
+          this.createNewUserId();
+        } else {
+          return id;
+        }
+      }
 
-			deleteUser() {
-				let userIndex = this.getIdIndex(this.user.id);
-				this.users.splice(userIndex, 1);
-				this.updateLocalStorage();
-			}
+      deleteUser() {
+        let userIndex = this.getIdIndex(this.user.id);
+        this.users.splice(userIndex, 1);
+        this.updateLocalStorage();
+      }
 
-			getIdIndex(id) {
-				let index = (this.users) ? this.users.findIndex(val => val.id === id) : -1;
-				// Returns false if id does not exist
-				return (index === -1) ? false : index;
-			}
+      getIdIndex(id) {
+        let index = (this.users) ? this.users.findIndex(val => val.id === id) : -1;
+        // Returns false if id does not exist
+        return (index === -1) ? false : index;
+      }
 
-			save(e) {
-				// if new user
-				if (!this.user.id) {
-					this.user.id = this.createNewUserId();
-					this.users.splice(0, 0, this.user);
-					// if existing user
-				} else {
-					e.preventDefault();
-					let index = this.getIdIndex(this.user.id);
-					this.users.splice(index, 1, this.user);
-					// Updates the information displayed on the user card so when you close the edit window it displays properly
-					this.toggleView();
-				}
+      save(e) {
+        // if new user
+        if (!this.user.id) {
+          this.user.id = this.createNewUserId();
+          this.users.splice(0, 0, this.user);
+          // if existing user
+        } else {
+          e.preventDefault();
+          let index = this.getIdIndex(this.user.id);
+          this.users.splice(index, 1, this.user);
+          // Updates the information displayed on the user card so when you close the edit window it displays properly
+          this.toggleMode();
+        }
 
-				this.updateLocalStorage();
-				if (this.collapsed) {
-					this.toggleCollapse();
-				}
-			}
+        this.updateLocalStorage();
+        if (this.collapsed) {
+          this.toggleCollapse();
+        }
+      }
 
-			toggleCollapse() {
-				this.collapsed = !this.collapsed;
-			}
+      toggleCollapse() {
+        this.collapsed = !this.collapsed;
+      }
 
-			toggleView() {
-				this.editMode = !this.editMode;
-			}
+      toggleMode() {
+        this.mode = (this.mode === 'edit') ? 'display' : 'edit';
+      }
 
-			updateLocalStorage() {
-				localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
-			}
+      updateLocalStorage() {
+        localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
+      }
 
-		}
+    }
 
-		customElements.define(UserComponent.is, UserComponent);
-	</script>
+    customElements.define(UserComponent.is, UserComponent);
+  </script>
 </dom-module>
