@@ -25,12 +25,12 @@
       }
 
       button {
-        margin: 5px;
+        margin: 10px;
       }
     </style>
 
     <template is="dom-if" if="[[isInMode(mode, 'display')]]">
-      <template is="dom-if" if="{{!user.id}}">
+      <template is="dom-if" if="[[!user.id]]">
         <p>You have not selected a user</p>
       </template>
     </template>
@@ -49,7 +49,7 @@
             <h3 class="department">
               [[user.department]]
             </h3>
-            <template is="dom-if" if="{{admin}}">
+            <template is="dom-if" if="[[admin]]">
               <button on-click="toggleMode">Edit User</button>
             </template>
           </template>
@@ -59,34 +59,34 @@
     </template>
 
     <template is="dom-if" if="[[isInMode(mode, 'edit')]]">
-			<h1>Edit: [[user.first]], [[user.last]]</h1>
       <div class="form-box">
         <form autocomplete="on">
           <div id="editUserFields" class="default-card">
-             <!-- bplint-disable no-auto-binding -->
+            <h1>Edit: [[user.first]], [[user.last]]</h1>
+            <!-- bplint-disable no-auto-binding -->
             <fieldset>
               <legend>
                 Name:
               </legend>
-              <input id="fName" type="text" class="first-name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+              <input id="editfName" type="text" class="first-name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
                required>
-              <input id="lName" type="text" class="last-name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+              <input id="editlName" type="text" class="last-name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
                required>
             </fieldset>
             <fieldset>
               <legend>Contact:</legend>
-              <label for="email">
-                <input id="email" type="email" placeholder="email" autocomplete="email" value="{{user.email::change}}" name="email" required>
+              <label for="editEmail">
+                <input id="editEmail" type="email" placeholder="email" autocomplete="email" value="{{user.email::change}}" name="email" required>
               </label>
               <br>
-              <label for="phone">
-                <input id="phone" type="tel" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
+              <label for="editPhone">
+                <input id="editPhone" type="tel" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
               </label>
             </fieldset>
             <fieldset>
               <legend>Other:</legend>
-              <label for="department">
-                <input id="department" placeholder="Department" value="{{user.department::change}}" required>
+              <label for="editDepartment">
+                <input id="editDepartment" placeholder="Department" value="{{user.department::change}}" required>
               </label>
             </fieldset>
             <!-- bplint-enable no-auto-binding -->
@@ -103,11 +103,11 @@
 
     </template>
     <template is="dom-if" if="[[isInMode(mode, 'create')]]">
-			<h1>Create New User:</h1>
+      <h1>Create New User:</h1>
       <div class="form-box">
         <form autocomplete="on">
-          <div id="editUserFields" class="default-card">
-             <!-- bplint-disable no-auto-binding -->
+          <div id="createUserFields" class="default-card">
+            <!-- bplint-disable no-auto-binding -->
             <fieldset>
               <legend>
                 Name:
@@ -187,53 +187,32 @@
 
       connectedCallback() {
         super.connectedCallback();
-
-        // Sets init value for users if there are no users
-        let users = JSON.parse(localStorage.getItem('onboardProjectUsers'));
-        if (users === null) {
-          this.set('users', []);
-        } else {
-          this.set('users', users);
-        }
-
-        // Displays message for user-profile if a user has not been selected
-        this.noSelectedUserToDisplay = !this.user.id && !this.editMode;
-      }
-
-      isInMode(currentMode, expectedMode) {
-        return (currentMode === expectedMode);
-      }
-
-      setEmptyMessage() {
-        if (!this.user.id && this.mode === 'display') {
-        }
-      }
-
-      // Makes sure all fields are filled
-      checkFields() {
-        for (let prop in this.user) {
-          if (!this.user[prop]) {
-            window.alert('Please fill out highlighted fields');
-            return false;
-          }
-        }
-        return true;
+        this.initUsers();
       }
 
       createNewUserId() {
         let id = '';
         // returns 9 random letters/symbols/numbers and pushes them into the id.
         for (let i = 0; i < 9; i++) { // eslint-disable-line no-magic-numbers
-          let number = Math.random() * (94); // eslint-disable-line no-magic-numbers
+          let number = Math.random() * (90); // eslint-disable-line no-magic-numbers
           id += String.fromCharCode(Math.floor(number + 33)); // eslint-disable-line no-magic-numbers
         }
 
-        // Checks to make sure id is not already in use
-        if (this.getIdIndex(id)) {
-          this.createNewUserId();
-        } else {
-          return id;
+        // Checks to see if the created id is a duplicate of another users id, if so it creates a new id until successful
+        let idAlreadyExists = this.getIdIndex(id);
+        return (idAlreadyExists) ? this.createNewUserId() : id;
+      }
+
+      // Makes sure all fields are filled
+      checkFields() {
+
+        for (let prop in this.user) {
+          if (!this.user[prop]) {
+            window.alert('Please fill out all fields');
+            return false;
+          }
         }
+        return true;
       }
 
       deleteUser() {
@@ -242,30 +221,56 @@
         this.updateLocalStorage();
       }
 
+      // This is used to get the index for deleting or updating a users information.
+      // This is also used when a new users id is created to see if that id already exists
       getIdIndex(id) {
         let index = (this.users) ? this.users.findIndex(val => val.id === id) : -1;
         // Returns false if id does not exist
         return (index === -1) ? false : index;
       }
 
-      save(e) {
-        // if new user
-        if (!this.user.id) {
-          this.user.id = this.createNewUserId();
-          this.users.splice(0, 0, this.user);
-          // if existing user
-        } else {
-          e.preventDefault();
-          let index = this.getIdIndex(this.user.id);
-          this.users.splice(index, 1, this.user);
-          // Updates the information displayed on the user card so when you close the edit window it displays properly
-          this.toggleMode();
-        }
+      getDatabaseUsers() {
+        return JSON.parse(localStorage.getItem('onboardProjectUsers'));
+      }
 
-        this.updateLocalStorage();
-        if (this.collapsed) {
-          this.toggleCollapse();
+      initUsers() {
+        let users = this.getDatabaseUsers();
+        this.users = (users) ? users : [];
+      }
+
+      isInMode(currentMode, expectedMode) {
+        return (currentMode === expectedMode);
+      }
+
+      save(e) {
+        if (this.checkFields()) {
+          // If this.user doesn't have an id it means its a new user being created.
+          if (!this.user.id) {
+            this.saveNewUser();
+          } else {
+            this.saveUserEdit(e);
+          }
+
+          if (this.collapsed) {
+            this.toggleCollapse();
+          }
+
         }
+      }
+
+      saveNewUser() {
+        this.user.id = this.createNewUserId();
+        this.users.splice(0, 0, this.user);
+        this.updateLocalStorage();
+      }
+
+      saveUserEdit(e) {
+        e.preventDefault();
+
+        let index = this.getIdIndex(this.user.id);
+        this.users.splice(index, 1, this.user);
+        this.toggleMode();
+        this.updateLocalStorage();
       }
 
       toggleCollapse() {

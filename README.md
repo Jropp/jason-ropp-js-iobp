@@ -8,7 +8,29 @@ To create a new user, click the 'Create User' tab and fill out the form. Users w
 
 ## how to use
 
-Not currently compatible with firefox
+### Warning
+
+Not currently compatible with firefox, will be addressed in update of webpackconfig
+
+### Create User
+
+Click on 'Create User' tab, enter a user. Try leaving a field empty, it should tell you to fill out all of the fields.
+
+### Users List: Edit/Delete User
+
+Your created user should appear after clicking the User List tab. Click one of the cards to expand and see the details of that card. Admin mode is on by default so you should be able to click the edit button and edit the fields for that user. 
+
+If you leave a field empty, it should prompt you that a field is empty.
+
+When you click submit, the card information should update and be displayed immediately. 
+
+If you click, delete, the user you selected to be deleted should be gone.
+
+If there are no users, there should be a 'no users in database message'
+
+### User Profile
+
+Because there currently is not a way to select a particular user, you should just see a 'no user currently selected' message.
 
 ### NPM Scripts
     To serve the app (also runs ux-lint):
