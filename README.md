@@ -32,6 +32,18 @@ If there are no users, there should be a 'no users in database message'
 
 Because there currently is not a way to select a particular user, you should just see a 'no user currently selected' message.
 
+### Changing User Component In Code
+
+User component has three mode settings:
+
+`<user-component mode=['edit', 'create', 'display']><user-component>` 
+
+Changing that mode in the code will cause the state of the card to be that mode on load. 
+
+Collapsed setting which displays the card in display mode but only shows the first and last name of the user. Clicking a collapsed card will expand it to show the details by setting collapse mode to be false.  Clicking any user component card Will set collapse mode to be true. This only works with display mode and is implemented in user-list.
+
+`<user-component mode='display' collapsed='true'><user-component>` 
+
 ### NPM Scripts
     To serve the app (also runs ux-lint):
 
