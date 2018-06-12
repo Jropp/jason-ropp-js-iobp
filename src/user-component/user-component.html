@@ -1,292 +1,240 @@
 <link rel="import" href="polymer.html">
 <dom-module id="user-component">
-  <template>
-    <style>
-      :host {
-        display: block;
-      }
+	<template>
+		<style>
+			:host {
+				display: block;
+			}
 
-      .default-card {
-        background-color: #B1A296;
-        min-width: 300px;
-        width: fit-content;
-        padding: 15px;
-        margin: 5px;
-        border-radius: 5px;
-        box-shadow: 3px 3px 2px lightgrey;
-      }
+			.default-card {
+				background-color: #B1A296;
+				min-width: 300px;
+				width: fit-content;
+				padding: 15px;
+				margin: 5px;
+				border-radius: 5px;
+				box-shadow: 3px 3px 2px lightgrey;
+			}
 
-      .default-card>input .first-name .last-name {
-        width: 20px;
-      }
+			.default-card>input .first-name .last-name {
+				width: 20px;
+			}
 
-      input {
-        margin: 5px;
-      }
+			input {
+				margin: 5px;
+			}
 
-      button {
-        margin: 10px;
-      }
-    </style>
+			button {
+				margin: 10px;
+			}
+		</style>
 
-    <template is="dom-if" if="[[isInMode(mode, 'display')]]">
-      <template is="dom-if" if="[[!user.id]]">
-        <p>You have not selected a user</p>
-      </template>
-    </template>
 
-    <template is="dom-if" if="[[isInMode(mode, 'display')]]">
-      <template is="dom-if" if="[[user.id]]">
+		<!-- HOW DO I COMBINE THESE TWO TO BE ON ONE TEMPLATE? -->
+		<!-- <template is="dom-if" if="[[isInMode(mode, 'display')]]">
+			<template is="dom-if" if="[[!user.id]]">
+				<p>You have not selected a user</p>
+			</template>
+		</template> -->
 
-        <hgroup class="default-card" on-click="toggleCollapse">
-          <h1 class="name">Profile: [[user.first]] [[user.last]]</h1>
-          <template is="dom-if" if="[[!collapsed]]">
-            <h3 class="id">ID: [[user.id]]</h3>
-            <h3 class="phone">[[user.phone]]</h3>
-            <h3 class="email">
-              <a href="dummy@email.com">[[user.email]]</a>
-            </h3>
-            <h3 class="department">
-              [[user.department]]
-            </h3>
-            <template is="dom-if" if="[[admin]]">
-              <button on-click="toggleMode">Edit User</button>
-            </template>
-          </template>
-        </hgroup>
+		<template is="dom-if" if="[[isInMode(mode, 'display')]]">
 
-      </template>
-    </template>
+			<hgroup class="default-card" on-click="toggleCollapse">
+				<h1 class="name">Profile: [[user.first]] [[user.last]]</h1>
+				<template is="dom-if" if="[[!collapsed]]">
+					<h3 class="id">ID: [[user.id]]</h3>
+					<h3 class="phone">[[user.phone]]</h3>
+					<h3 class="email">
+						<a href="dummy@email.com">[[user.email]]</a>
+					</h3>
+					<h3 class="department">
+						[[user.department]]
+					</h3>
+					<template is="dom-if" if="[[admin]]">
+						<button on-click="toggleMode">Edit User</button>
+					</template>
+				</template>
+			</hgroup>
 
-    <template is="dom-if" if="[[isInMode(mode, 'edit')]]">
-      <div class="form-box">
-        <form autocomplete="on">
-          <div id="editUserFields" class="default-card">
-            <h1>Edit: [[user.first]], [[user.last]]</h1>
-            <!-- bplint-disable no-auto-binding -->
-            <fieldset>
-              <legend>
-                Name:
-              </legend>
-              <input id="editfName" type="text" class="first-name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-               required>
-              <input id="editlName" type="text" class="last-name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-               required>
-            </fieldset>
-            <fieldset>
-              <legend>Contact:</legend>
-              <label for="editEmail">
-                <input id="editEmail" type="email" placeholder="email" autocomplete="email" value="{{user.email::change}}" name="email" required>
-              </label>
-              <br>
-              <label for="editPhone">
-                <input id="editPhone" type="tel" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
-              </label>
-            </fieldset>
-            <fieldset>
-              <legend>Other:</legend>
-              <label for="editDepartment">
-                <input id="editDepartment" placeholder="Department" value="{{user.department::change}}" required>
-              </label>
-            </fieldset>
-            <!-- bplint-enable no-auto-binding -->
+		</template>
 
-            <div class="submit-button-box">
-              <button class="form-button" on-click="save" type="submit">Submit</button>
-              <template is="dom-if" if="[[user.id]]">
-                <button class="form-button" on-click="deleteUser" type="submit">Delete</button>
-              </template>
-            </div>
-          </div>
-        </form>
-      </div>
+		<template is="dom-if" if="[[isInMode(mode, 'edit')]]">
+			<div class="form-box">
+				<form autocomplete="on">
+					<div id="editUserFields" class="default-card">
+						<template is="dom-if" if="{{user.id}}">
+							<h1>Edit: [[user.first]], [[user.last]]</h1>
+						</template>
+						<template is="dom-if" if="{{!user.id}}">
+							<h1>Create New User:</h1>
+						</template>
+						<!-- bplint-disable no-auto-binding -->
+						<fieldset>
+							<legend>
+								Name:
+							</legend>
+							<input id="editfName" type="text" class="first-name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+							 required>
+							<input id="editlName" type="text" class="last-name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+							 required>
+						</fieldset>
+						<fieldset>
+							<legend>Contact:</legend>
+							<label for="editEmail">
+								<input id="editEmail" type="email" placeholder="email" autocomplete="email" value="{{user.email::change}}" name="email" required>
+							</label>
+							<br>
+							<label for="editPhone">
+								<input id="editPhone" type="tel" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
+							</label>
+						</fieldset>
+						<fieldset>
+							<legend>Other:</legend>
+							<label for="editDepartment">
+								<input id="editDepartment" placeholder="Department" value="{{user.department::change}}" required>
+							</label>
+						</fieldset>
+						<!-- bplint-enable no-auto-binding -->
 
-    </template>
-    <template is="dom-if" if="[[isInMode(mode, 'create')]]">
-      <h1>Create New User:</h1>
-      <div class="form-box">
-        <form autocomplete="on">
-          <div id="createUserFields" class="default-card">
-            <!-- bplint-disable no-auto-binding -->
-            <fieldset>
-              <legend>
-                Name:
-              </legend>
-              <input id="fName" type="text" class="first-name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-               required>
-              <input id="lName" type="text" class="last-name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-               required>
-            </fieldset>
-            <fieldset>
-              <legend>Contact:</legend>
-              <label for="email">
-                <input id="email" type="email" placeholder="email" autocomplete="email" value="{{user.email::change}}" name="email" required>
-              </label>
-              <br>
-              <label for="phone">
-                <input id="phone" type="tel" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
-              </label>
-            </fieldset>
-            <fieldset>
-              <legend>Other:</legend>
-              <label for="department">
-                <input id="department" placeholder="Department" value="{{user.department::change}}" required>
-              </label>
-            </fieldset>
-            <!-- bplint-enable no-auto-binding -->
+						<div class="submit-button-box">
+							<button class="form-button" on-click="saveNewOrEdit" type="submit">Save</button>
+							<template is="dom-if" if="[[user.id]]">
+								<button class="form-button" on-click="deleteUser" type="submit">Delete</button>
+							</template>
+						</div>
+					</div>
+				</form>
+			</div>
 
-            <div class="submit-button-box">
-              <button class="form-button" on-click="save" type="submit">Submit</button>
-              <template is="dom-if" if="[[user.id]]">
-                <button class="form-button" on-click="deleteUser" type="submit">Delete</button>
-              </template>
-            </div>
-          </div>
-        </form>
-      </div>
+		</template>
+	</template>
+	<script>
+		'use strict';
+		class UserComponent extends Polymer.Element {
+			static get is() { return 'user-component'; }
+			static get properties() {
+				return {
+					admin: {
+						type: Boolean,
+						value: true
+					},
+					collapsed: {
+						type: Boolean,
+						value: false,
+					},
+					// edit, display
+					mode: {
+						type: String,
+					},
+					noSelectedUserToDisplay: {
+						type: Boolean,
+					},
+					user: {
+						type: Object,
+						value: function () {
+							return {
+								first: '',
+								last: '',
+								phone: '',
+								email: '',
+								department: '',
+								id: ''
+							}
+						}
+					},
+					users: {
+						type: Array,
+						value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
+					}
+				};
+			}
 
-    </template>
-  </template>
-  <script>
-    'use strict';
-    class UserComponent extends Polymer.Element {
-      static get is() { return 'user-component'; }
-      static get properties() {
-        return {
-          admin: {
-            type: Boolean,
-            value: true
-          },
-          collapsed: {
-            type: Boolean,
-            value: false,
-          },
-          // edit, display
-          mode: {
-            type: String,
-          },
-          noSelectedUserToDisplay: {
-            type: Boolean,
-          },
-          user: {
-            type: Object,
-            value: {
-              first: '',
-              last: '',
-              phone: '',
-              email: '',
-              department: '',
-              id: ''
-            }
-          },
-          users: {
-            type: Array,
-          }
-        };
-      }
+			createNewUserId() {
+				let id = '';
+				// returns 9 random letters/symbols/numbers and pushes them into the id.
+				for (let i = 0; i < 9; i++) { // eslint-disable-line no-magic-numbers
+					let number = Math.random() * (90); // eslint-disable-line no-magic-numbers
+					id += String.fromCharCode(Math.floor(number + 33)); // eslint-disable-line no-magic-numbers
+				}
 
-      connectedCallback() {
-        super.connectedCallback();
-        this.initUsers();
-      }
+				// Checks to see if the created id is a duplicate of another users id, if so it creates a new id until successful
+				let idAlreadyExists = this.getIdIndex(id);
+				return (idAlreadyExists) ? this.createNewUserId() : id;
+			}
 
-      createNewUserId() {
-        let id = '';
-        // returns 9 random letters/symbols/numbers and pushes them into the id.
-        for (let i = 0; i < 9; i++) { // eslint-disable-line no-magic-numbers
-          let number = Math.random() * (90); // eslint-disable-line no-magic-numbers
-          id += String.fromCharCode(Math.floor(number + 33)); // eslint-disable-line no-magic-numbers
-        }
+			// Makes sure all fields are filled
+			// FIXME: Currently fires even when all fields are filled
+			checkFields() {
+				for (let prop in this.user) {
+					if (!this.user[prop]) {
+						window.alert('Please fill out all fields');
+						return false;
+					}
+				}
+				return true;
+			}
 
-        // Checks to see if the created id is a duplicate of another users id, if so it creates a new id until successful
-        let idAlreadyExists = this.getIdIndex(id);
-        return (idAlreadyExists) ? this.createNewUserId() : id;
-      }
+			deleteUser() {
+				let userIndex = this.getIdIndex(this.user.id);
+				this.users.splice(userIndex, 1);
+				this.updateLocalStorage();
+			}
 
-      // Makes sure all fields are filled
-      checkFields() {
+			// This is used to get the index for deleting or updating a users information.
+			// This is also used when a new users id is created to see if that id already exists
+			getIdIndex(id) {
+				let index = (this.users) ? this.users.findIndex(val => val.id === id) : -1;
+				// Returns false if id does not exist
+				return (index === -1) ? false : index;
+			}
 
-        for (let prop in this.user) {
-          if (!this.user[prop]) {
-            window.alert('Please fill out all fields');
-            return false;
-          }
-        }
-        return true;
-      }
+			isInMode(currentMode, expectedMode) {
+						return (currentMode === expectedMode);
+			}
 
-      deleteUser() {
-        let userIndex = this.getIdIndex(this.user.id);
-        this.users.splice(userIndex, 1);
-        this.updateLocalStorage();
-      }
+			saveNewOrEdit(e) {
+				// TODO: Implement check user fields that allows for not having an ID
 
-      // This is used to get the index for deleting or updating a users information.
-      // This is also used when a new users id is created to see if that id already exists
-      getIdIndex(id) {
-        let index = (this.users) ? this.users.findIndex(val => val.id === id) : -1;
-        // Returns false if id does not exist
-        return (index === -1) ? false : index;
-      }
+				// If this.user doesn't have an id it means its a new user being created.
+				if (!this.user.id) {
+					this.saveNewUser();
+				} else {
+					this.saveUserEdit(e);
+				}
 
-      getDatabaseUsers() {
-        return JSON.parse(localStorage.getItem('onboardProjectUsers'));
-      }
+				// If the card is in collapsed mode, this keeps it open after switching back to display mode
+				if (this.collapsed) {
+					this.toggleCollapse();
+				}
+			}
 
-      initUsers() {
-        let users = this.getDatabaseUsers();
-        this.users = (users) ? users : [];
-      }
+			saveNewUser() {
+				this.users.splice(0, 0, this.user);
+				this.updateLocalStorage();
+			}
 
-      isInMode(currentMode, expectedMode) {
-        return (currentMode === expectedMode);
-      }
+			saveUserEdit(e) {
+				e.preventDefault();
+				let index = this.getIdIndex(this.user.id);
+				this.users.splice(index, 1, this.user);
+				this.toggleMode();
+				this.updateLocalStorage();
+			}
 
-      save(e) {
-        if (this.checkFields()) {
-          // If this.user doesn't have an id it means its a new user being created.
-          if (!this.user.id) {
-            this.saveNewUser();
-          } else {
-            this.saveUserEdit(e);
-          }
+			toggleCollapse() {
+				this.collapsed = !this.collapsed;
+			}
 
-          if (this.collapsed) {
-            this.toggleCollapse();
-          }
+			toggleMode() {
+				this.mode = (this.mode === 'edit') ? 'display' : 'edit';
+			}
 
-        }
-      }
+			updateLocalStorage() {
+				localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
+			}
 
-      saveNewUser() {
-        this.user.id = this.createNewUserId();
-        this.users.splice(0, 0, this.user);
-        this.updateLocalStorage();
-      }
+		}
 
-      saveUserEdit(e) {
-        e.preventDefault();
-
-        let index = this.getIdIndex(this.user.id);
-        this.users.splice(index, 1, this.user);
-        this.toggleMode();
-        this.updateLocalStorage();
-      }
-
-      toggleCollapse() {
-        this.collapsed = !this.collapsed;
-      }
-
-      toggleMode() {
-        this.mode = (this.mode === 'edit') ? 'display' : 'edit';
-      }
-
-      updateLocalStorage() {
-        localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
-      }
-
-    }
-
-    customElements.define(UserComponent.is, UserComponent);
-  </script>
+		customElements.define(UserComponent.is, UserComponent);
+	</script>
 </dom-module>
