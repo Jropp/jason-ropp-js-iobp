@@ -37,28 +37,6 @@
 			</template>
 		</template> -->
 
-		<template is="dom-if" if="[[isInMode(mode, 'display')]]">
-
-			<hgroup class="default-card" on-click="toggleCollapse">
-				<h1 class="name">Profile: [[user.first]] [[user.last]]</h1>
-				<template is="dom-if" if="[[!collapsed]]">
-					<h3 class="id">ID: [[user.id]]</h3>
-					<h3 class="phone">[[user.phone]]</h3>
-					<h3 class="email">
-						<a href="dummy@email.com">[[user.email]]</a>
-					</h3>
-					<h3 class="department">
-						[[user.department]]
-					</h3>
-					<template is="dom-if" if="[[admin]]">
-						<button on-click="toggleMode">Edit User</button>
-					</template>
-				</template>
-			</hgroup>
-
-		</template>
-
-		<template is="dom-if" if="[[isInMode(mode, 'edit')]]">
 			<div class="form-box">
 				<form autocomplete="on">
 					<div id="editUserFields" class="default-card">
@@ -107,7 +85,6 @@
 			</div>
 
 		</template>
-	</template>
 	<script>
 		'use strict';
 		class UserComponent extends Polymer.Element {
