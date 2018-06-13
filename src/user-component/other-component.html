@@ -22,17 +22,6 @@
 
 			input {
 				margin: 5px;
-				border: none;
-				font-size: 20px;
-			}
-
-			input[class*="email"] {
-				font-size: 14px;
-				width: 50%;
-			}
-
-			.edit {
-				border-bottom: lightgray solid 1px;
 			}
 
 			button {
@@ -48,52 +37,76 @@
 			</template>
 		</template> -->
 
-		<div class="form-box">
-			<form autocomplete="on">
-				<div id="editUserFields" class="default-card">
-					<h1>[[headerMessage(mode)]]</h1>
+		<template is="dom-if" if="[[isInMode(mode, 'display')]]">
 
-					<!-- bplint-disable no-auto-binding -->
-					<fieldset>
-						<legend>
-							Name:
-						</legend>
-						<input id="editfName" type="text" class="first-name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-						 required>
-						<input id="editlName" type="text" class="last-name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-						 required>
-					</fieldset>
-					<fieldset>
-						<legend>Contact:</legend>
-						<label for="editEmail">
-							<input id="editEmail" type="email" class="email" placeholder="email" autocomplete="email" value="{{user.email::change}}"
-							 name="email" required>
-						</label>
-						<br>
-						<label for="editPhone">
-							<input id="editPhone" type="tel" class="phone" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
-						</label>
-					</fieldset>
-					<fieldset>
-						<legend>Other:</legend>
-						<label for="editDepartment">
-							<input id="editDepartment" class="department" placeholder="Department" value="{{user.department::change}}" required>
-						</label>
-						<p class="id">[[idDisplay(user)]]</p>
-					</fieldset>
-					<!-- bplint-enable no-auto-binding -->
+			<hgroup class="default-card" on-click="toggleCollapse">
+				<h1 class="name">Profile: [[user.first]] [[user.last]]</h1>
+				<template is="dom-if" if="[[!collapsed]]">
+					<h3 class="id">ID: [[user.id]]</h3>
+					<h3 class="phone">[[user.phone]]</h3>
+					<h3 class="email">
+						<a href="dummy@email.com">[[user.email]]</a>
+					</h3>
+					<h3 class="department">
+						[[user.department]]
+					</h3>
+					<template is="dom-if" if="[[admin]]">
+						<button on-click="toggleMode">Edit User</button>
+					</template>
+				</template>
+			</hgroup>
 
-					<div class="submit-button-box">
-						<button class="form-button" on-click="saveNewOrEdit" type="submit">Save</button>
-						<button class="form-button" on-click="toggleEditable" type="submit">Edit</button>
-						<template is="dom-if" if="[[user.id]]">
-							<button class="form-button" on-click="deleteUser" type="submit">Delete</button>
+		</template>
+
+		<template is="dom-if" if="[[isInMode(mode, 'edit')]]">
+			<div class="form-box">
+				<form autocomplete="on">
+					<div id="editUserFields" class="default-card">
+						<template is="dom-if" if="{{user.id}}">
+							<h1>Edit: [[user.first]], [[user.last]]</h1>
 						</template>
-					</div>
-				</div>
-			</form>
-		</div>
+						<template is="dom-if" if="{{!user.id}}">
+							<h1>Create New User:</h1>
+						</template>
+						<!-- bplint-disable no-auto-binding -->
+						<fieldset>
+							<legend>
+								Name:
+							</legend>
+							<input id="editfName" type="text" class="first-name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+							 required>
+							<input id="editlName" type="text" class="last-name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+							 required>
+						</fieldset>
+						<fieldset>
+							<legend>Contact:</legend>
+							<label for="editEmail">
+								<input id="editEmail" type="email" placeholder="email" autocomplete="email" value="{{user.email::change}}" name="email" required>
+							</label>
+							<br>
+							<label for="editPhone">
+								<input id="editPhone" type="tel" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
+							</label>
+						</fieldset>
+						<fieldset>
+							<legend>Other:</legend>
+							<label for="editDepartment">
+								<input id="editDepartment" placeholder="Department" value="{{user.department::change}}" required>
+							</label>
+						</fieldset>
+						<!-- bplint-enable no-auto-binding -->
 
+						<div class="submit-button-box">
+							<button class="form-button" on-click="saveNewOrEdit" type="submit">Save</button>
+							<template is="dom-if" if="[[user.id]]">
+								<button class="form-button" on-click="deleteUser" type="submit">Delete</button>
+							</template>
+						</div>
+					</div>
+				</form>
+			</div>
+
+		</template>
 	</template>
 	<script>
 		'use strict';
@@ -101,6 +114,10 @@
 			static get is() { return 'user-component'; }
 			static get properties() {
 				return {
+					admin: {
+						type: Boolean,
+						value: true
+					},
 					collapsed: {
 						type: Boolean,
 						value: false,
@@ -130,13 +147,6 @@
 						value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
 					}
 				};
-			}
-
-			connectedCallback() {
-				super.connectedCallback();
-				if (this.mode === 'display') {
-					this.toggleEditable();
-				}
 			}
 
 			createNewUserId() {
@@ -178,47 +188,35 @@
 				return (index === -1) ? false : index;
 			}
 
-			headerMessage(mode) {
-
-				if (mode === 'edit') {
-					return (this.user.id) ? `Edit: ${user.first}, ${user.last}` : "Create User:"
-				} else {
-					return '';
-				}
-
-
-			}
-
-			isUser(user) {
-				return user.id ? true : false;
-			}
-
-			idDisplay(user){
-				console.log(user.id);
-
-				return (user.id) ? `ID: ${user.id}` : "";
+			isInMode(currentMode, expectedMode) {
+						return (currentMode === expectedMode);
 			}
 
 			saveNewOrEdit(e) {
+				this.toggleEditable();
+				debugger;
+				// TODO: Implement check user fields that allows for not having an ID
 
+				// If this.user doesn't have an id it means its a new user being created.
 				if (!this.user.id) {
 					this.saveNewUser();
 				} else {
 					this.saveUserEdit(e);
 				}
-				this.toggleEditable();
-				// if (this.collapsed) {
-				// 	this.toggleCollapse();
-				// }
+
+				// If the card is in collapsed mode, this keeps it open after switching back to display mode
+				if (this.collapsed) {
+					this.toggleCollapse();
+				}
 			}
 
 			saveNewUser() {
-				this.user.id = this.createNewUserId();
 				this.users.splice(0, 0, this.user);
 				this.updateLocalStorage();
 			}
 
 			saveUserEdit(e) {
+				e.preventDefault();
 				let index = this.getIdIndex(this.user.id);
 				this.users.splice(index, 1, this.user);
 				this.toggleMode();
@@ -233,32 +231,9 @@
 				this.mode = (this.mode === 'edit') ? 'display' : 'edit';
 			}
 
-			toggleClass(field) {
-				let name = field.className;
-				if (name.match(/edit/)) {
-					console.log('take on me');
-
-					field.className = name.replace(/edit/, "")
-				}
-
-				if (!name.match(/edit/)) {
-					console.log('take me on add edit');
-					field.className = name + ' edit';
-				}
-			}
-
-			toggleEditable(e) {
-				if (e) {
-					e.preventDefault();
-				}
-				let inputs = this.shadowRoot.querySelectorAll('input');
-				for (let field of inputs) {
-					field.readOnly = field.readOnly !== true;
-
-					if (e) {
-						this.toggleClass(field);
-					}
-				}
+			toggleEditable() {
+				let inputs = document.querySelectorAll('input');
+				console.log(inputs);
 			}
 
 			updateLocalStorage() {
