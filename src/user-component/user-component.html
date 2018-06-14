@@ -6,7 +6,11 @@
 
 	2. User card hould display 'no current user selected' if a user is not passed into it.
 
+	3. Polyfill for safari required input popup
+		x. check for use of safari
+		x. enables popup window on required fields
 
+	4. Required field only works if I interrupt the process with my checkFields function
 -->
 
 <link rel="import" href="polymer.html">
@@ -54,6 +58,16 @@
 			button {
 				margin: 10px;
 			}
+
+			.empty-field-pop-up {
+				position: absolute;
+				top: 25%;
+				left: 25%;
+				z-index: 2;
+				background-color: pink;
+				height: 200px;
+				width: 300px;
+			}
 		</style>
 
 
@@ -63,12 +77,10 @@
 				<p>You have not selected a user</p>
 			</template>
 		</template> -->
-
 		<div class="form-box">
 			<form autocomplete="on">
 				<div id="editUserFields" class="default-card">
 					<h1>[[headerMessage(mode)]]</h1>
-
 					<!-- bplint-disable no-auto-binding -->
 					<fieldset>
 						<legend>
@@ -87,13 +99,14 @@
 						</label>
 						<br>
 						<label for="editPhone">
-							<input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
+							<input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
+							 required>
 						</label>
 					</fieldset>
 					<fieldset>
 						<legend>Other:</legend>
 						<label for="editDepartment">
-							<input id="editDepartment" class="department edit" placeholder="Department" value="{{user.department::change}}" required>
+							<input id="editDepartment" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
 						</label>
 						<p class="id">[[idDisplay(user)]]</p>
 					</fieldset>
@@ -172,10 +185,10 @@
 
 			// Makes sure all fields are filled
 			// FIXME: Currently fires even when all fields are filled
+			// Why the heck does the auto complete work when this is up but not when it isn't, even though this has nothing to do with the autocomplete
 			checkFields() {
 				for (let prop in this.user) {
 					if (!this.user[prop]) {
-						window.alert('Please fill out all fields');
 						return false;
 					}
 				}
@@ -188,6 +201,7 @@
 				this.updateLocalStorage();
 			}
 
+
 			// This is used to get the index for deleting or updating a users information.
 			// This is also used when a new users id is created to see if that id already exists
 			getIdIndex(id) {
@@ -197,70 +211,70 @@
 			}
 
 			headerMessage(mode) {
-				console.log(mode);
-
-				if (this.mode === 'edit') {
+				if (mode === 'edit') {
+					// If there is not a user id then it means it is an instance of creating a user
 					return (this.user.id) ? `Edit: ${this.user.first}, ${this.user.last}` : "Create User:"
 				} else {
+					// Display mode is currently an empty string
 					return '';
 				}
-
-
 			}
 
 			isUser(user) {
 				return user.id ? true : false;
 			}
 
-			idDisplay(user){
+			idDisplay(user) {
 				return (user.id) ? `ID: ${user.id}` : "";
 			}
 
 			saveNewOrEdit(e) {
-
-				if (!this.user.id) {
-					this.saveNewUser();
-				} else {
-					this.saveUserEdit(e);
+				if (this.checkFields()) {
+					if (!this.user.id) {
+						this.saveNewUser();
+					} else {
+						this.saveUserEdit(e);
+					}
+					this.toggleEditable();
+					// if (this.collapsed) {
+					// 	this.toggleCollapse();
+					// }
 				}
-				this.toggleEditable();
-				// if (this.collapsed) {
-				// 	this.toggleCollapse();
-				// }
 			}
+
 
 			saveNewUser() {
-				this.user.id = this.createNewUserId();
-				this.users.splice(0, 0, this.user);
-				this.updateLocalStorage();
-			}
+						this.user.id = this.createNewUserId();
+					this.users.splice(0, 0, this.user);
+					this.updateLocalStorage();
+				}
 
 			saveUserEdit(e) {
-				let index = this.getIdIndex(this.user.id);
-				this.users.splice(index, 1, this.user);
-				this.toggleMode();
-				this.updateLocalStorage();
-			}
+						let index = this.getIdIndex(this.user.id);
+					this.users.splice(index, 1, this.user);
+					this.toggleMode();
+					this.updateLocalStorage();
+				}
 
 			toggleCollapse() {
-				this.collapsed = !this.collapsed;
-			}
+						this.collapsed = !this.collapsed;
+					}
 
 			toggleMode() {
-				this.mode = (this.mode === 'edit') ? 'display' : 'edit';
-			}
+						this.mode = (this.mode === 'edit') ? 'display' : 'edit';
+					}
 
 			toggleClass(field) {
-				let name = field.className;
+						let name = field.className;
 
 				if (name.match(/edit/)) {
-					field.className = name.replace(/edit/, "");
+						field.className = name.replace(/edit/, "");
 					// This pokes the mode so that the card header updates display. Fixes bug but probably should be somewhere else.
 					this.mode = 'display';
 				}
 
 				if (!name.match(/edit/)) {
-					field.className = name + ' edit';
+						field.className = name + ' edit';
 					// This pokes the mode so that the card header updates display. Fixes bug but probably should be somewhere else.
 					this.mode = 'edit';
 				}
@@ -268,11 +282,11 @@
 
 			toggleEditable(e) {
 				if (e) {
-					e.preventDefault();
-				}
-				let inputs = this.shadowRoot.querySelectorAll('input');
+						e.preventDefault();
+					}
+					let inputs = this.shadowRoot.querySelectorAll('input');
 				for (let field of inputs) {
-					field.readOnly = field.readOnly !== true;
+						field.readOnly = field.readOnly !== true;
 
 					// If it was a click event it means it was from clicking the edit button
 					this.toggleClass(field);
@@ -282,11 +296,11 @@
 			}
 
 			updateLocalStorage() {
-				localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
+						localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
 			}
 
-		}
+				}
 
-		customElements.define(UserComponent.is, UserComponent);
-	</script>
+				customElements.define(UserComponent.is, UserComponent);
+			</script>
 </dom-module>
