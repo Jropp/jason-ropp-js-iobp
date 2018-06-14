@@ -1,3 +1,14 @@
+<!-- Bugs
+	1. When you edit the user, it doesn't display an "Edit user header"
+		Currently the default is edit mode, but if there isn't a user then it is in create mode (the only difference is the setting the header display)
+
+		FIXED: Sort of fixed in toggle class function with this.mode = 'edit/display';
+
+	2. User card hould display 'no current user selected' if a user is not passed into it.
+
+
+-->
+
 <link rel="import" href="polymer.html">
 <dom-module id="user-component">
 	<template>
@@ -26,9 +37,14 @@
 				font-size: 20px;
 			}
 
-			input[class*="email"] {
+			.email {
 				font-size: 14px;
 				width: 50%;
+			}
+
+			.id {
+				font-size: 20px;
+				margin-left: 6px;
 			}
 
 			.edit {
@@ -58,26 +74,26 @@
 						<legend>
 							Name:
 						</legend>
-						<input id="editfName" type="text" class="first-name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+						<input id="editfName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
 						 required>
-						<input id="editlName" type="text" class="last-name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+						<input id="editlName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
 						 required>
 					</fieldset>
 					<fieldset>
 						<legend>Contact:</legend>
 						<label for="editEmail">
-							<input id="editEmail" type="email" class="email" placeholder="email" autocomplete="email" value="{{user.email::change}}"
+							<input id="editEmail" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
 							 name="email" required>
 						</label>
 						<br>
 						<label for="editPhone">
-							<input id="editPhone" type="tel" class="phone" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
+							<input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
 						</label>
 					</fieldset>
 					<fieldset>
 						<legend>Other:</legend>
 						<label for="editDepartment">
-							<input id="editDepartment" class="department" placeholder="Department" value="{{user.department::change}}" required>
+							<input id="editDepartment" class="department edit" placeholder="Department" value="{{user.department::change}}" required>
 						</label>
 						<p class="id">[[idDisplay(user)]]</p>
 					</fieldset>
@@ -134,6 +150,8 @@
 
 			connectedCallback() {
 				super.connectedCallback();
+
+				// The default mode is editable, this changes that to display
 				if (this.mode === 'display') {
 					this.toggleEditable();
 				}
@@ -179,9 +197,10 @@
 			}
 
 			headerMessage(mode) {
+				console.log(mode);
 
-				if (mode === 'edit') {
-					return (this.user.id) ? `Edit: ${user.first}, ${user.last}` : "Create User:"
+				if (this.mode === 'edit') {
+					return (this.user.id) ? `Edit: ${this.user.first}, ${this.user.last}` : "Create User:"
 				} else {
 					return '';
 				}
@@ -194,8 +213,6 @@
 			}
 
 			idDisplay(user){
-				console.log(user.id);
-
 				return (user.id) ? `ID: ${user.id}` : "";
 			}
 
@@ -235,15 +252,17 @@
 
 			toggleClass(field) {
 				let name = field.className;
-				if (name.match(/edit/)) {
-					console.log('take on me');
 
-					field.className = name.replace(/edit/, "")
+				if (name.match(/edit/)) {
+					field.className = name.replace(/edit/, "");
+					// This pokes the mode so that the card header updates display. Fixes bug but probably should be somewhere else.
+					this.mode = 'display';
 				}
 
 				if (!name.match(/edit/)) {
-					console.log('take me on add edit');
 					field.className = name + ' edit';
+					// This pokes the mode so that the card header updates display. Fixes bug but probably should be somewhere else.
+					this.mode = 'edit';
 				}
 			}
 
@@ -255,10 +274,11 @@
 				for (let field of inputs) {
 					field.readOnly = field.readOnly !== true;
 
-					if (e) {
-						this.toggleClass(field);
-					}
+					// If it was a click event it means it was from clicking the edit button
+					this.toggleClass(field);
+
 				}
+
 			}
 
 			updateLocalStorage() {
