@@ -12,7 +12,7 @@
 
 	4. Required field only works if I interrupt the process with my checkFields function
 
-	5. New user not creating
+			use form onsubmit attribute for validation https://stackoverflow.com/questions/35487417/how-to-stop-form-submit-if-the-validation-fails
 -->
 
 <link rel="import" href="polymer.html">
@@ -132,16 +132,9 @@
 			static get is() { return 'user-component'; }
 			static get properties() {
 				return {
-					collapsed: {
-						type: Boolean,
-						value: false,
-					},
 					// edit, display
 					mode: {
 						type: String,
-					},
-					noSelectedUserToDisplay: {
-						type: Boolean,
 					},
 					user: {
 						type: Object,
@@ -180,17 +173,20 @@
 					id += String.fromCharCode(Math.floor(number + 33)); // eslint-disable-line no-magic-numbers
 				}
 
-				// Checks to see if the created id is a duplicate of another users id, if so it creates a new id until successful
-				let idAlreadyExists = this.getIdIndex(id);
-				return (idAlreadyExists) ? this.createNewUserId() : id;
+				// Makes sure that generated id is not already being used by another user
+				return (this.getIdIndex(id)) ? this.createNewUserId() : id;
 			}
 
 			// Makes sure all fields are filled
-			// FIXME: Currently fires even when all fields are filled
-			// Why the heck does the auto complete work when this is up but not when it isn't, even though this has nothing to do with the autocomplete
 			checkFields() {
+
+				// check for safari
+					// enter polyfill
+
 				for (let prop in this.user) {
-					if (!this.user[prop]) {
+					let itemVal = this.user[prop];
+					// FIXME: check through this.user to see if anything was left unfilled
+					if(fixthis){
 						return false;
 					}
 				}
@@ -203,90 +199,71 @@
 				this.updateLocalStorage();
 			}
 
-
-			// This is used to get the index for deleting or updating a users information.
-			// This is also used when a new users id is created to see if that id already exists
 			getIdIndex(id) {
 				let index = (this.users) ? this.users.findIndex(val => val.id === id) : -1;
-				// Returns false if id does not exist
+				// Returns false if id does not exist and index if it does
 				return (index === -1) ? false : index;
 			}
 
 			headerMessage(mode) {
 				if (mode === 'edit') {
-					// If there is not a user id then it means it is an instance of creating a user
+					// Sets header for edit existing user or create new user
 					return (this.user.id) ? `Edit: ${this.user.first}, ${this.user.last}` : "Create User:"
 				} else {
-					// Display mode is currently an empty string
+					// Display mode header
 					return '';
 				}
 			}
 
-			isUser(user) {
-				return user.id ? true : false;
-			}
-
+			// Dynamically sets the id display so that "ID:" isn't displayed before it is created
 			idDisplay(user) {
 				return (user.id) ? `ID: ${user.id}` : "";
 			}
 
 			saveNewOrEdit(e) {
-					if (!this.user.id) {
-						this.saveNewUser();
-					} else {
-						this.saveUserEdit(e);
-					}
-					this.toggleEditable();
-					// if (this.collapsed) {
-					// 	this.toggleCollapse();
-					// }
+
+				(!this.user.id) ? this.saveNewUser() : this.saveUserEdit(e);
+				this.toggleEditable();
 			}
 
 
 			saveNewUser() {
-						this.user.id = this.createNewUserId();
-					this.users.splice(0, 0, this.user);
-					this.updateLocalStorage();
-				}
+				this.user.id = this.createNewUserId();
+				this.users.splice(0, 0, this.user);
+				this.updateLocalStorage();
+			}
 
 			saveUserEdit(e) {
-						let index = this.getIdIndex(this.user.id);
-					this.users.splice(index, 1, this.user);
-					this.toggleMode();
-					this.updateLocalStorage();
-				}
+				let indexOfUser = this.getIdIndex(this.user.id);
+				this.users.splice(indexOfUser, 1, this.user);
+
+				this.toggleMode();
+				this.updateLocalStorage();
+			}
 
 			toggleCollapse() {
-						this.collapsed = !this.collapsed;
-					}
+				this.collapsed = !this.collapsed;
+			}
 
 			toggleMode() {
-						this.mode = (this.mode === 'edit') ? 'display' : 'edit';
-					}
+				this.mode = (this.mode === 'edit') ? 'display' : 'edit';
+			}
 
 			toggleClass(field) {
-						let name = field.className;
+				let name = field.className;
 
-				if (name.match(/edit/)) {
-						field.className = name.replace(/edit/, "");
-					// This pokes the mode so that the card header updates display. Fixes bug but probably should be somewhere else.
-					this.mode = 'display';
-				}
+			  field.className =	name.match(/edit/) ? name.replace(/edit/, "") : name + ' edit';
+				this.mode = name.match(/edit/) ? 'display' : 'edit';
 
-				if (!name.match(/edit/)) {
-						field.className = name + ' edit';
-					// This pokes the mode so that the card header updates display. Fixes bug but probably should be somewhere else.
-					this.mode = 'edit';
-				}
 			}
 
 			toggleEditable(e) {
 				if (e) {
-						e.preventDefault();
-					}
-					let inputs = this.shadowRoot.querySelectorAll('input');
+					e.preventDefault();
+				}
+				let inputs = this.shadowRoot.querySelectorAll('input');
 				for (let field of inputs) {
-						field.readOnly = field.readOnly !== true;
+					field.readOnly = field.readOnly !== true;
 
 					// If it was a click event it means it was from clicking the edit button
 					this.toggleClass(field);
@@ -296,11 +273,11 @@
 			}
 
 			updateLocalStorage() {
-						localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
+				localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
 			}
 
-				}
+		}
 
-				customElements.define(UserComponent.is, UserComponent);
-			</script>
+		customElements.define(UserComponent.is, UserComponent);
+	</script>
 </dom-module>
