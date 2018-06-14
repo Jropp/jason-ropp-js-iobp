@@ -11,6 +11,8 @@
 		x. enables popup window on required fields
 
 	4. Required field only works if I interrupt the process with my checkFields function
+
+	5. New user not creating
 -->
 
 <link rel="import" href="polymer.html">
@@ -229,7 +231,6 @@
 			}
 
 			saveNewOrEdit(e) {
-				if (this.checkFields()) {
 					if (!this.user.id) {
 						this.saveNewUser();
 					} else {
@@ -239,7 +240,6 @@
 					// if (this.collapsed) {
 					// 	this.toggleCollapse();
 					// }
-				}
 			}
 
 
