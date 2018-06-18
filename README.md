@@ -18,7 +18,7 @@ Click on 'Create User' tab, enter a user. Try leaving a field empty, it should t
 
 ### Users List: Edit/Delete User
 
-Your created user should appear after clicking the User List tab. Click one of the cards to expand and see the details of that card. Admin mode is on by default so you should be able to click the edit button and edit the fields for that user. 
+Your created user should appear after clicking the User List tab. You should be able to click the edit button and edit the fields for that user and save with the updated information displayed immediately. 
 
 If you leave a field empty, it should prompt you that a field is empty.
 

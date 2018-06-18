@@ -1,283 +1,250 @@
-<!-- Bugs
-	1. When you edit the user, it doesn't display an "Edit user header"
-		Currently the default is edit mode, but if there isn't a user then it is in create mode (the only difference is the setting the header display)
-
-		FIXED: Sort of fixed in toggle class function with this.mode = 'edit/display';
-
-	2. User card hould display 'no current user selected' if a user is not passed into it.
-
-	3. Polyfill for safari required input popup
-		x. check for use of safari
-		x. enables popup window on required fields
-
-	4. Required field only works if I interrupt the process with my checkFields function
-
-			use form onsubmit attribute for validation https://stackoverflow.com/questions/35487417/how-to-stop-form-submit-if-the-validation-fails
--->
-
 <link rel="import" href="polymer.html">
 <dom-module id="user-component">
-	<template>
-		<style>
-			:host {
-				display: block;
-			}
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
 
-			.default-card {
-				background-color: white;
-				min-width: 300px;
-				width: fit-content;
-				padding: 15px;
-				margin: 5px;
-				border-radius: 5px;
-				box-shadow: 3px 3px 2px lightgrey;
-			}
+      .default-card {
+        background-color: white;
+        min-width: 300px;
+        width: fit-content;
+        padding: 15px;
+        margin: 5px;
+        border-radius: 5px;
+        box-shadow: 3px 3px 2px lightgrey;
+      }
 
-			.default-card>input .first-name .last-name {
-				width: 20px;
-			}
+      .default-card>input .first-name .last-name {
+        width: 20px;
+      }
 
-			input {
-				margin: 5px;
-				border: none;
-				font-size: 20px;
-			}
+      input {
+        margin: 5px;
+        border: none;
+        font-size: 20px;
+      }
 
-			.email {
-				font-size: 14px;
-				width: 50%;
-			}
+      .email {
+        font-size: 14px;
+        width: 50%;
+      }
 
-			.id {
-				font-size: 20px;
-				margin-left: 6px;
-			}
+      .id {
+        font-size: 20px;
+        margin-left: 6px;
+      }
 
-			.edit {
-				border-bottom: lightgray solid 1px;
-			}
+      .edit {
+        border-bottom: lightgray solid 1px;
+      }
 
-			button {
-				margin: 10px;
-			}
+      button {
+        margin: 10px;
+      }
 
-			.empty-field-pop-up {
-				position: absolute;
-				top: 25%;
-				left: 25%;
-				z-index: 2;
-				background-color: pink;
-				height: 200px;
-				width: 300px;
-			}
-		</style>
+      .empty-field-pop-up {
+        position: absolute;
+        top: 25%;
+        left: 25%;
+        z-index: 2;
+        background-color: pink;
+        height: 200px;
+        width: 300px;
+      }
+    </style>
 
+    <div class="form-box">
+      <form autocomplete="on">
+        <div id="editUserFields" class="default-card">
+          <h1>[[headerMessage(mode)]]</h1>
+          <!-- bplint-disable no-auto-binding -->
+          <fieldset>
+            <legend>
+              Name:
+            </legend>
+            <input id="editfName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+             required>
+            <input id="editlName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+             required>
+          </fieldset>
+          <fieldset>
+            <legend>Contact:</legend>
+            <label for="editEmail">
+              <input id="editEmail" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
+               name="email" required>
+            </label>
+            <br>
+            <label for="editPhone">
+              <input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
+               required>
+            </label>
+          </fieldset>
+          <fieldset>
+            <legend>Other:</legend>
+            <label for="editDepartment">
+              <input id="editDepartment" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
+            </label>
+            <p class="id">[[idDisplay(user)]]</p>
+          </fieldset>
+          <!-- bplint-enable no-auto-binding -->
+          <div class="submit-button-box">
+            <template is="dom-if" if="[[isMode(mode, 'edit')]]">
+              <button class="form-button" on-click="saveNewOrEdit" type="submit">Save</button>
+              <template is="dom-if" if="[[user.id]]">
+                <button class="form-button" on-click="deleteUser" type="submit">Delete</button>
+              </template>
+            </template>
+            <template is="dom-if" if="[[isMode(mode, 'display')]]">
+              <button class="form-button" on-click="toggleEditable" type="submit">Edit</button>
+            </template>
+          </div>
+        </div>
+      </form>
+    </div>
+  </template>
+  <script>
+    'use strict';
+    class UserComponent extends Polymer.Element {
+      static get is() { return 'user-component'; }
+      static get properties() {
+        return {
+          // edit, display
+          mode: {
+            type: String,
+          },
+          user: {
+            type: Object,
+            value: function() {
+              return {
+                first: '',
+                last: '',
+                phone: '',
+                email: '',
+                department: '',
+                id: ''
+              };
+            }
+          },
+          collapsed: {
+            type: Boolean,
+            value: false
+          },
+          users: {
+            type: Array,
+            value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
+          }
+        };
+      }
 
-		<!-- HOW DO I COMBINE THESE TWO TO BE ON ONE TEMPLATE? -->
-		<!-- <template is="dom-if" if="[[isInMode(mode, 'display')]]">
-			<template is="dom-if" if="[[!user.id]]">
-				<p>You have not selected a user</p>
-			</template>
-		</template> -->
-		<div class="form-box">
-			<form autocomplete="on">
-				<div id="editUserFields" class="default-card">
-					<h1>[[headerMessage(mode)]]</h1>
-					<!-- bplint-disable no-auto-binding -->
-					<fieldset>
-						<legend>
-							Name:
-						</legend>
-						<input id="editfName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-						 required>
-						<input id="editlName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-						 required>
-					</fieldset>
-					<fieldset>
-						<legend>Contact:</legend>
-						<label for="editEmail">
-							<input id="editEmail" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
-							 name="email" required>
-						</label>
-						<br>
-						<label for="editPhone">
-							<input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
-							 required>
-						</label>
-					</fieldset>
-					<fieldset>
-						<legend>Other:</legend>
-						<label for="editDepartment">
-							<input id="editDepartment" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
-						</label>
-						<p class="id">[[idDisplay(user)]]</p>
-					</fieldset>
-					<!-- bplint-enable no-auto-binding -->
+      connectedCallback() {
+        super.connectedCallback();
+        if (this.mode === 'display') {
+          this.toggleEditable();
+        }
+      }
 
-					<div class="submit-button-box">
-						<button class="form-button" on-click="saveNewOrEdit" type="submit">Save</button>
-						<button class="form-button" on-click="toggleEditable" type="submit">Edit</button>
-						<template is="dom-if" if="[[user.id]]">
-							<button class="form-button" on-click="deleteUser" type="submit">Delete</button>
-						</template>
-					</div>
-				</div>
-			</form>
-		</div>
+      createNewUserId() {
+        let id = '';
+        // returns 9 random letters/symbols/numbers and pushes them into the id.
+        for (let i = 0; i < 9; i++) { // eslint-disable-line no-magic-numbers
+          let number = Math.random() * (90); // eslint-disable-line no-magic-numbers
+          id += String.fromCharCode(Math.floor(number + 33)); // eslint-disable-line no-magic-numbers
+        }
 
-	</template>
-	<script>
-		'use strict';
-		class UserComponent extends Polymer.Element {
-			static get is() { return 'user-component'; }
-			static get properties() {
-				return {
-					// edit, display
-					mode: {
-						type: String,
-					},
-					user: {
-						type: Object,
-						value: function () {
-							return {
-								first: '',
-								last: '',
-								phone: '',
-								email: '',
-								department: '',
-								id: ''
-							}
-						}
-					},
-					users: {
-						type: Array,
-						value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
-					}
-				};
-			}
+        // Makes sure that generated id is not already being used by another user
+        return (this.getIdIndex(id)) ? this.createNewUserId() : id;
+      }
 
-			connectedCallback() {
-				super.connectedCallback();
+      deleteUser() {
+        let userIndex = this.getIdIndex(this.user.id);
+        this.users.splice(userIndex, 1);
+        this.updateLocalStorage();
+      }
 
-				// The default mode is editable, this changes that to display
-				if (this.mode === 'display') {
-					this.toggleEditable();
-				}
-			}
+      getIdIndex(id) {
+        let index = (this.users) ? this.users.findIndex(val => val.id === id) : -1;
+        // Returns false if id does not exist and index if it does
+        return (index === -1) ? false : index;
+      }
 
-			createNewUserId() {
-				let id = '';
-				// returns 9 random letters/symbols/numbers and pushes them into the id.
-				for (let i = 0; i < 9; i++) { // eslint-disable-line no-magic-numbers
-					let number = Math.random() * (90); // eslint-disable-line no-magic-numbers
-					id += String.fromCharCode(Math.floor(number + 33)); // eslint-disable-line no-magic-numbers
-				}
+      headerMessage(mode) {
+        if (mode === 'edit') {
+          // Sets header for edit existing user or create new user
+          return (this.user.id) ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
+        } else {
+          // Display mode header
+          return '';
+        }
+      }
 
-				// Makes sure that generated id is not already being used by another user
-				return (this.getIdIndex(id)) ? this.createNewUserId() : id;
-			}
+      // Dynamically sets the id display so that "ID:" isn't displayed before it is created
+      idDisplay(user) {
+        return (user.id) ? `ID: ${user.id}` : '';
+      }
 
-			// Makes sure all fields are filled
-			checkFields() {
+      isMode(currentMode, expectedMode) {
+        return (currentMode === expectedMode);
+      }
 
-				// check for safari
-					// enter polyfill
+      saveNewOrEdit(e) {
+        if (!this.user.id) {
+          this.saveNewUser();
+        } else {
+          this.saveUserEdit(e);
+        }
+        this.toggleEditable();
+      }
 
-				for (let prop in this.user) {
-					let itemVal = this.user[prop];
-					// FIXME: check through this.user to see if anything was left unfilled
-					if(fixthis){
-						return false;
-					}
-				}
-				return true;
-			}
+      saveNewUser() {
+        this.user.id = this.createNewUserId();
+        this.users.splice(0, 0, this.user);
+        this.updateLocalStorage();
+      }
 
-			deleteUser() {
-				let userIndex = this.getIdIndex(this.user.id);
-				this.users.splice(userIndex, 1);
-				this.updateLocalStorage();
-			}
+      saveUserEdit(e) {
+        let indexOfUser = this.getIdIndex(this.user.id);
+        this.users.splice(indexOfUser, 1, this.user);
 
-			getIdIndex(id) {
-				let index = (this.users) ? this.users.findIndex(val => val.id === id) : -1;
-				// Returns false if id does not exist and index if it does
-				return (index === -1) ? false : index;
-			}
+        this.toggleMode();
+        this.updateLocalStorage();
+      }
 
-			headerMessage(mode) {
-				if (mode === 'edit') {
-					// Sets header for edit existing user or create new user
-					return (this.user.id) ? `Edit: ${this.user.first}, ${this.user.last}` : "Create User:"
-				} else {
-					// Display mode header
-					return '';
-				}
-			}
+      toggleMode() {
+        this.mode = (this.mode === 'edit') ? 'display' : 'edit';
+      }
 
-			// Dynamically sets the id display so that "ID:" isn't displayed before it is created
-			idDisplay(user) {
-				return (user.id) ? `ID: ${user.id}` : "";
-			}
+      toggleClass(field) {
+        let name = field.className;
+        field.className = name.match(/edit/) ? name.replace(/edit/, '') : name + ' edit';
+        this.mode = name.match(/edit/) ? 'display' : 'edit';
+      }
 
-			saveNewOrEdit(e) {
+      toggleEditable(e) {
+        // the default of the user-component is edit,
+        // so this is fired to create display mode but also
+        // fires when you click the edit or save button.
+        // If there is an event available it means that
+        // the edit button was clicked, so the page is not
+        // refreshed, so that it holds the mode it is supposed
+        // to rather than defaulting back to edit.
+        if (e) {
+          e.preventDefault();
+        }
+        let inputs = this.shadowRoot.querySelectorAll('input');
+        for (let field of inputs) {
+          field.readOnly = field.readOnly !== true;
+          this.toggleClass(field);
+        }
+      }
 
-				(!this.user.id) ? this.saveNewUser() : this.saveUserEdit(e);
-				this.toggleEditable();
-			}
+      updateLocalStorage() {
+        localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
+      }
 
+    }
 
-			saveNewUser() {
-				this.user.id = this.createNewUserId();
-				this.users.splice(0, 0, this.user);
-				this.updateLocalStorage();
-			}
-
-			saveUserEdit(e) {
-				let indexOfUser = this.getIdIndex(this.user.id);
-				this.users.splice(indexOfUser, 1, this.user);
-
-				this.toggleMode();
-				this.updateLocalStorage();
-			}
-
-			toggleCollapse() {
-				this.collapsed = !this.collapsed;
-			}
-
-			toggleMode() {
-				this.mode = (this.mode === 'edit') ? 'display' : 'edit';
-			}
-
-			toggleClass(field) {
-				let name = field.className;
-
-			  field.className =	name.match(/edit/) ? name.replace(/edit/, "") : name + ' edit';
-				this.mode = name.match(/edit/) ? 'display' : 'edit';
-
-			}
-
-			toggleEditable(e) {
-				if (e) {
-					e.preventDefault();
-				}
-				let inputs = this.shadowRoot.querySelectorAll('input');
-				for (let field of inputs) {
-					field.readOnly = field.readOnly !== true;
-
-					// If it was a click event it means it was from clicking the edit button
-					this.toggleClass(field);
-
-				}
-
-			}
-
-			updateLocalStorage() {
-				localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
-			}
-
-		}
-
-		customElements.define(UserComponent.is, UserComponent);
-	</script>
+    customElements.define(UserComponent.is, UserComponent);
+  </script>
 </dom-module>
