@@ -1,9 +1,15 @@
 <link rel="import" href="polymer.html">
+<link rel="import" href="something.html">
+
 <dom-module id="user-component">
   <template>
     <style>
       :host {
         display: block;
+      }
+
+      button {
+        margin: 10px;
       }
 
       .default-card {
@@ -20,10 +26,8 @@
         width: 20px;
       }
 
-      input {
-        margin: 5px;
-        border: none;
-        font-size: 20px;
+      .edit {
+        border-bottom: lightgray solid 1px;
       }
 
       .email {
@@ -31,75 +35,63 @@
         width: 50%;
       }
 
-      .id {
+      input {
+        margin: 5px;
+        border: none;
         font-size: 20px;
+      }
+
+      .id {
+        font-size: 15px;
         margin-left: 6px;
-      }
-
-      .edit {
-        border-bottom: lightgray solid 1px;
-      }
-
-      button {
-        margin: 10px;
-      }
-
-      .empty-field-pop-up {
-        position: absolute;
-        top: 25%;
-        left: 25%;
-        z-index: 2;
-        background-color: pink;
-        height: 200px;
-        width: 300px;
       }
     </style>
 
-    <div class="form-box">
+    <div id="editUserFields" class="default-card">
       <form autocomplete="on">
-        <div id="editUserFields" class="default-card">
-          <h1>[[headerMessage(mode)]]</h1>
-          <!-- bplint-disable no-auto-binding -->
-          <fieldset>
-            <legend>
-              Name:
-            </legend>
-            <input id="editfName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+        <h1>[[headerMessage(mode)]]</h1>
+        <!-- bplint-disable no-auto-binding -->
+        <fieldset>
+          <legend>
+            Name:
+          </legend>
+          <input id="editfName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+           required>
+          <input id="editlName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+           required>
+        </fieldset>
+        <fieldset>
+          <legend>Contact:</legend>
+          <label for="editEmail">
+            <input id="editEmail" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
+             name="email" required>
+          </label>
+          <br>
+          <label for="editPhone">
+            <input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
              required>
-            <input id="editlName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-             required>
-          </fieldset>
-          <fieldset>
-            <legend>Contact:</legend>
-            <label for="editEmail">
-              <input id="editEmail" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
-               name="email" required>
-            </label>
-            <br>
-            <label for="editPhone">
-              <input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
-               required>
-            </label>
-          </fieldset>
-          <fieldset>
-            <legend>Other:</legend>
-            <label for="editDepartment">
-              <input id="editDepartment" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
-            </label>
-            <p class="id">[[idDisplay(user)]]</p>
-          </fieldset>
-          <!-- bplint-enable no-auto-binding -->
-          <div class="submit-button-box">
-            <template is="dom-if" if="[[isMode(mode, 'edit')]]">
-              <button class="form-button" on-click="saveNewOrEdit" type="submit">Save</button>
-              <template is="dom-if" if="[[user.id]]">
-                <button class="form-button" on-click="deleteUser" type="submit">Delete</button>
-              </template>
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>Other:</legend>
+          <label for="editDepartment">
+            <input id="editDepartment" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
+          </label>
+          <template is="dom-if" if="[[user.id]]">
+            <p class="id">ID: [[user.id]]</p>
+          </template>
+        </fieldset>
+        <!-- bplint-enable no-auto-binding -->
+        <div class="submit-button-box">
+          <template is="dom-if" if="[[isMode(mode, 'edit')]]">
+            <button class="form-button" on-click="save" type="submit">Save</button>
+            <template is="dom-if" if="[[user.id]]">
+              <button class="form-button" on-click="deleteUser" type="submit">Delete</button>
             </template>
-            <template is="dom-if" if="[[isMode(mode, 'display')]]">
-              <button class="form-button" on-click="toggleEditable" type="submit">Edit</button>
-            </template>
-          </div>
+          </template>
+          <template is="dom-if" if="[[isMode(mode, 'display')]]">
+            <button class="form-button" on-click="toggleEditable" type="submit">Edit</button>
+          </template>
         </div>
       </form>
     </div>
@@ -113,6 +105,7 @@
           // edit, display
           mode: {
             type: String,
+            value: 'edit'
           },
           user: {
             type: Object,
@@ -127,10 +120,6 @@
               };
             }
           },
-          collapsed: {
-            type: Boolean,
-            value: false
-          },
           users: {
             type: Array,
             value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
@@ -140,6 +129,7 @@
 
       connectedCallback() {
         super.connectedCallback();
+        // inits display mode
         if (this.mode === 'display') {
           this.toggleEditable();
         }
@@ -153,89 +143,77 @@
           id += String.fromCharCode(Math.floor(number + 33)); // eslint-disable-line no-magic-numbers
         }
 
-        // Makes sure that generated id is not already being used by another user
-        return (this.getIdIndex(id)) ? this.createNewUserId() : id;
+        return (this.getIdIndex(id) === -1) ? id : this.createNewUserId();
       }
 
       deleteUser() {
-        let userIndex = this.getIdIndex(this.user.id);
-        this.users.splice(userIndex, 1);
+        this.users.splice(this.getIdIndex(this.user.id), 1);
         this.updateLocalStorage();
       }
 
       getIdIndex(id) {
-        let index = (this.users) ? this.users.findIndex(val => val.id === id) : -1;
-        // Returns false if id does not exist and index if it does
-        return (index === -1) ? false : index;
+        if (this.users) {
+          return this.users.findIndex(val => val.id === id);
+        }
       }
 
       headerMessage(mode) {
         if (mode === 'edit') {
-          // Sets header for edit existing user or create new user
-          return (this.user.id) ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
-        } else {
-          // Display mode header
-          return '';
+          return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
         }
-      }
-
-      // Dynamically sets the id display so that "ID:" isn't displayed before it is created
-      idDisplay(user) {
-        return (user.id) ? `ID: ${user.id}` : '';
+        return '';
       }
 
       isMode(currentMode, expectedMode) {
         return (currentMode === expectedMode);
       }
 
-      saveNewOrEdit(e) {
-        if (!this.user.id) {
-          this.saveNewUser();
-        } else {
-          this.saveUserEdit(e);
+      save(e) {
+        if (this.checkUserFields()) {
+
+          let index = this.getIdIndex();
+
+          if (index === -1) {
+            this.user.id = this.createNewUserId();
+            this.users.splice(0, 0, this.user);
+          } else {
+            e.preventDefault();
+            this.users.splice(index, 1, this.user);
+            this.mode = (this.mode === 'edit') ? 'display' : 'edit';
+            this.toggleEditable();
+          }
+
+          this.updateLocalStorage();
+
         }
-        this.toggleEditable();
       }
 
-      saveNewUser() {
-        this.user.id = this.createNewUserId();
-        this.users.splice(0, 0, this.user);
-        this.updateLocalStorage();
-      }
+      checkUserFields() {
 
-      saveUserEdit(e) {
-        let indexOfUser = this.getIdIndex(this.user.id);
-        this.users.splice(indexOfUser, 1, this.user);
+        for (let key of Object.keys(this.user)) {
+          if (!this.user[key].length) {
+            if (key !== 'id') {
+              return false;
+            }
+          }
 
-        this.toggleMode();
-        this.updateLocalStorage();
-      }
+        }
 
-      toggleMode() {
-        this.mode = (this.mode === 'edit') ? 'display' : 'edit';
-      }
+        return true;
 
-      toggleClass(field) {
-        let name = field.className;
-        field.className = name.match(/edit/) ? name.replace(/edit/, '') : name + ' edit';
-        this.mode = name.match(/edit/) ? 'display' : 'edit';
       }
 
       toggleEditable(e) {
-        // the default of the user-component is edit,
-        // so this is fired to create display mode but also
-        // fires when you click the edit or save button.
-        // If there is an event available it means that
-        // the edit button was clicked, so the page is not
-        // refreshed, so that it holds the mode it is supposed
-        // to rather than defaulting back to edit.
+        // in the event that the function was fired from a button rather than on display mode load
         if (e) {
           e.preventDefault();
         }
-        let inputs = this.shadowRoot.querySelectorAll('input');
-        for (let field of inputs) {
+
+        for (let field of this.shadowRoot.querySelectorAll('input')) {
           field.readOnly = field.readOnly !== true;
-          this.toggleClass(field);
+          let name = field.className;
+          field.className = name.match(/edit/) ? name.replace(/edit/, '') : name + ' edit';
+          this.mode = name.match(/edit/) ? 'display' : 'edit';
         }
       }
 
