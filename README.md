@@ -22,11 +22,9 @@ Your created user should appear after clicking the User List tab. You should be 
 
 If you leave a field empty, it should prompt you that a field is empty.
 
-When you click submit, the card information should update and be displayed immediately. 
-
 If you click, delete, the user you selected to be deleted should be gone.
 
-If there are no users, there should be a 'no users in database message'
+If there are no users, there should be an empty user card.
 
 ### User Profile
 

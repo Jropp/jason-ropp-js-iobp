@@ -1,5 +1,4 @@
 <link rel="import" href="polymer.html">
-<link rel="import" href="something.html">
 
 <dom-module id="user-component">
   <template>
@@ -10,6 +9,10 @@
 
       button {
         margin: 10px;
+        width: 60px;
+        height: 30px;
+        border-radius: 3px;
+        background-color: #7395ae;
       }
 
       .default-card {
@@ -18,6 +21,7 @@
         width: fit-content;
         padding: 15px;
         margin: 5px;
+        border: lightgray 1px solid;
         border-radius: 5px;
         box-shadow: 3px 3px 2px lightgrey;
       }
@@ -83,14 +87,14 @@
         </fieldset>
         <!-- bplint-enable no-auto-binding -->
         <div class="submit-button-box">
-          <template is="dom-if" if="[[isMode(mode, 'edit')]]">
-            <button class="form-button" on-click="save" type="submit">Save</button>
+          <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
+            <button on-click="save" type="submit">Save</button>
             <template is="dom-if" if="[[user.id]]">
-              <button class="form-button" on-click="deleteUser" type="submit">Delete</button>
+              <button on-click="deleteUser" type="submit">Delete</button>
             </template>
           </template>
-          <template is="dom-if" if="[[isMode(mode, 'display')]]">
-            <button class="form-button" on-click="toggleEditable" type="submit">Edit</button>
+          <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
+            <button on-click="toggleMode" type="submit">Edit</button>
           </template>
         </div>
       </form>
@@ -105,11 +109,20 @@
           // edit, display
           mode: {
             type: String,
-            value: 'edit'
+            observer: 'toggleEditable'
+          },
+          modes: {
+            type: Object,
+            value: () => {
+              return {
+                DISPLAY: 'display',
+                EDIT: 'edit'
+              };
+            }
           },
           user: {
             type: Object,
-            value: function() {
+            value: () => {
               return {
                 first: '',
                 last: '',
@@ -127,12 +140,29 @@
         };
       }
 
-      connectedCallback() {
-        super.connectedCallback();
-        // inits display mode
-        if (this.mode === 'display') {
-          this.toggleEditable();
+      save(e) {
+        if (this.checkUserFields()) {
+
+          let index = this.getIdIndex(this.user.id);
+
+          // Saves new user
+          if (index === -1) {
+            this.user.id = this.createNewUserId();
+            this.users.splice(0, 0, this.user);
+            // Saves edited user
+          } else {
+            this.users.splice(index, 1, this.user);
+            this.toggleMode(e);
+          }
+
+          this.updateLocalStorage();
+
         }
+      }
+
+      deleteUser() {
+        this.users.splice(this.getIdIndex(this.user.id), 1);
+        this.updateLocalStorage();
       }
 
       createNewUserId() {
@@ -146,48 +176,6 @@
         return (this.getIdIndex(id) === -1) ? id : this.createNewUserId();
       }
 
-      deleteUser() {
-        this.users.splice(this.getIdIndex(this.user.id), 1);
-        this.updateLocalStorage();
-      }
-
-      getIdIndex(id) {
-        if (this.users) {
-          return this.users.findIndex(val => val.id === id);
-        }
-      }
-
-      headerMessage(mode) {
-        if (mode === 'edit') {
-          return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
-        }
-        return '';
-      }
-
-      isMode(currentMode, expectedMode) {
-        return (currentMode === expectedMode);
-      }
-
-      save(e) {
-        if (this.checkUserFields()) {
-
-          let index = this.getIdIndex();
-
-          if (index === -1) {
-            this.user.id = this.createNewUserId();
-            this.users.splice(0, 0, this.user);
-          } else {
-            e.preventDefault();
-            this.users.splice(index, 1, this.user);
-            this.mode = (this.mode === 'edit') ? 'display' : 'edit';
-            this.toggleEditable();
-          }
-
-          this.updateLocalStorage();
-
-        }
-      }
-
       checkUserFields() {
 
         for (let key of Object.keys(this.user)) {
@@ -196,25 +184,40 @@
               return false;
             }
           }
-
         }
 
         return true;
-
       }
 
-      toggleEditable(e) {
-        // in the event that the function was fired from a button rather than on display mode load
-        if (e) {
-          e.preventDefault();
-        }
+      getIdIndex(id) {
+        return (this.users) ? this.users.findIndex(val => val.id === id) : -1;
+      }
 
-        for (let field of this.shadowRoot.querySelectorAll('input')) {
-          field.readOnly = field.readOnly !== true;
-          let name = field.className;
-          field.className = name.match(/edit/) ? name.replace(/edit/, '') : name + ' edit';
-          this.mode = name.match(/edit/) ? 'display' : 'edit';
+      isMode(currentMode, expectedMode) {
+        return (currentMode === expectedMode);
+      }
+
+      headerMessage(mode) {
+        if (mode === this.modes.EDIT) {
+          return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
         }
+        return '';
+      }
+
+      toggleMode(e) {
+        e.preventDefault();
+        this.mode = (this.mode === this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
+      }
+
+      toggleEditable() {
+
+        this.shadowRoot.querySelectorAll('input')
+          .forEach(field => {
+            field.readOnly = this.isMode(this.mode, this.modes.DISPLAY);
+            let name = field.className;
+            field.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/edit/, '') : name + ' edit';
+          });
+
       }
 
       updateLocalStorage() {
