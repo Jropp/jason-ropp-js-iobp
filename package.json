@@ -8,7 +8,7 @@
     "build": "webpack --mode production",
     "start": "webpack-dev-server --https --port 1820 --mode development",
     "help": "npm-scripts-help",
-    "lint": "ux-lint src/pages/*.html"
+    "lint":  "ux-lint src/*/*.html"
   },
   "repository": {
     "type": "git",

@@ -1,4 +1,5 @@
 <link rel="import" href="polymer.html">
+<link rel="import" href="user-component.html">
 <dom-module id="user-list">
   <template>
     <style>
@@ -42,19 +43,11 @@
         border: none;
       }
     </style>
-    <template is="dom-if" if="[[!userToDisplay]]">
-      <h2>There are currently no users in our system.</h2>
-    </template>
-    <template is="dom-repeat" items="[[users]]">
-      <hgroup on-click="selectUserCard" class="default-card">
-        <h2 class="name">[[item.first]] [[item.last]]</h2>
-        <h3 class="id">[[item.id]]</h3>
-        <h3 class="department">[[item.department]]</h3>
-        <h3 class="phone">[[item.phone]]</h3>
-        <h3 class="email">
-          <a href="dummy@email.com">[[item.email]]</a>
-        </h3>
-      </hgroup>
+    <h2>[[headerMessage(users)]]</h2>
+
+    <template is="dom-repeat" items="[[users]]" as="user">
+      <user-component collapsed="true" mode="display" user="[[user]]">
+      </user-component>
     </template>
 
   </template>
@@ -65,29 +58,15 @@
       static get properties() {
         return {
           users: {
-            type: Array
-          },
-          selectedUser: {
-            type: Object
-          },
-          userToDisplay: {
-            type: Boolean,
-            value: true
+            type: Array,
+            value: () => JSON.parse(localStorage.getItem('onboardProjectUsers'))
           }
         };
       }
-      ready() {
-        super.ready();
-        this.set('users', JSON.parse(localStorage.getItem('onboardProjectUsers')));
-      }
-      connectedCallback() {
-        super.connectedCallback();
-        if (!this.users) {
-          this.set('userToDisplay', false);
-        }
-      }
-      selectUserCard() {
-        history.pushState({}, 'User Profile', 'user-profile.html');
+
+      headerMessage() {
+        return (this.users.length) ? '' : 'There are currently no users in our database.';
+
       }
     }
 

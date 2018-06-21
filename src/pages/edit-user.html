@@ -7,6 +7,7 @@
   <title>Edit User</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="import" href="./nav-bar.html">
+  <link rel="import" href="user-component.html">
 </head>
 <style>
   .default-card {
@@ -30,13 +31,7 @@
       <nav-bar></nav-bar>
     </nav>
   </header>
-  <h1>Edit User:</h1>
-  <form class="default-card">
-    <input type="text" autocomplete="name" placeholder="First Name">
-    <input type="text" autocomplete="family-name" placeholder="Last Name">
-    <input type="text" autocomplete="tel" placeholder="Phone">
-    <button>Submit</button>
-  </form>
+  <user-component mode="edit"></user-component>
 </body>
 
 </html>

@@ -6,17 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="import" href="./nav-bar.html">
   <script src="./main.js"></script>
+  <link rel="import" href="user-component.html">
   <title>User Profile</title>
 </head>
 <style>
-  .default-card {
-    background-color: #B1A296;
-    width: fit-content;
-    padding: 15px;
-    margin: 5px;
-    border-radius: 5px;
-    box-shadow: 3px 3px 2px lightgrey;
-  }
 </style>
 
 <body>
@@ -25,25 +18,7 @@
       <nav-bar></nav-bar>
     </nav>
   </header>
-  <h1>User Profile:</h1>
-  <hgroup class="default-card">
-    <h2 class="name">Jason Ropp</h2>
-    <h3 class="id">ID: Wombat</h3>
-    <h3 class="phone">541-615-9999</h3>
-    <h3 class="email">
-      <a href="dummy@email.com">dummy@email.com</a>
-    </h3>
-    <button id="detailsButton" type="button" onclick="toggleUserDetails(event)">Hide Details</button>
-  </hgroup>
+  <user-component id="profile" mode="display"></user-component>
 </body>
-
-<script>
-  'use strict';
-
-  let toggleUserDetails = function(event) { // eslint-disable-line no-unused-vars
-    window.toggleUserDetails(event);
-  };
-
-</script>
 
 </html>

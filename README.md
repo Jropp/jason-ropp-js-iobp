@@ -8,7 +8,37 @@ To create a new user, click the 'Create User' tab and fill out the form. Users w
 
 ## how to use
 
-Not currently compatible with firefox
+### Warning
+
+Not currently compatible with firefox, will be addressed in update of webpackconfig
+
+### Create User
+
+Click on 'Create User' tab, enter a user. Try leaving a field empty, it should tell you to fill out all of the fields.
+
+### Users List: Edit/Delete User
+
+Your created user should appear after clicking the User List tab. You should be able to click the edit button and edit the fields for that user and save with the updated information displayed immediately. 
+
+If you leave a field empty, it should prompt you that a field is empty.
+
+If you click, delete, the user you selected to be deleted should be gone.
+
+If there are no users, there should be an empty user card.
+
+### User Profile
+
+Because there currently is not a way to select a particular user, you should just see a 'no user currently selected' message.
+
+### Changing User Component In Code
+
+User component has two mode settings:
+
+`<user-component mode=['edit', 'display']><user-component>` 
+
+Changing that mode in the code will cause the state of the card to be that mode on load.
+
+If no user is passed into the component it will serve as a 'create new user' card. 
 
 ### NPM Scripts
     To serve the app (also runs ux-lint):
@@ -57,7 +87,6 @@ Not currently compatible with firefox
 
   ##### Notes
 
-  The locally built files are not the exact files that are served. This is just an example of the file organization that webpack-dev-server builds on the server.
 
 ### UX-Lint
 

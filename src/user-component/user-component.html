@@ -1,0 +1,234 @@
+<link rel="import" href="polymer.html">
+
+<dom-module id="user-component">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      button {
+        margin: 10px;
+        width: 60px;
+        height: 30px;
+        border-radius: 3px;
+        background-color: #7395ae;
+      }
+
+      .default-card {
+        background-color: white;
+        min-width: 300px;
+        width: fit-content;
+        padding: 15px;
+        margin: 5px;
+        border: lightgray 1px solid;
+        border-radius: 5px;
+        box-shadow: 3px 3px 2px lightgrey;
+      }
+
+      .default-card>input .first-name .last-name {
+        width: 20px;
+      }
+
+      .edit {
+        border-bottom: lightgray solid 1px;
+      }
+
+      .email {
+        font-size: 14px;
+        width: 50%;
+      }
+
+      input {
+        margin: 5px;
+        border: none;
+        font-size: 20px;
+      }
+
+      .id {
+        font-size: 15px;
+        margin-left: 6px;
+      }
+    </style>
+
+    <div id="editUserFields" class="default-card">
+      <form autocomplete="on">
+        <h1>[[headerMessage(mode)]]</h1>
+        <!-- bplint-disable no-auto-binding -->
+        <fieldset>
+          <legend>
+            Name:
+          </legend>
+          <input id="editfName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+            required>
+          <input id="editlName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+            required>
+        </fieldset>
+        <fieldset>
+          <legend>Contact:</legend>
+          <label for="editEmail">
+            <input id="editEmail" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
+              name="email" required>
+          </label>
+          <br>
+          <label for="editPhone">
+            <input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
+              required>
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>Other:</legend>
+          <label for="editDepartment">
+            <input id="editDepartment" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
+          </label>
+          <template is="dom-if" if="[[user.id]]">
+            <p class="id">ID: [[user.id]]</p>
+          </template>
+        </fieldset>
+        <!-- bplint-enable no-auto-binding -->
+        <div class="submit-button-box">
+          <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
+            <button on-click="save" type="submit">Save</button>
+            <template is="dom-if" if="[[user.id]]">
+              <button on-click="deleteUser" type="submit">Delete</button>
+            </template>
+          </template>
+          <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
+            <button on-click="toggleMode" type="submit">Edit</button>
+          </template>
+        </div>
+      </form>
+    </div>
+  </template>
+  <script>
+    'use strict';
+    class UserComponent extends Polymer.Element {
+      static get is() { return 'user-component'; }
+      static get properties() {
+        return {
+          // edit, display
+          mode: {
+            type: String,
+            observer: 'toggleEditable'
+          },
+          modes: {
+            type: Object,
+            value: () => {
+              return {
+                DISPLAY: 'display',
+                EDIT: 'edit'
+              };
+            }
+          },
+          user: {
+            type: Object,
+            value: () => {
+              return {
+                first: '',
+                last: '',
+                phone: '',
+                email: '',
+                department: '',
+                id: ''
+              };
+            }
+          },
+          users: {
+            type: Array,
+            value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
+          }
+        };
+      }
+
+      save(e) {
+        if (this.checkUserFields()) {
+
+          let index = this.getIdIndex(this.user.id);
+
+          const isNewUser = index === -1;
+          if (isNewUser) {
+            this.user.id = this.createNewUserId();
+            this.users.splice(0, 0, this.user);
+          } else {
+            this.users.splice(index, 1, this.user);
+            this.toggleMode(e);
+          }
+
+          this.updateLocalStorage();
+
+        }
+      }
+
+      deleteUser() {
+        this.users.splice(this.getIdIndex(this.user.id), 1);
+        this.updateLocalStorage();
+      }
+
+      createNewUserId() {
+        let id = '';
+
+        let asciiCharsLowest = 33;
+        let asciiCharsHighest = 123;
+        let idLength = 9;
+
+        for (let i = 0; i < idLength; i++) {
+          let charCode = Math.floor(Math.random() * (asciiCharsHighest - asciiCharsLowest)) + asciiCharsLowest;
+          id += String.fromCharCode(charCode);
+        }
+
+        return (this.getIdIndex(id) === -1) ? id : this.createNewUserId();
+      }
+
+      checkUserFields() {
+
+        for (let key of Object.keys(this.user)) {
+          if (!this.user[key].length) {
+            if (key !== 'id') {
+              return false;
+            }
+          }
+        }
+
+        return true;
+      }
+
+      getIdIndex(id) {
+        return (this.users) ? this.users.findIndex(val => val.id === id) : -1;
+      }
+
+      isMode(currentMode, expectedMode) {
+        return (currentMode === expectedMode);
+      }
+
+      headerMessage(mode) {
+        if (mode === this.modes.EDIT) {
+          return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
+        }
+        return '';
+      }
+
+      toggleMode(e) {
+        e.preventDefault();
+        this.mode = (this.mode === this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
+      }
+
+      toggleEditable() {
+
+        this.shadowRoot.querySelectorAll('input')
+          .forEach(field => {
+            field.readOnly = this.isMode(this.mode, this.modes.DISPLAY);
+            let name = field.className;
+            field.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/edit/, '') : name + ' edit';
+          });
+
+      }
+
+      updateLocalStorage() {
+        localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
+      }
+
+    }
+
+    customElements.define(UserComponent.is, UserComponent);
+  </script>
+</dom-module>
