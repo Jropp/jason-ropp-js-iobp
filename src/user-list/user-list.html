@@ -70,7 +70,7 @@
         return {
           users: {
             type: Array,
-            value: () => JSON.parse(localStorage.getItem('onboardProjectUsers'))
+            value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
           },
           mode: {
             type: String,
@@ -88,7 +88,7 @@
       }
       connectedCallback() {
         super.connectedCallback();
-        if (!this.users || !this.users.length) {
+        if (!this.users.length) {
           this.users = false;
           this.mode = this.modes.CREATE_NEW;
         } else {
