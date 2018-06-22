@@ -44,22 +44,42 @@
         height: 40px;
         border-radius: 3px;
       }
+
+      .display-container {
+        display: grid;
+        grid-template-columns: 50fr 50fr;
+      }
+
+      .create-user-component {
+        position: fixed;
+      }
     </style>
-    <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
-      <button on-click="createNewUserCard">+ Create New User</button>
-    </template>
-    <template is="dom-if" if="[[isMode(mode, modes.CREATE_NEW)]]">
-      <template is="dom-if" if="[[!users]]">
-        <h2>There are currently no users in the database. Please create one.</h2>
-      </template>
-      <user-component mode="edit"></user-component>
-    </template>
-    <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
-      <template is="dom-repeat" items="[[users]]" as="user">
-        <user-component mode="display" user="[[user]]">
-        </user-component>
-      </template>
-    </template>
+    <div class="display-container">
+      <div class="user-list-column">
+        <template is="dom-repeat" items="[[users]]" as="user">
+          <user-component mode="display" user="[[user]]">
+          </user-component>
+        </template>
+      </div>
+      <div class="new-user-column">
+        <div class="create-user-component">
+          <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
+            <button on-click="createNewUserCard">+ Create New User</button>
+          </template>
+          <template is="dom-if" if="[[isMode(mode, modes.CREATE_NEW)]]">
+            <template is="dom-if" if="[[!usersToDisplay]]">
+              <h2>There are currently no users in the database. Please create one.</h2>
+            </template>
+            <user-component mode="edit"></user-component>
+          </template>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
 
   </template>
   <script>
@@ -71,6 +91,10 @@
           users: {
             type: Array,
             value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
+          },
+          usersToDisplay: {
+            type: Boolean,
+            value: true,
           },
           mode: {
             type: String,
@@ -89,7 +113,7 @@
       connectedCallback() {
         super.connectedCallback();
         if (!this.users.length) {
-          this.users = false;
+          this.usersToDisplay = false;
           this.mode = this.modes.CREATE_NEW;
         } else {
           this.mode = this.modes.DISPLAY;
