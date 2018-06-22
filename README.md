@@ -4,7 +4,7 @@
 
 This app allows you to create and edit user profiles, each of which have an ID, Name, Number, and Email Address.
 
-To create a new user, click the 'Create User' tab and fill out the form. Users will be added to the local storage database. 
+To create a new user, click the 'Create User' button and fill out the form. Users will be added to the local storage database. 
 
 ## how to use
 
@@ -12,23 +12,20 @@ To create a new user, click the 'Create User' tab and fill out the form. Users w
 
 Not currently compatible with firefox, will be addressed in update of webpackconfig
 
+
 ### Create User
 
-Click on 'Create User' tab, enter a user. Try leaving a field empty, it should tell you to fill out all of the fields.
+Click on 'Create User' button, enter a user. Try leaving a field empty, it should tell you to fill out all of the fields. Cancelling should take you back to the users list. Saving will display the users list along with your new user.
 
-### Users List: Edit/Delete User
+### Edit/Delete User
 
-Your created user should appear after clicking the User List tab. You should be able to click the edit button and edit the fields for that user and save with the updated information displayed immediately. 
+You should be able to click the edit button and edit the fields for that user and save with the updated information displayed immediately. 
 
-If you leave a field empty, it should prompt you that a field is empty.
+If you leave a field empty and try to save, it should prompt you that a field is empty.
 
-If you click, delete, the user you selected to be deleted should be gone.
+If you click, delete, the user you selected to be deleted should disappear immediately, even if you have left an input field empty.
 
-If there are no users, there should be an empty user card.
-
-### User Profile
-
-Because there currently is not a way to select a particular user, you should just see a 'no user currently selected' message.
+If there are no users, there should be an empty user card and a prompt to create a new user.
 
 ### Changing User Component In Code
 
