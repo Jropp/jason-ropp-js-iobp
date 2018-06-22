@@ -89,8 +89,9 @@
         <div class="submit-button-box">
           <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
             <button on-click="save" type="submit">Save</button>
+            <button on-click="cancel" formnovalidate>Cancel</button>
             <template is="dom-if" if="[[user.id]]">
-              <button on-click="deleteUser" type="submit">Delete</button>
+              <button on-click="deleteUser" type="submit" formnovalidate>Delete</button>
             </template>
           </template>
           <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
@@ -157,6 +158,13 @@
           this.updateLocalStorage();
 
         }
+      }
+
+      cancel() {
+        this.dispatchEvent(new CustomEvent('cancel create new user', {
+          bubbles: true,
+          componsed: true,
+        }));
       }
 
       deleteUser() {
