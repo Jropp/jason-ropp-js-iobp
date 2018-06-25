@@ -55,31 +55,29 @@
       }
     </style>
     <div class="display-container">
+
       <div class="user-list-column">
+        <template is="dom-if" if="[[!usersToDisplay]]">
+          <h2>There are currently no users in the database. Please create one.</h2>
+        </template>
         <template is="dom-repeat" items="[[users]]" as="user">
-          <user-component mode="display" user="[[user]]">
-          </user-component>
+          <user-component disable-edit="[[disableEdit]]" mode="display" user="[[user]]"></user-component>
         </template>
       </div>
+
       <div class="new-user-column">
         <div class="create-user-component">
           <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
-            <button on-click="createNewUserCard">+ Create New User</button>
+            <template is="dom-if" if="[[!disableCreate]]">
+              <button on-click="createNewUserCard">+ Create New User</button>
+            </template>
           </template>
           <template is="dom-if" if="[[isMode(mode, modes.CREATE_NEW)]]">
-            <template is="dom-if" if="[[!usersToDisplay]]">
-              <h2>There are currently no users in the database. Please create one.</h2>
-            </template>
             <user-component mode="edit"></user-component>
           </template>
         </div>
       </div>
     </div>
-
-
-
-
-
 
   </template>
   <script>
@@ -88,6 +86,13 @@
       static get is() { return 'user-list'; }
       static get properties() {
         return {
+          disableEdit: {
+            type: Boolean,
+          },
+          disableCreate: {
+            type: Boolean,
+            value: false
+          },
           users: {
             type: Array,
             value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
@@ -116,6 +121,7 @@
           this.usersToDisplay = false;
           this.mode = this.modes.CREATE_NEW;
         } else {
+          this.usersToDisplay = true;
           this.mode = this.modes.DISPLAY;
         }
 
@@ -123,12 +129,19 @@
           this.mode = this.modes.DISPLAY;
         });
 
+        document.addEventListener('editing user card', () => {
+          this.disableCreate = this.disableCreate !== true;
+        });
+
       }
+
       isMode(currentMode, expectedMode) {
         return (currentMode === expectedMode);
       }
+
       createNewUserCard() {
         this.mode = this.modes.CREATE_NEW;
+        this.disableEdit = true;
       }
     }
 
