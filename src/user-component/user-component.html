@@ -89,9 +89,11 @@
 				<div class="submit-button-box">
 					<template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
 						<button on-click="save" type="submit">Save</button>
-						<button on-click="cancel" formnovalidate>Cancel</button>
+						<template is="dom-if" if="[[!user.id]]">
+							<button on-click="cancel" formnovalidate>Cancel</button>
+						</template>
 						<template is="dom-if" if="[[user.id]]">
-							<button on-click="deleteUser" type="submit" formnovalidate>Delete</button>
+							<button on-click="delete" type="submit" formnovalidate>Delete</button>
 						</template>
 					</template>
 					<template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
@@ -129,7 +131,8 @@
 								last: '',
 								phone: '',
 								email: '',
-								department: ''
+								department: '',
+								id: ''
 							};
 						}
 					},
@@ -146,59 +149,47 @@
 
 			save(e) {
 				e.preventDefault();
-				if(!this.user.id){
-					this.user = {
-						first: '',
-						last: '',
-						phone: '',
-						email: '',
-						department: '',
-						id: ''
-					}
-				} else {
-					this.toggleMode();
-				}
+
 				if (this.checkUserFields()) {
+					let userToSave = this.user;
+
+					// emtpies the input fields for create user
+					if (!this.user.id) {
+						this.user = {
+							first: '',
+							last: '',
+							phone: '',
+							email: '',
+							department: '',
+							id: ''
+						}
+					} else {
+						this.toggleMode();
+					}
+
 					this.dispatchEvent(new CustomEvent('save', {
 						bubbles: true,
 						composed: true,
-						detail: this.user
+						detail: userToSave
 					}));
 				}
 			}
 
-			cancel() {
-				this.dispatchEvent(new CustomEvent('cancel create new user', {
+			cancel(e) {
+				e.preventDefault();
+				this.dispatchEvent(new CustomEvent('cancel', {
 					bubbles: true,
 					composed: true,
 				}));
 			}
 
-			deleteUser(e) {
+			delete(e) {
 				e.preventDefault();
 				this.dispatchEvent(new CustomEvent('delete', {
 					bubbles: true,
 					composed: true,
 					detail: this.user
 				}));
-
-				// this.users.splice(this.getIdIndex(this.user.id), 1);
-				// this.updateLocalStorage();
-			}
-
-			createNewUserId() {
-				let id = '';
-
-				let asciiCharsLowest = 33;
-				let asciiCharsHighest = 123;
-				let idLength = 9;
-
-				for (let i = 0; i < idLength; i++) {
-					let charCode = Math.floor(Math.random() * (asciiCharsHighest - asciiCharsLowest)) + asciiCharsLowest;
-					id += String.fromCharCode(charCode);
-				}
-
-				return (this.getIdIndex(id) === -1) ? id : this.createNewUserId();
 			}
 
 			checkUserFields() {
@@ -214,10 +205,6 @@
 				return true;
 			}
 
-			getIdIndex(id) {
-				return (this.users) ? this.users.findIndex(val => val.id === id) : -1;
-			}
-
 			isMode(currentMode, expectedMode) {
 				return (currentMode === expectedMode);
 			}
@@ -230,14 +217,10 @@
 			}
 
 			toggleMode(e) {
-				if(e){
+				if (e) {
 					e.preventDefault();
 				}
 				this.mode = (this.mode === this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
-				this.dispatchEvent(new CustomEvent('editing user card', {
-					bubbles: true,
-					composed: true,
-				}));
 			}
 
 			toggleEditable() {
@@ -248,13 +231,7 @@
 						let name = field.className;
 						field.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/edit/, '') : name + ' edit';
 					});
-
 			}
-
-			updateLocalStorage() {
-				localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
-			}
-
 		}
 
 		customElements.define(UserComponent.is, UserComponent);
