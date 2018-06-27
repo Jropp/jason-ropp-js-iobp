@@ -1,202 +1,199 @@
 <link rel="import" href="polymer.html">
 <link rel="import" href="user-component.html">
 <dom-module id="user-list">
-	<template>
-		<style>
-			:host {
-				display: block;
-				padding: 10px;
-			}
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 10px;
+      }
 
-			.default-card {
-				background-color: #B1A296;
-				width: 300px;
-				padding: 10px;
-				margin: 10px;
-				border-radius: 5px;
-				box-shadow: 3px 3px 2px black;
-				height: 50px;
-			}
+      .default-card {
+        background-color: #B1A296;
+        width: 300px;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 5px;
+        box-shadow: 3px 3px 2px black;
+        height: 50px;
+      }
 
-			.default-card:hover {
-				height: 230px;
-				transition: height .4s ease-out;
-			}
+      .default-card:hover {
+        height: 230px;
+        transition: height .4s ease-out;
+      }
 
-			.default-card:not(:hover) {
-				height: 50px;
-				transition: height .4s ease-in;
-			}
+      .default-card:not(:hover) {
+        height: 50px;
+        transition: height .4s ease-in;
+      }
 
-			.default-card:hover>h3 {
-				opacity: 1;
-				transition: opacity 1.4s;
-			}
+      .default-card:hover>h3 {
+        opacity: 1;
+        transition: opacity 1.4s;
+      }
 
-			hgroup>h3 {
-				opacity: 0;
-			}
+      hgroup>h3 {
+        opacity: 0;
+      }
 
-			button {
-				background-color: #7395AE;
-				color: black;
-				border: none;
-				height: 40px;
-				border-radius: 3px;
-			}
+      button {
+        background-color: #7395AE;
+        color: black;
+        border: none;
+        height: 40px;
+        border-radius: 3px;
+      }
 
-			.display-container {
-				display: grid;
-				grid-template-columns: 50fr 50fr;
-			}
+      .display-container {
+        display: grid;
+        grid-template-columns: 50fr 50fr;
+      }
 
-			.create-user-component {
-				position: fixed;
-			}
-		</style>
-		<div class="display-container">
+      .create-user-component {
+        position: fixed;
+      }
+    </style>
+    <div class="display-container">
 
-			<div class="user-list-column">
-				<template is="dom-if" if="[[checkForUsers(users)]]">
-					<h2>There are currently no users in the database. Please create one.</h2>
-				</template>
-				<template is="dom-repeat" items="[[users]]" as="user">
-					<user-component disable-edit=[[disableFunctionality]] mode="display" user="[[user]]"></user-component>
-				</template>
-			</div>
+      <div class="user-list-column">
+        <template is="dom-if" if="[[checkForUsers(users)]]">
+          <h2>There are currently no users in the database. Please create one.</h2>
+        </template>
+        <template is="dom-repeat" items="[[users]]" as="user">
+          <user-component disable-edit="[[disableFunctionality]]" mode="display" user="[[user]]"></user-component>
+        </template>
+      </div>
 
-			<div class="new-user-column">
-				<div class="create-user-component">
-					<template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
-						<button on-click="showCreateNewUserCard">+ Create New User</button>
-					</template>
-					<template is="dom-if" if="[[isMode(mode, modes.CREATE_NEW)]]">
-						<user-component disable-save=[[disableFunctionality]] mode="edit"></user-component>
-					</template>
-				</div>
-			</div>
-		</div>
+      <div class="new-user-column">
+        <div class="create-user-component">
+          <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
+            <button on-click="showCreateNewUserCard">+ Create New User</button>
+          </template>
+          <template is="dom-if" if="[[isMode(mode, modes.CREATE_NEW)]]">
+            <user-component disable-save="[[disableFunctionality]]" mode="edit"></user-component>
+          </template>
+        </div>
+      </div>
+    </div>
 
-	</template>
-	<script>
-		'use strict';
-		class UserListElement extends Polymer.Element {
-			static get is() { return 'user-list'; }
-			static get properties() {
-				return {
-					disableFunctionality: {
-						type: Boolean,
-						value: false
-					},
-					users: {
-						type: Array,
-						value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
-					},
-					usersToDisplay: {
-						type: Boolean,
-					},
-					mode: {
-						type: String,
-					},
-					modes: {
-						type: Object,
-						value: () => {
-							return {
-								CREATE_NEW: 'create',
-								DISPLAY: 'display'
-							};
-						}
-					},
-				};
-			}
-			connectedCallback() {
-				super.connectedCallback();
+  </template>
+  <script>
+    'use strict';
+    class UserListElement extends Polymer.Element {
+      static get is() { return 'user-list'; }
+      static get properties() {
+        return {
+          disableFunctionality: {
+            type: Boolean,
+            value: false
+          },
+          users: {
+            type: Array,
+            value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
+          },
+          usersToDisplay: {
+            type: Boolean,
+          },
+          mode: {
+            type: String,
+          },
+          modes: {
+            type: Object,
+            value: () => {
+              return {
+                CREATE_NEW: 'create',
+                DISPLAY: 'display'
+              };
+            }
+          },
+        };
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        if (!this.users.length) {
+          this.usersToDisplay = false;
+          this.mode = this.modes.CREATE_NEW;
+        } else {
+          this.usersToDisplay = true;
+          this.mode = this.modes.DISPLAY;
+        }
 
-				if (!this.users.length) {
-					this.usersToDisplay = false;
-					this.mode = this.modes.CREATE_NEW;
-				} else {
-					this.usersToDisplay = true;
-					this.mode = this.modes.DISPLAY;
-				}
+        document.addEventListener('cancel', () => {
+          this.mode = this.modes.DISPLAY;
+        });
 
-				document.addEventListener('cancel', () => {
-					this.mode = this.modes.DISPLAY;
-				});
+        document.addEventListener('delete', (e) => {
+          this.delete(e.detail);
+        });
 
-				document.addEventListener('delete', (e) => {
-					this.delete(e.detail);
-				});
+        document.addEventListener('save', (e) => {
+          this.save(e.detail.user);
+          this.disableFunctionality = false;
+        });
+        document.addEventListener('edit', (e) => {
+          this.disableFunctionality = true;
+        });
 
-				document.addEventListener('save', (e) => {
-					this.save(e.detail.user);
-					this.disableFunctionality = false;
-				});
-				document.addEventListener('edit', (e) => {
-					console.log(e.detail.disableEdit);
+      }
 
-					this.disableFunctionality = true;
-				});
+      save(user) {
+        let index = this.getIdIndex(user.id);
 
-			}
+        const isNewUser = index === -1;
+        if (isNewUser) {
+          user.id = this.createNewUserId();
+          this.users.splice(0, 0, user);
+        } else {
+          this.users.splice(index, 1, user);
+        }
 
-			save(user) {
-				let index = this.getIdIndex(user.id);
+        this.updateLocalStorage();
+      }
 
-				const isNewUser = index === -1;
-				if (isNewUser) {
-					user.id = this.createNewUserId();
-					this.users.splice(0, 0, user);
-				} else {
-					this.users.splice(index, 1, user);
-				}
+      delete(user) {
+        this.users.splice(this.getIdIndex(user.id), 1);
+        this.updateLocalStorage();
+      }
 
-				this.updateLocalStorage();
-			}
+      createNewUserId() {
+        let id = '';
+        let asciiCharsLowest = 33;
+        let asciiCharsHighest = 123;
+        let idLength = 9;
 
-			delete(user) {
-				this.users.splice(this.getIdIndex(user.id), 1);
-				this.updateLocalStorage();
-			}
+        for (let i = 0; i < idLength; i++) {
+          let charCode = Math.floor(Math.random() * (asciiCharsHighest - asciiCharsLowest)) + asciiCharsLowest;
+          id += String.fromCharCode(charCode);
+        }
 
-			createNewUserId() {
-				let id = '';
-				let asciiCharsLowest = 33;
-				let asciiCharsHighest = 123;
-				let idLength = 9;
+        return (this.getIdIndex(id) === -1) ? id : this.createNewUserId();
+      }
 
-				for (let i = 0; i < idLength; i++) {
-					let charCode = Math.floor(Math.random() * (asciiCharsHighest - asciiCharsLowest)) + asciiCharsLowest;
-					id += String.fromCharCode(charCode);
-				}
+      isMode(currentMode, expectedMode) {
+        return (currentMode === expectedMode);
+      }
 
-				return (this.getIdIndex(id) === -1) ? id : this.createNewUserId();
-			}
+      getIdIndex(id) {
+        return (this.users) ? this.users.findIndex(val => val.id === id) : -1;
+      }
 
-			isMode(currentMode, expectedMode) {
-				return (currentMode === expectedMode);
-			}
+      showCreateNewUserCard() {
+        this.mode = this.modes.CREATE_NEW;
+        this.disableEdit = true;
+      }
 
-			getIdIndex(id) {
-				return (this.users) ? this.users.findIndex(val => val.id === id) : -1;
-			}
+      updateLocalStorage() {
+        localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
+        this.users = JSON.parse(localStorage.getItem('onboardProjectUsers'));
+      }
 
-			showCreateNewUserCard() {
-				this.mode = this.modes.CREATE_NEW;
-				this.disableEdit = true;
-			}
+      checkForUsers(users) {
+        return users.length === 0;
+      }
 
-			updateLocalStorage() {
-				localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
-				this.users = JSON.parse(localStorage.getItem('onboardProjectUsers'));
-			}
+    }
 
-			checkForUsers(users){
-				return (users.length === 0) ? true : false;
-			}
-
-		}
-
-		customElements.define(UserListElement.is, UserListElement);
-	</script>
+    customElements.define(UserListElement.is, UserListElement);
+  </script>
 </dom-module>
