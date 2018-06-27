@@ -197,7 +197,7 @@
         this.dispatchEvent(new CustomEvent('delete', {
           bubbles: true,
           composed: true,
-          detail: this.user
+          detail: {user: this.user, mode: this.mode}
         }));
         this.mode = this.modes.DISPLAY;
       }

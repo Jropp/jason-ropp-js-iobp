@@ -124,7 +124,10 @@
         });
 
         document.addEventListener('delete', (e) => {
-          this.delete(e.detail);
+          this.delete(e.detail.user);
+					if(e.detail.mode === 'edit') {
+						this.disableFunctionality = false;
+					}
         });
 
         document.addEventListener('save', (e) => {
