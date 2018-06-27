@@ -140,6 +140,10 @@
 						type: Array,
 						value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
 					},
+					disableSave: {
+						type: Boolean,
+						value: false
+					},
 					disableEdit: {
 						type: Boolean,
 						value: false
@@ -149,29 +153,34 @@
 
 			save(e) {
 				e.preventDefault();
+				if (!this.disableSave) {
 
-				if (this.checkUserFields()) {
-					let userToSave = this.user;
+					if (this.checkUserFields()) {
+						let userToSave = this.user;
 
-					// emtpies the input fields for create user
-					if (!this.user.id) {
-						this.user = {
-							first: '',
-							last: '',
-							phone: '',
-							email: '',
-							department: '',
-							id: ''
+						// emtpies the input fields for create user
+						if (!this.user.id) {
+							this.user = {
+								first: '',
+								last: '',
+								phone: '',
+								email: '',
+								department: '',
+								id: ''
+							};
+						} else {
+							this.toggleMode();
 						}
-					} else {
-						this.toggleMode();
+
+						this.dispatchEvent(new CustomEvent('save', {
+							bubbles: true,
+							composed: true,
+							detail: { user: userToSave, saveStopper: this.saveStopper }
+						}));
 					}
 
-					this.dispatchEvent(new CustomEvent('save', {
-						bubbles: true,
-						composed: true,
-						detail: userToSave
-					}));
+				} else {
+					window.alert("Please save user edits before creating a new user.")
 				}
 			}
 
@@ -218,7 +227,19 @@
 
 			toggleMode(e) {
 				if (e) {
+
 					e.preventDefault();
+					if (!this.disableEdit) {
+						this.dispatchEvent(new CustomEvent('edit', {
+							bubbles: true,
+							composed: true,
+							detail: { disableEdit: this.disableEdit }
+						}));
+					} else {
+						window.alert('Please save user edits before starting a new one.');
+						return;
+					}
+
 				}
 				this.mode = (this.mode === this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
 			}

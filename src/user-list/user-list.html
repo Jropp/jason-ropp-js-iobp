@@ -61,7 +61,7 @@
 					<h2>There are currently no users in the database. Please create one.</h2>
 				</template>
 				<template is="dom-repeat" items="[[users]]" as="user">
-					<user-component mode="display" user="[[user]]"></user-component>
+					<user-component disable-edit=[[disableFunctionality]] mode="display" user="[[user]]"></user-component>
 				</template>
 			</div>
 
@@ -71,7 +71,7 @@
 						<button on-click="showCreateNewUserCard">+ Create New User</button>
 					</template>
 					<template is="dom-if" if="[[isMode(mode, modes.CREATE_NEW)]]">
-						<user-component mode="edit"></user-component>
+						<user-component disable-save=[[disableFunctionality]] mode="edit"></user-component>
 					</template>
 				</div>
 			</div>
@@ -84,10 +84,7 @@
 			static get is() { return 'user-list'; }
 			static get properties() {
 				return {
-					disableEdit: {
-						type: Boolean,
-					},
-					disableCreate: {
+					disableFunctionality: {
 						type: Boolean,
 						value: false
 					},
@@ -132,7 +129,13 @@
 				});
 
 				document.addEventListener('save', (e) => {
-					this.save(e.detail);
+					this.save(e.detail.user);
+					this.disableFunctionality = false;
+				});
+				document.addEventListener('edit', (e) => {
+					console.log(e.detail.disableEdit);
+
+					this.disableFunctionality = true;
 				});
 
 			}
