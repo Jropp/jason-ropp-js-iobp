@@ -125,15 +125,14 @@
 
         document.addEventListener('delete', (e) => {
           this.delete(e.detail.user);
-					if(e.detail.mode === 'edit') {
-						this.disableFunctionality = false;
-					}
+          this.disableFunctionality = false;
         });
 
         document.addEventListener('save', (e) => {
           this.save(e.detail.user);
           this.disableFunctionality = false;
         });
+
         document.addEventListener('edit', (e) => {
           this.disableFunctionality = true;
         });
