@@ -92,9 +92,6 @@
             type: Array,
             value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
           },
-          usersToDisplay: {
-            type: Boolean,
-          },
           mode: {
             type: String,
           },
@@ -111,13 +108,8 @@
       }
       connectedCallback() {
         super.connectedCallback();
-        if (!this.users.length) {
-          this.usersToDisplay = false;
-          this.mode = this.modes.CREATE_NEW;
-        } else {
-          this.usersToDisplay = true;
-          this.mode = this.modes.DISPLAY;
-        }
+
+        this.mode = (this.users.length) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
 
         document.addEventListener('cancel', () => {
           this.mode = this.modes.DISPLAY;
@@ -133,7 +125,7 @@
           this.disableFunctionality = false;
         });
 
-        document.addEventListener('edit', (e) => {
+        document.addEventListener('edit', () => {
           this.disableFunctionality = true;
         });
 
@@ -169,7 +161,8 @@
           id += String.fromCharCode(charCode);
         }
 
-        return (this.getIdIndex(id) === -1) ? id : this.createNewUserId();
+        let doesIdExist = this.getIdIndex(id) === -1;
+        return (doesIdExist) ? id : this.createNewUserId();
       }
 
       isMode(currentMode, expectedMode) {

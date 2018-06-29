@@ -1,266 +1,264 @@
 <link rel="import" href="polymer.html">
 
 <dom-module id="user-component">
-	<template>
-		<style>
-			:host {
-				display: block;
-			}
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
 
-			button {
-				margin: 10px;
-				width: 60px;
-				height: 30px;
-				border-radius: 3px;
-				background-color: #7395ae;
-			}
+      button {
+        margin: 10px;
+        width: 60px;
+        height: 30px;
+        border-radius: 3px;
+        background-color: #7395ae;
+      }
 
-			.default-card {
-				background-color: white;
-				min-width: 300px;
-				width: fit-content;
-				padding: 15px;
-				margin: 5px;
-				border: lightgray 1px solid;
-				border-radius: 5px;
-				box-shadow: 3px 3px 2px lightgrey;
-			}
+      .default-card {
+        background-color: white;
+        min-width: 300px;
+        width: fit-content;
+        padding: 15px;
+        margin: 5px;
+        border: lightgray 1px solid;
+        border-radius: 5px;
+        box-shadow: 3px 3px 2px lightgrey;
+      }
 
-			.default-card>input .first-name .last-name {
-				width: 20px;
-			}
+      .default-card>input .first-name .last-name {
+        width: 20px;
+      }
 
-			.edit {
-				border-bottom: lightgray solid 1px;
-			}
+      .edit {
+        border-bottom: lightgray solid 1px;
+      }
 
-			.email {
-				font-size: 14px;
-				width: 50%;
-			}
+      .email {
+        font-size: 14px;
+        width: 50%;
+      }
 
-			input {
-				margin: 5px;
-				border: none;
-				font-size: 20px;
-			}
+      input {
+        margin: 5px;
+        border: none;
+        font-size: 20px;
+      }
 
-			.id {
-				font-size: 15px;
-				margin-left: 6px;
-			}
-		</style>
+      .id {
+        font-size: 15px;
+        margin-left: 6px;
+      }
+    </style>
 
-		<div id="editUserFields" class="default-card">
-			<form autocomplete="on">
-				<h1>[[headerMessage(mode)]]</h1>
-				<!-- bplint-disable no-auto-binding -->
-				<fieldset>
-					<legend>
-						Name:
-					</legend>
-					<input id="editfName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-					 required>
-					<input id="editlName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-					 required>
-				</fieldset>
-				<fieldset>
-					<legend>Contact:</legend>
-					<label for="editEmail">
-						<input id="editEmail" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
-						 name="email" required>
-					</label>
-					<br>
-					<label for="editPhone">
-						<input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
-						 required>
-					</label>
-				</fieldset>
-				<fieldset>
-					<legend>Other:</legend>
-					<label for="editDepartment">
-						<input id="editDepartment" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
-					</label>
-					<template is="dom-if" if="[[user.id]]">
-						<p class="id">ID: [[user.id]]</p>
-					</template>
-				</fieldset>
-				<!-- bplint-enable no-auto-binding -->
-				<div class="submit-button-box">
-					<template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
-						<button on-click="save" type="submit">Save</button>
-						<template is="dom-if" if="[[!user.id]]">
-							<button on-click="cancel" formnovalidate>Cancel</button>
-						</template>
-						<template is="dom-if" if="[[user.id]]">
-							<button on-click="delete" type="submit" formnovalidate>Delete</button>
-						</template>
-					</template>
-					<template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
-						<button on-click="toggleMode" type="submit">Edit</button>
-					</template>
-				</div>
-			</form>
-		</div>
-	</template>
-	<script>
-		'use strict';
-		class UserComponent extends Polymer.Element {
-			static get is() { return 'user-component'; }
-			static get properties() {
-				return {
-					// edit, display
-					mode: {
-						type: String,
-						observer: 'toggleEditable'
-					},
-					modes: {
-						type: Object,
-						value: () => {
-							return {
-								DISPLAY: 'display',
-								EDIT: 'edit'
-							};
-						}
-					},
-					user: {
-						type: Object,
-						value: () => {
-							return {
-								first: '',
-								last: '',
-								phone: '',
-								email: '',
-								department: '',
-								id: ''
-							};
-						}
-					},
-					users: {
-						type: Array,
-						value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
-					},
-					disableSave: {
-						type: Boolean,
-						value: false
-					},
-					disableEdit: {
-						type: Boolean,
-						value: false
-					}
-				};
-			}
+    <div id="editUserFields" class="default-card">
+      <form autocomplete="on">
+        <h1>[[headerMessage(mode)]]</h1>
+        <!-- bplint-disable no-auto-binding -->
+        <fieldset>
+          <legend>
+            Name:
+          </legend>
+          <input id="editfName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+           required>
+          <input id="editlName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+           required>
+        </fieldset>
+        <fieldset>
+          <legend>Contact:</legend>
+          <label for="editEmail">
+            <input id="editEmail" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
+             name="email" required>
+          </label>
+          <br>
+          <label for="editPhone">
+            <input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
+             required>
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>Other:</legend>
+          <label for="editDepartment">
+            <input id="editDepartment" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
+          </label>
+          <template is="dom-if" if="[[user.id]]">
+            <p class="id">ID: [[user.id]]</p>
+          </template>
+        </fieldset>
+        <!-- bplint-enable no-auto-binding -->
+        <div class="submit-button-box">
+          <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
+            <button on-click="save" type="submit">Save</button>
+            <template is="dom-if" if="[[!user.id]]">
+              <button on-click="cancel" formnovalidate>Cancel</button>
+            </template>
+            <template is="dom-if" if="[[user.id]]">
+              <button on-click="delete" type="submit" formnovalidate>Delete</button>
+            </template>
+          </template>
+          <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
+            <button on-click="toggleMode" type="submit">Edit</button>
+          </template>
+        </div>
+      </form>
+    </div>
+  </template>
+  <script>
+    'use strict';
+    class UserComponent extends Polymer.Element {
+      static get is() { return 'user-component'; }
+      static get properties() {
+        return {
+          // edit, display
+          mode: {
+            type: String,
+            observer: 'toggleEditable'
+          },
+          modes: {
+            type: Object,
+            value: () => {
+              return {
+                DISPLAY: 'display',
+                EDIT: 'edit'
+              };
+            }
+          },
+          user: {
+            type: Object,
+            value: () => {
+              return {
+                first: '',
+                last: '',
+                phone: '',
+                email: '',
+                department: '',
+                id: ''
+              };
+            }
+          },
+          users: {
+            type: Array,
+            value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
+          },
+          disableSave: {
+            type: Boolean,
+            value: false
+          },
+          disableEdit: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
 
-			save(e) {
-				e.preventDefault();
+      save(e) {
+        e.preventDefault();
+        let userToSave = Object.assign({}, this.user);
 
-				if (this.validateSave()) {
-					let userToSave = this.user;
+        if (this.validateSave()) {
 
-					if (!this.user.id) {
-						this.clearInputFields();
-					} else {
-						this.toggleMode();
-					}
+          if (!this.user.id) {
+            this.clearInputForm();
+          } else {
+            this.toggleMode();
+          }
 
-					this.dispatchEvent(new CustomEvent('save', {
-						bubbles: true,
-						composed: true,
-						detail: { user: userToSave }
-					}));
-				}
-			}
+          this.dispatchEvent(new CustomEvent('save', {
+            bubbles: true,
+            composed: true,
+            detail: { user: userToSave }
+          }));
+        }
+      }
 
-			validateSave() {
-				if (this.disableSave) {
-					window.alert('Please save user edits before creating a new user.');
-					return false;
-				}
+      clearInputForm() {
 
-				// Makes sure fields are filled
-				for (let key of Object.keys(this.user)) {
-					if (!this.user[key].length) {
-						if (key !== 'id') {
-							return false;
-						}
-					}
-				}
-				return true;
-			}
+        this.shadowRoot.querySelector('form').reset();
 
+        for (let key of Object.keys(this.user)) {
+          this.user[key] = '';
+        }
+      }
 
-			clearInputFields() {
-				this.user = {
-					first: '',
-					last: '',
-					phone: '',
-					email: '',
-					department: '',
-					id: ''
-				};
-			}
+      validateSave() {
+        if (this.disableSave) {
+          window.alert('Please save user edits first.');
+          return false;
+        }
 
-			cancel(e) {
-				e.preventDefault();
-				this.dispatchEvent(new CustomEvent('cancel', {
-					bubbles: true,
-					composed: true,
-				}));
-			}
+        // Makes sure fields are filled
+        for (let key of Object.keys(this.user)) {
+          if (!this.user[key].length) {
+            if (key !== 'id') {
+              return false;
+            }
+          }
+        }
+        return true;
+      }
 
-			delete(e) {
-				e.preventDefault();
+      cancel(e) {
+        e.preventDefault();
+        this.dispatchEvent(new CustomEvent('cancel', {
+          bubbles: true,
+          composed: true,
+        }));
 
-				this.dispatchEvent(new CustomEvent('delete', {
-					bubbles: true,
-					composed: true,
-					detail: { user: this.user, mode: this.mode }
-				}));
+        this.shadowRoot.querySelector('form').reset();
+      }
 
-				this.mode = this.modes.DISPLAY;
-			}
+      delete(e) {
+        e.preventDefault();
 
-			isMode(currentMode, expectedMode) {
-				return (currentMode === expectedMode);
-			}
+        this.dispatchEvent(new CustomEvent('delete', {
+          bubbles: true,
+          composed: true,
+          detail: { user: this.user }
+        }));
 
-			headerMessage(mode) {
-				if (mode === this.modes.EDIT) {
-					return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
-				}
-				return '';
-			}
+        this.mode = this.modes.DISPLAY;
+      }
 
-			toggleMode(e) {
-				if (e) {
-					e.preventDefault();
+      isMode(currentMode, expectedMode) {
+        return (currentMode === expectedMode);
+      }
 
-					if (this.disableEdit) {
-						window.alert('Please save user edits before starting a new one.');
-						return;
-					}
+      headerMessage(mode) {
+        if (mode === this.modes.EDIT) {
+          return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
+        }
+        return '';
+      }
 
-					this.dispatchEvent(new CustomEvent('edit', {
-						bubbles: true,
-						composed: true,
-						detail: { disableEdit: this.disableEdit }
-					}));
-				}
+      toggleMode(e) {
+        if (e) {
+          e.preventDefault();
 
-				this.mode = (this.mode === this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
-			}
+          if (this.disableEdit) {
+            window.alert('Please save user edits first.');
+            return;
+          }
 
-			toggleEditable() {
+          this.dispatchEvent(new CustomEvent('edit', {
+            bubbles: true,
+            composed: true
+          }));
+        }
 
-				this.shadowRoot.querySelectorAll('input')
-					.forEach(field => {
-						field.readOnly = this.isMode(this.mode, this.modes.DISPLAY);
-						let name = field.className;
-						field.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/edit/, '') : name + ' edit';
-					});
-			}
-		}
+        this.mode = this.isMode(this.mode, this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
+      }
 
-		customElements.define(UserComponent.is, UserComponent);
-	</script>
+      toggleEditable() {
+
+        this.shadowRoot.querySelectorAll('input')
+          .forEach(field => {
+            field.readOnly = this.isMode(this.mode, this.modes.DISPLAY);
+            let name = field.className;
+            field.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/edit/, '') : name + ' edit';
+          });
+      }
+    }
+
+    customElements.define(UserComponent.is, UserComponent);
+  </script>
 </dom-module>
