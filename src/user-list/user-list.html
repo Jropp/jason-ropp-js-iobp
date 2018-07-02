@@ -131,6 +131,19 @@
 
       }
 
+      disconnectedCallback() {
+        super.disconnectedCallback();
+
+        document.removeEventListener('cancel');
+
+        document.removeEventListener('delete');
+
+        document.removeEventListener('save');
+
+        document.removeEventListener('edit');
+
+      }
+
       save(user) {
         let index = this.getIdIndex(user.id);
 
