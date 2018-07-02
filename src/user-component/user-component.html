@@ -60,20 +60,20 @@
             Name:
           </legend>
           <input id="editfName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-           required>
+            required>
           <input id="editlName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-           required>
+            required>
         </fieldset>
         <fieldset>
           <legend>Contact:</legend>
           <label for="editEmail">
             <input id="editEmail" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
-             name="email" required>
+              name="email" required>
           </label>
           <br>
           <label for="editPhone">
             <input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
-             required>
+              required>
           </label>
         </fieldset>
         <fieldset>
@@ -97,7 +97,7 @@
             </template>
           </template>
           <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
-            <button on-click="toggleMode" type="submit">Edit</button>
+            <button on-click="editButtonClicked" type="submit">Edit</button>
           </template>
         </div>
       </form>
@@ -230,21 +230,23 @@
         return '';
       }
 
-      toggleMode(e) {
-        if (e) {
-          e.preventDefault();
+      editButtonClicked(e) {
+        e.preventDefault();
 
-          if (this.disableEdit) {
-            window.alert('Please save user edits first.');
-            return;
-          }
-
-          this.dispatchEvent(new CustomEvent('edit', {
-            bubbles: true,
-            composed: true
-          }));
+        if (this.disableEdit) {
+          window.alert('Please save user edits first.');
+          return;
         }
 
+        this.dispatchEvent(new CustomEvent('edit', {
+          bubbles: true,
+          composed: true
+        }));
+
+        this.toggleMode();
+      }
+
+      toggleMode(e) {
         this.mode = this.isMode(this.mode, this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
       }
 
