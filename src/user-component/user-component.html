@@ -89,12 +89,15 @@
         <div class="submit-button-box">
           <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
             <button on-click="save" type="submit">Save</button>
+            <template is="dom-if" if="[[!user.id]]">
+              <button on-click="cancel" formnovalidate>Cancel</button>
+            </template>
             <template is="dom-if" if="[[user.id]]">
-              <button on-click="deleteUser" type="submit">Delete</button>
+              <button on-click="delete" type="submit" formnovalidate>Delete</button>
             </template>
           </template>
           <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
-            <button on-click="toggleMode" type="submit">Edit</button>
+            <button on-click="editButtonClicked" type="submit">Edit</button>
           </template>
         </div>
       </form>
@@ -136,51 +139,54 @@
           users: {
             type: Array,
             value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
+          },
+          disableSave: {
+            type: Boolean,
+            value: false
+          },
+          disableEdit: {
+            type: Boolean,
+            value: false
           }
         };
       }
 
       save(e) {
-        if (this.checkUserFields()) {
+        e.preventDefault();
+        let userToSave = Object.assign({}, this.user);
 
-          let index = this.getIdIndex(this.user.id);
+        if (this.validateSave()) {
 
-          const isNewUser = index === -1;
-          if (isNewUser) {
-            this.user.id = this.createNewUserId();
-            this.users.splice(0, 0, this.user);
+          if (!this.user.id) {
+            this.clearInputForm();
           } else {
-            this.users.splice(index, 1, this.user);
-            this.toggleMode(e);
+            this.toggleMode();
           }
 
-          this.updateLocalStorage();
-
+          this.dispatchEvent(new CustomEvent('save', {
+            bubbles: true,
+            composed: true,
+            detail: { user: userToSave }
+          }));
         }
       }
 
-      deleteUser() {
-        this.users.splice(this.getIdIndex(this.user.id), 1);
-        this.updateLocalStorage();
+      clearInputForm() {
+
+        this.shadowRoot.querySelector('form').reset();
+
+        for (let key of Object.keys(this.user)) {
+          this.user[key] = '';
+        }
       }
 
-      createNewUserId() {
-        let id = '';
-
-        let asciiCharsLowest = 33;
-        let asciiCharsHighest = 123;
-        let idLength = 9;
-
-        for (let i = 0; i < idLength; i++) {
-          let charCode = Math.floor(Math.random() * (asciiCharsHighest - asciiCharsLowest)) + asciiCharsLowest;
-          id += String.fromCharCode(charCode);
+      validateSave() {
+        if (this.disableSave) {
+          window.alert('Please save user edits first.');
+          return false;
         }
 
-        return (this.getIdIndex(id) === -1) ? id : this.createNewUserId();
-      }
-
-      checkUserFields() {
-
+        // Makes sure fields are filled
         for (let key of Object.keys(this.user)) {
           if (!this.user[key].length) {
             if (key !== 'id') {
@@ -188,12 +194,29 @@
             }
           }
         }
-
         return true;
       }
 
-      getIdIndex(id) {
-        return (this.users) ? this.users.findIndex(val => val.id === id) : -1;
+      cancel(e) {
+        e.preventDefault();
+        this.dispatchEvent(new CustomEvent('cancel', {
+          bubbles: true,
+          composed: true,
+        }));
+
+        this.shadowRoot.querySelector('form').reset();
+      }
+
+      delete(e) {
+        e.preventDefault();
+
+        this.dispatchEvent(new CustomEvent('delete', {
+          bubbles: true,
+          composed: true,
+          detail: { user: this.user }
+        }));
+
+        this.mode = this.modes.DISPLAY;
       }
 
       isMode(currentMode, expectedMode) {
@@ -207,9 +230,24 @@
         return '';
       }
 
-      toggleMode(e) {
+      editButtonClicked(e) {
         e.preventDefault();
-        this.mode = (this.mode === this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
+
+        if (this.disableEdit) {
+          window.alert('Please save user edits first.');
+          return;
+        }
+
+        this.dispatchEvent(new CustomEvent('edit', {
+          bubbles: true,
+          composed: true
+        }));
+
+        this.toggleMode();
+      }
+
+      toggleMode(e) {
+        this.mode = this.isMode(this.mode, this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
       }
 
       toggleEditable() {
@@ -220,13 +258,7 @@
             let name = field.className;
             field.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/edit/, '') : name + ' edit';
           });
-
       }
-
-      updateLocalStorage() {
-        localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
-      }
-
     }
 
     customElements.define(UserComponent.is, UserComponent);
