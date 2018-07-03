@@ -4,13 +4,12 @@
 <dom-module id="my-app">
   <template>
     <user-list></user-list>
-    </template>
   </template>
   <script type="module">
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js';
     /** @polymer */
-    const base = PolymerElement;
-    class MyAppElement extends base {
+
+    class MyAppElement extends PolymerElement {
       static get is() { return 'my-app'; }
     }
     customElements.define(MyAppElement.is, MyAppElement);
