@@ -142,7 +142,7 @@
           },
           users: {
             type: Array,
-            value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
+            value: () => database.getUsers()
           },
           disableSave: {
             type: Boolean,
@@ -157,6 +157,7 @@
 
       save(e) {
         e.preventDefault();
+
         let userToSave = Object.assign({}, this.user);
 
         if (this.validateSave()) {

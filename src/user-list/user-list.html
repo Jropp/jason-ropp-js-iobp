@@ -2,6 +2,7 @@
 <link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
 <link rel="import" href="~@banno/polymer/lib/elements/dom-repeat.js">
 <link rel="import" href="~@banno/polymer/polymer-element.js">
+<!-- <link rel="import" href="./main.js"> -->
 <!-- bplint-enable no-unused-import -->
 <link rel="import" href="../user-component/user-component.html">
 <dom-module id="user-list">
@@ -85,6 +86,7 @@
   <script type="module">
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
 
+		import {database} from './../api/user-database.js'
     class UserListElement extends PolymerElement {
       static get is() { return 'user-list'; }
       static get properties() {
@@ -95,7 +97,7 @@
           },
           users: {
             type: Array,
-            value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
+            value: () =>  database.getUsers()
           },
           mode: {
             type: String,
@@ -121,74 +123,32 @@
         });
 
         document.addEventListener('delete', (e) => {
-          this.delete(e.detail.user);
+          database.deleteUser(e.detail.user);
+					this.updateUserList();
           this.disableFunctionality = false;
         });
 
         document.addEventListener('save', (e) => {
-          this.save(e.detail.user);
+          database.saveUser(e.detail.user);
+					this.updateUserList();
           this.disableFunctionality = false;
         });
 
         document.addEventListener('edit', () => {
           this.disableFunctionality = true;
         });
-
       }
 
       disconnectedCallback() {
         super.disconnectedCallback();
-
         document.removeEventListener('cancel');
-
         document.removeEventListener('delete');
-
         document.removeEventListener('save');
-
         document.removeEventListener('edit');
-
-      }
-
-      save(user) {
-        let index = this.getIdIndex(user.id);
-
-        const isNewUser = index === -1;
-        if (isNewUser) {
-          user.id = this.createNewUserId();
-          this.users.splice(0, 0, user);
-        } else {
-          this.users.splice(index, 1, user);
-        }
-
-        this.updateLocalStorage();
-      }
-
-      delete(user) {
-        this.users.splice(this.getIdIndex(user.id), 1);
-        this.updateLocalStorage();
-      }
-
-      createNewUserId() {
-        let id = '';
-        let asciiCharsLowest = 33;
-        let asciiCharsHighest = 123;
-        let idLength = 9;
-
-        for (let i = 0; i < idLength; i++) {
-          let charCode = Math.floor(Math.random() * (asciiCharsHighest - asciiCharsLowest)) + asciiCharsLowest;
-          id += String.fromCharCode(charCode);
-        }
-
-        let doesIdExist = this.getIdIndex(id) === -1;
-        return (doesIdExist) ? id : this.createNewUserId();
       }
 
       isMode(currentMode, expectedMode) {
         return (currentMode === expectedMode);
-      }
-
-      getIdIndex(id) {
-        return (this.users) ? this.users.findIndex(val => val.id === id) : -1;
       }
 
       showCreateNewUserCard() {
@@ -196,9 +156,8 @@
         this.disableEdit = true;
       }
 
-      updateLocalStorage() {
-        localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
-        this.users = JSON.parse(localStorage.getItem('onboardProjectUsers'));
+      updateUserList() {
+        this.users = database.getUsers();
       }
 
       checkForUsers(users) {
