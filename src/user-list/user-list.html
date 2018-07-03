@@ -126,11 +126,7 @@
         });
 
         document.addEventListener('save', (e) => {
-					this.save(e.detail.user);
-					console.log(e.detail.user);
-					console.log(this.users);
-
-
+          this.save(e.detail.user);
           this.disableFunctionality = false;
         });
 
