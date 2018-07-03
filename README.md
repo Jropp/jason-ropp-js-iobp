@@ -42,7 +42,7 @@ If no user is passed into the component it will serve as a 'create new user' car
 
         `$ yarn start` then open https://localhost:1820 in the browser.
 
-        This lints, builds, and serves the project
+        This lints, builds, and serves the project using webpack-dev-server
 
     To see a list of available scripts [or a single script]: 
     
@@ -52,7 +52,9 @@ If no user is passed into the component it will serve as a 'create new user' car
 
         `$ yarn lint`
 
-    To build a local example of the bundled file structure that webpack-dev-server uses
+        `$ yarn start` also fires the linter before serving the project.
+
+    To bundle the code for production. It gets built into the dist folder in the root.
 
         `$ yarn build`
 
@@ -65,9 +67,14 @@ If no user is passed into the component it will serve as a 'create new user' car
 
 ### @Banno/Polymer
 
+
+### Webpack
+
+   For building production code `$yarn build` bundles code into the dist folder.
+
 ### Webpack-Dev-Server
 
-  Webpack-dev-server wraps around webpack, bundling and serving the files. 
+  Webpack-dev-server wraps around webpack, bundling and serving the files for development purposes. 
 
   The bundling and serving happens together on `$ yarn start`
 

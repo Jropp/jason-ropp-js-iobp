@@ -1,4 +1,7 @@
-<link rel="import" href="polymer.html">
+<!-- bplint-disable no-unused-import -->
+<link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
+<link rel="import" href="~@banno/polymer/polymer-element.js">
+<!-- bplint-enable no-unused-import -->
 
 <dom-module id="user-component">
   <template>
@@ -60,20 +63,20 @@
             Name:
           </legend>
           <input id="editfName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-            required>
+           required>
           <input id="editlName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-            required>
+           required>
         </fieldset>
         <fieldset>
           <legend>Contact:</legend>
           <label for="editEmail">
             <input id="editEmail" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
-              name="email" required>
+             name="email" required>
           </label>
           <br>
           <label for="editPhone">
             <input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
-              required>
+             required>
           </label>
         </fieldset>
         <fieldset>
@@ -103,9 +106,10 @@
       </form>
     </div>
   </template>
-  <script>
-    'use strict';
-    class UserComponent extends Polymer.Element {
+  <script type="module">
+    import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
+
+    class UserComponentElement extends PolymerElement {
       static get is() { return 'user-component'; }
       static get properties() {
         return {
@@ -261,6 +265,7 @@
       }
     }
 
-    customElements.define(UserComponent.is, UserComponent);
+    customElements.define(UserComponentElement.is, UserComponentElement);
+    export default UserComponentElement;
   </script>
 </dom-module>
