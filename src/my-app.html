@@ -1,0 +1,19 @@
+<link rel="import" href="~@banno/polymer/polymer-element.js">
+<link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
+<link rel="import" href="./user-list/user-list.html">
+<dom-module id="my-app">
+  <template>
+    <user-list></user-list>
+    </template>
+  </template>
+  <script type="module">
+    import { Element as PolymerElement } from '@banno/polymer/polymer-element.js';
+    /** @polymer */
+    const base = PolymerElement;
+    class MyAppElement extends base {
+      static get is() { return 'my-app'; }
+    }
+    customElements.define(MyAppElement.is, MyAppElement);
+    export default MyAppElement;
+  </script>
+</dom-module>

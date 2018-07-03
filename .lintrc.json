@@ -1,0 +1,25 @@
+{
+  "eslint": {
+    "env": {
+      "node": true
+    },
+    "plugins": ["banno", "html"],
+    "globals": {
+      "fixture": true
+    },
+    "settings": {
+      "html/javascript-mime-types": "/^(module|application/javascript)$/"
+    },
+    "parserOptions": {
+      "ecmaVersion": 2017,
+      "sourceType": "module"
+    },
+    "rules": {
+      "max-len": [ "error", 120,
+        { "ignoreUrls": true, "ignoreTemplateLiterals": true } ],
+      "new-cap": ["error",
+        { "capIsNewExceptionPattern": "^Polymer\\.[A-Za-z]+|Mixin$" } ],
+      "no-path-concat": [ "error" ]
+    }
+  }
+}

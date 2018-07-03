@@ -1,5 +1,7 @@
-<link rel="import" href="polymer.html">
-<link rel="import" href="user-component.html">
+<!-- bplint-disable no-unused-import -->
+<link rel="import" href="~@banno/polymer/polymer-element.js">
+<!-- bplint-enable no-unused-import -->
+<link rel="import" href="../user-component/user-component.html">
 <dom-module id="user-list">
   <template>
     <style>
@@ -78,9 +80,10 @@
     </div>
 
   </template>
-  <script>
-    'use strict';
-    class UserListElement extends Polymer.Element {
+  <script type="module">
+    import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
+
+    class UserListElement extends PolymerElement {
       static get is() { return 'user-list'; }
       static get properties() {
         return {
@@ -121,7 +124,11 @@
         });
 
         document.addEventListener('save', (e) => {
-          this.save(e.detail.user);
+					this.save(e.detail.user);
+					console.log(e.detail.user);
+					console.log(this.users);
+
+
           this.disableFunctionality = false;
         });
 
@@ -203,5 +210,6 @@
     }
 
     customElements.define(UserListElement.is, UserListElement);
+    export default UserListElement;
   </script>
 </dom-module>

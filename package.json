@@ -4,11 +4,12 @@
   "description": "## Description This app allows you to create and edit user profiles, each of which have an ID, Name, Number, and Email Address.",
   "main": "index.js",
   "scripts": {
-    "prestart": "ux-lint src/*/*.html",
-    "build": "webpack --mode production",
-    "start": "webpack-dev-server --https --port 1820 --mode development",
+    "prestart": "ux-lint --extend .lintrc.json src/*/*.html",
+    "build": "webpack",
+    "release": "webpack --env.release",
+    "start": "webpack-dev-server",
     "help": "npm-scripts-help",
-    "lint":  "ux-lint src/*/*.html"
+    "lint": "ux-lint src/*/*.html"
   },
   "repository": {
     "type": "git",
@@ -23,21 +24,18 @@
   "homepage": "https://github.com/Jropp/jason-ropp-js-iobp",
   "dependencies": {},
   "devDependencies": {
-    "@banno/polymer": "2.3.1-html-imports",
-    "babel-loader": "^7.1.4",
-    "clean-webpack-plugin": "^0.1.19",
-    "copy-webpack-plugin": "^4.5.1",
-    "css-loader": "^0.28.11",
-    "html-loader": "^0.5.5",
-    "html-webpack-plugin": "^3.2.0",
-    "npm-scripts-help": "^0.8.0",
-    "serve": "^6.5.6",
-    "style-loader": "^0.21.0",
+    "@banno/polymer": "^2.3.1",
+    "@webcomponents/shadycss": "^1.0.6",
+    "@webcomponents/webcomponentsjs": "^1.0.14",
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-preset-env": "^1.6.0",
+    "copy-webpack-plugin": "^4.0.1",
+    "html-webpack-plugin": "^2.30.1",
+    "polymer-webpack-loader": "^2.0.0",
     "ux-lint": "^1.8.0",
-    "webpack": "^4.6.0",
-    "webpack-cli": "^2.0.15",
-    "webpack-dev-server": "^3.1.3",
-    "write-file-webpack-plugin": "^4.3.2"
+    "webpack": "^3.0.0",
+    "webpack-dev-server": "^2.5.0"
   },
   "scriptshelp": {
     "help-message": [
