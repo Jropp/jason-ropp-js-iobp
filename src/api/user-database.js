@@ -14,18 +14,19 @@ let database = (() => {
     });
   }
 
-  function saveUser(user) {
+  function editUser(user) {
     let users = getUsers();
     let index = getIdIndex(user.id);
+    users.splice(index, 1, user);
+    console.log(users);
 
-    const isNewUser = index === -1;
-    if (isNewUser) {
-      user.id = createNewUserId();
-      users.splice(0, 0, user);
-    } else {
-      users.splice(index, 1, user);
-    }
+    updateLocalStorage(users);
+  }
 
+  function saveUser(user) {
+    let users = getUsers();
+    user.id = createNewUserId();
+    users.splice(0, 0, user);
     updateLocalStorage(users);
   }
 
@@ -68,6 +69,7 @@ let database = (() => {
   return {
     getUsers: getUsers,
     saveUser: saveUser,
+    editUser: editUser,
     deleteUser: deleteUser,
     deleteUsers: deleteUsers
   };

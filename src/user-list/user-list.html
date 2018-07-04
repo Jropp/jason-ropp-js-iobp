@@ -129,14 +129,25 @@
         });
 
         document.addEventListener('save', (e) => {
-          database.saveUser(e.detail.user);
-          this.updateUserList();
+          this.saveNewOrUpdate(e.detail.user);
           this.disableFunctionality = false;
         });
 
         document.addEventListener('edit', () => {
           this.disableFunctionality = true;
         });
+      }
+
+      saveNewOrUpdate(user) {
+        const isExistingUser = user.id;
+        if (isExistingUser) {
+          debugger;
+          database.editUser(user);
+        } else {
+          debugger;
+          database.saveUser(user);
+        }
+        this.updateUserList();
       }
 
       disconnectedCallback() {
