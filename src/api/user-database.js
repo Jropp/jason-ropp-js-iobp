@@ -18,7 +18,6 @@ let database = (() => {
     let users = getUsers();
     let index = getIdIndex(user.id);
     users.splice(index, 1, user);
-    console.log(users);
 
     updateLocalStorage(users);
   }

@@ -2,7 +2,6 @@
 <link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
 <link rel="import" href="~@banno/polymer/lib/elements/dom-repeat.js">
 <link rel="import" href="~@banno/polymer/polymer-element.js">
-<!-- <link rel="import" href="./main.js"> -->
 <!-- bplint-enable no-unused-import -->
 <link rel="import" href="../user-component/user-component.html">
 <dom-module id="user-list">
@@ -141,10 +140,8 @@
       saveNewOrUpdate(user) {
         const isExistingUser = user.id;
         if (isExistingUser) {
-          debugger;
           database.editUser(user);
         } else {
-          debugger;
           database.saveUser(user);
         }
         this.updateUserList();
