@@ -75,7 +75,7 @@
           </label>
           <br>
           <label for="editPhone">
-            <input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
+            <input id="editPhone" type="tel" class="phone edit" placeholder="(xxx) xxx-xxxx" autocomplete="tel" value="{{user.phone::change}}"
               required>
           </label>
         </fieldset>
@@ -91,7 +91,7 @@
         <!-- bplint-enable no-auto-binding -->
         <div class="submit-button-box">
           <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
-            <button on-click="save" type="submit">Save</button>
+            <button on-click="normalizeUserInfo" type="submit">Save</button>
             <template is="dom-if" if="[[!user.id]]">
               <button on-click="cancel" formnovalidate>Cancel</button>
             </template>
@@ -155,10 +155,22 @@
         };
       }
 
-      save(e) {
+      normalizeUserInfo(e) {
         e.preventDefault();
+        let phoneFormat = new RegExp(/(^\(\d{3}\)((\-|\s))?|^\d{3}((\-|\s)))?(^)?\d{3}-\d{4}$/gm);
 
-        let userToSave = Object.assign({}, this.user);
+        console.log(this.user.phone === phoneFormat);
+
+        if (this.user.phone.match(phoneFormat)) {
+          console.log('its a match!');
+        }
+
+        this.save();
+      }
+
+      save(e) {
+
+        let validatedUserToSave = Object.assign({}, this.user);
 
         if (this.validateSave()) {
 
@@ -171,7 +183,7 @@
           this.dispatchEvent(new CustomEvent('save', {
             bubbles: true,
             composed: true,
-            detail: { user: userToSave }
+            detail: { user: validatedUserToSave }
           }));
         }
       }
@@ -201,6 +213,8 @@
         }
         return true;
       }
+
+      validatePhoneNumber() { }
 
       cancel(e) {
         e.preventDefault();
