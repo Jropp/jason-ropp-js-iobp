@@ -120,7 +120,6 @@
   </template>
   <script type="module">
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
-    import { database } from './../api/user-database.js';
     class UserComponentElement extends PolymerElement {
       static get is() { return 'user-component'; }
       static get properties() {
@@ -151,10 +150,6 @@
                 id: ''
               };
             }
-          },
-          users: {
-            type: Array,
-            value: () => database.getUsers()
           },
           disableSave: {
             type: Boolean,
@@ -203,7 +198,7 @@
       checkPhoneFormat(phone) {
         // This match makes sure the proper numbers are present, but allows exceptions
         // for errors or variation in format of spaces, dashes, and parenthesis
-        let phoneFormat = new RegExp(/(^\d{1,3})?((\s|-))?(\()?\d\d\d(\))?((\s|-))?\d\d\d((\s|-))?\d\d\d\d$/);
+        let phoneFormat = new RegExp(/(^\d{1,3})?((\s|-))?(^)?(\()?\d\d\d(\))?((\s|-))?\d\d\d((\s|-))?\d\d\d\d$/);
 
         return phone.match(phoneFormat) !== null;
       }
@@ -227,27 +222,30 @@
         return numbers;
       }
 
-      insertPhoneSymbols(numbers) {
-        let numLength = numbers.length;
+      insertPhoneSymbols(phoneArray) {
+        phoneArray = phoneArray.reverse();
 
         let dashLoc = 4;
-        let spaceLoc = 7;
-        let leftParLoc = 7;
-        let rightParLoc = 10;
+        let spaceLoc = 8;
+        let leftParLoc = 9;
+        let rightParLoc = 13;
         let domesticNumLength = 14;
-        let intSpaceLoc = 10;
-        let intPlusLoc = 0;
+        let intSpaceLoc = 14;
 
-        numbers.splice(numLength - dashLoc, 0, '-');
-        numbers.splice(numLength - spaceLoc, 0, ' ');
-        numbers.splice(numLength - leftParLoc, 0, ')');
-        numbers.splice(numLength - rightParLoc, 0, '(');
+        phoneArray.splice(dashLoc, 0, '-');
+        phoneArray.splice(spaceLoc, 0, ' ');
+        phoneArray.splice(leftParLoc, 0, ')');
+        phoneArray.splice(rightParLoc, 0, '(');
 
-        if (numbers.length > domesticNumLength) {
-          numbers.splice(numLength - intSpaceLoc, 0, ' ');
-          numbers.splice(intPlusLoc, 0, '+');
+        if (phoneArray.length > domesticNumLength) {
+          phoneArray.splice(intSpaceLoc, 0, ' ');
+
+          let internationalNumPre = '+';
+          phoneArray.push(internationalNumPre);
         }
-        return numbers.join('');
+
+        phoneArray = phoneArray.reverse();
+        return phoneArray.join('');
       }
 
       clearInputForm() {
