@@ -2,7 +2,6 @@
 <link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
 <link rel="import" href="~@banno/polymer/lib/elements/dom-repeat.js">
 <link rel="import" href="~@banno/polymer/polymer-element.js">
-<!-- <link rel="import" href="./main.js"> -->
 <!-- bplint-enable no-unused-import -->
 <link rel="import" href="../user-component/user-component.html">
 <dom-module id="user-list">
@@ -99,8 +98,15 @@
         });
 
         document.addEventListener('save', (e) => {
-          this.saveNewOrUpdate(e.detail.user);
           this.disableFunctionality = false;
+          let user = e.detail.user;
+
+          if (user.id) {
+            this.saveUserEdit(user);
+          } else {
+            this.saveNewUser(user);
+          }
+
         });
 
         document.addEventListener('edit', () => {
@@ -108,13 +114,13 @@
         });
       }
 
-      saveNewOrUpdate(user) {
-        const isExistingUser = user.id;
-        if (isExistingUser) {
-          database.editUser(user);
-        } else {
-          database.saveUser(user);
-        }
+      saveNewUser(user) {
+        database.saveUser(user);
+        this.updateUserList();
+      }
+
+      saveUserEdit(user) {
+        database.editUser(user);
         this.updateUserList();
       }
 

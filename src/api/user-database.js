@@ -18,7 +18,6 @@ let database = (() => {
     let users = getUsers();
     let index = getIdIndex(user.id);
     users.splice(index, 1, user);
-    console.log(users);
 
     updateLocalStorage(users);
   }
@@ -27,6 +26,7 @@ let database = (() => {
     let users = getUsers();
     user.id = createNewUserId();
     users.splice(0, 0, user);
+
     updateLocalStorage(users);
   }
 
@@ -68,6 +68,7 @@ let database = (() => {
 
   return {
     getUsers: getUsers,
+    getUser: getUser,
     saveUser: saveUser,
     editUser: editUser,
     deleteUser: deleteUser,

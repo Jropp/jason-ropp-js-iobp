@@ -12,6 +12,7 @@
 
       .default-card {
         width: fit-content;
+        min-width: 500px;
         min-height: 400px;
         margin: 5px;
         padding: 15px;
@@ -62,15 +63,21 @@
       <form autocomplete="on">
         <h1>[[headerMessage(mode)]]</h1>
         <!-- bplint-disable no-auto-binding -->
-        <fieldset>
-          <label for="firstName">First:</label>
-          <input id="firstName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-            required>
+        <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
+          <fieldset>
+            <label for="firstName">First:</label>
+            <input id="firstName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+              required>
 
-          <label for="lastName">Last:</label>
-          <input id="lastName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-            required>
-        </fieldset>
+            <label for="lastName">Last:</label>
+            <input id="lastName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+              required>
+          </fieldset>
+        </template>
+        <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
+          <h1>[[user.last]], [[user.first]]</h1>
+        </template>
+
         <fieldset>
           <label for="email">Email:</label>
           <input id="email" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
@@ -207,6 +214,7 @@
         for (let key of Object.keys(this.user)) {
           if (!this.user[key].length) {
             if (key !== 'id') {
+              window.alert('Please fill out all fields.');
               return false;
             }
           }
