@@ -195,6 +195,7 @@
         for (let key of Object.keys(this.user)) {
           if (!this.user[key].length) {
             if (key !== 'id') {
+              window.alert('Please fill out all fields.');
               return false;
             }
           }
