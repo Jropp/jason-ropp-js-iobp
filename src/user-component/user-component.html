@@ -180,50 +180,7 @@
           this.user.phone = this.normalizePhoneNumber(this.user.phone);
         }
 
-
         this.save();
-      }
-
-      extractNumbers(formInput) {
-        let numbers = [];
-
-        for (let character of formInput) {
-          if (character.match(/\d/)) {
-            numbers.push(character);
-          }
-        }
-
-        return numbers;
-      }
-
-      insertSymbols(numbers) {
-        let numLength = numbers.length;
-
-        let dashLoc = 4;
-        let space = 7;
-        let leftPar = 7;
-        let rightPar = 10;
-        let domesticNumLength = 14;
-        let intSpace = 10;
-        let intPlus = 0;
-
-        numbers.splice(numLength - dashLoc, 0, '-');
-        numbers.splice(numLength - space, 0, ' ');
-        numbers.splice(numLength - leftPar, 0, ')');
-        numbers.splice(numLength - rightPar, 0, '(');
-
-        if (numbers.length > domesticNumLength) {
-          numbers.splice(numLength - intSpace, 0, ' ');
-          numbers.splice(intPlus, 0, '+');
-        }
-        return numbers.join("");
-      }
-
-      normalizePhoneNumber(formInput) {
-        let numbers = this.extractNumbers(formInput);
-        let formattedNumber = this.insertSymbols(numbers)
-
-        return formattedNumber;
       }
 
       save(e) {
@@ -244,6 +201,48 @@
             detail: { user: validatedUserToSave }
           }));
         }
+      }
+
+      normalizePhoneNumber(formInput) {
+        let numbers = this.extractNumbers(formInput);
+        let formattedNumber = this.insertSymbols(numbers)
+
+        return formattedNumber;
+      }
+
+      extractNumbers(formInput) {
+        let numbers = [];
+
+        for (let character of formInput) {
+          if (character.match(/\d/)) {
+            numbers.push(character);
+          }
+        }
+
+        return numbers;
+      }
+
+      insertSymbols(numbers) {
+        let numLength = numbers.length;
+
+        let dashLoc = 4;
+        let spaceLoc = 7;
+        let leftParLoc = 7;
+        let rightParLoc = 10;
+        let domesticNumLength = 14;
+        let intSpaceLoc = 10;
+        let intPlusLoc = 0;
+
+        numbers.splice(numLength - dashLoc, 0, '-');
+        numbers.splice(numLength - spaceLoc, 0, ' ');
+        numbers.splice(numLength - leftParLoc, 0, ')');
+        numbers.splice(numLength - rightParLoc, 0, '(');
+
+        if (numbers.length > domesticNumLength) {
+          numbers.splice(numLength - intSpaceLoc, 0, ' ');
+          numbers.splice(intPlusLoc, 0, '+');
+        }
+        return numbers.join("");
       }
 
       clearInputForm() {
