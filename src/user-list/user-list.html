@@ -132,9 +132,9 @@
           let user = e.detail.user;
 
           if (user.id) {
-            this.saveNewUser(user);
-          } else {
             this.saveUserEdit(user);
+          } else {
+            this.saveNewUser(user);
           }
 
         });
