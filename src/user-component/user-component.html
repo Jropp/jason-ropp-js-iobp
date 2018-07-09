@@ -91,7 +91,7 @@
         <!-- bplint-enable no-auto-binding -->
         <div class="submit-button-box">
           <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
-            <button on-click="save" type="submit">Save</button>
+            <button on-click="validateSave" type="submit">Save</button>
             <template is="dom-if" if="[[!user.id]]">
               <button on-click="cancel" formnovalidate>Cancel</button>
             </template>
@@ -155,25 +155,21 @@
         };
       }
 
-      save(e) {
-        e.preventDefault();
-
+      save() {
         let userToSave = Object.assign({}, this.user);
 
-        if (this.validateSave()) {
+        this.dispatchEvent(new CustomEvent('save', {
+          bubbles: true,
+          composed: true,
+          detail: { user: userToSave }
+        }));
 
-          if (!this.user.id) {
-            this.clearInputForm();
-          } else {
-            this.toggleMode();
-          }
+        this.resetFormState(this.user.id);
+      }
 
-          this.dispatchEvent(new CustomEvent('save', {
-            bubbles: true,
-            composed: true,
-            detail: { user: userToSave }
-          }));
-        }
+
+      resetFormState(id) {
+        return (id) ? this.toggleMode() : this.clearInputForm();
       }
 
       clearInputForm() {
@@ -185,10 +181,11 @@
         }
       }
 
-      validateSave() {
+      validateSave(e) {
+        e.preventDefault();
         if (this.disableSave) {
           window.alert('Please save user edits first.');
-          return false;
+          return;
         }
 
         // Makes sure fields are filled
@@ -196,11 +193,11 @@
           if (!this.user[key].length) {
             if (key !== 'id') {
               window.alert('Please fill out all fields.');
-              return false;
+              return;
             }
           }
         }
-        return true;
+        this.save();
       }
 
       cancel(e) {
@@ -230,6 +227,7 @@
       }
 
       headerMessage(mode) {
+
         if (mode === this.modes.EDIT) {
           return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
         }
