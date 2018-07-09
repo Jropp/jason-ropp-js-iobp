@@ -98,8 +98,15 @@
         });
 
         document.addEventListener('save', (e) => {
-          this.saveNewOrUpdate(e.detail.user);
           this.disableFunctionality = false;
+          let user = e.detail.user;
+
+          if (user.id) {
+            this.saveUserEdit(user);
+          } else {
+            this.saveNewUser(user);
+          }
+
         });
 
         document.addEventListener('edit', () => {
@@ -107,13 +114,13 @@
         });
       }
 
-      saveNewOrUpdate(user) {
-        const isExistingUser = user.id;
-        if (isExistingUser) {
-          database.editUser(user);
-        } else {
-          database.saveUser(user);
-        }
+      saveNewUser(user) {
+        database.saveUser(user);
+        this.updateUserList();
+      }
+
+      saveUserEdit(user) {
+        database.editUser(user);
         this.updateUserList();
       }
 
