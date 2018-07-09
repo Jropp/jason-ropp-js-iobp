@@ -57,11 +57,19 @@
         border-radius: 3px;
         background-color: #7395ae;
       }
+
+      .warning {
+        color: red;
+        font-size: 20px;
+      }
     </style>
 
     <div id="editUserFields" class="default-card">
       <form autocomplete="on">
         <h1>[[headerMessage(mode)]]</h1>
+        <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
+          <p class="warning">[[warningMessage]]</p>
+        </template>
         <!-- bplint-disable no-auto-binding -->
         <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
           <fieldset>
@@ -76,6 +84,7 @@
         </template>
         <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
           <h1>[[user.last]], [[user.first]]</h1>
+          <p class="warning">[[warningMessage]]</p>
         </template>
 
         <fieldset>
@@ -165,11 +174,16 @@
           },
           disableSave: {
             type: Boolean,
-            value: false
+            value: false,
+            observer: 'setWarningMessage'
           },
           disableEdit: {
             type: Boolean,
-            value: false
+            value: false,
+            observer: 'setWarningMessage'
+          },
+          warningMessage: {
+            type: String
           }
         };
       }
@@ -198,15 +212,18 @@
       clearInputForm() {
 
         this.shadowRoot.querySelector('form').reset();
+        this.setWarningMessage('');
 
         for (let key of Object.keys(this.user)) {
           this.user[key] = '';
         }
+
       }
 
       validateSave() {
         if (this.disableSave) {
-          window.alert('Please save user edits first.');
+          this.setWarningMessage('Please save user edits first.');
+          // window.alert('Please save user edits first.');
           return false;
         }
 
@@ -214,7 +231,8 @@
         for (let key of Object.keys(this.user)) {
           if (!this.user[key].length) {
             if (key !== 'id') {
-              window.alert('Please fill out all fields.');
+              this.setWarningMessage('Please fill out all fields.');
+              // window.alert('Please fill out all fields.');
               return false;
             }
           }
@@ -255,11 +273,18 @@
         return '';
       }
 
+      setWarningMessage(message) {
+        // if (message === Boolean) {
+        //   this.warningMessage = '';
+        // }
+        this.warningMessage = (typeof message === 'boolean') ? '' : message;
+      }
+
       editButtonClicked(e) {
         e.preventDefault();
 
         if (this.disableEdit) {
-          window.alert('Please save user edits first.');
+          this.setWarningMessage('Please save user edits first.');
           return;
         }
 
