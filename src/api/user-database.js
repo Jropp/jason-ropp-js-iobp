@@ -5,7 +5,7 @@ let database = (() => {
     return JSON.parse(localStorage.getItem("onboardProjectUsers")) || [];
   }
 
-  function getUser(userId) {
+  function getUserById(userId) {
     let users = getUsers();
     users.forEach(user => {
       if (user.id === userId) {
@@ -74,7 +74,7 @@ let database = (() => {
 
   return {
     getUsers: getUsers,
-    getUser: getUser,
+    getUserById: getUserById,
     saveUser: saveUser,
     editUser: editUser,
     deleteUser: deleteUser,
