@@ -12,6 +12,7 @@ let database = (() => {
         return user;
       }
     });
+    return "User Not Found";
   }
 
   function editUser(user) {
@@ -26,7 +27,6 @@ let database = (() => {
     let users = getUsers();
     user.id = createNewUserId();
     users.splice(0, 0, user);
-
     updateLocalStorage(users);
   }
 
@@ -47,6 +47,12 @@ let database = (() => {
 
   function updateLocalStorage(users) {
     localStorage.setItem("onboardProjectUsers", JSON.stringify(users));
+    document.dispatchEvent(
+      new CustomEvent("databaseUpdated", {
+        bubbles: true,
+        composed: true
+      })
+    );
   }
 
   function createNewUserId() {

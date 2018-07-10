@@ -55,20 +55,25 @@
     </style>
 
     <div id="editUserFields" class="default-card">
-      <form autocomplete="on">
+      <form on-keyup="emptyFieldsDisableSave" autocomplete="on">
         <h1>[[headerMessage(mode)]]</h1>
+
         <!-- bplint-disable no-auto-binding -->
         <fieldset>
           <legend>
             Name:
           </legend>
+
           <input id="editfName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
             required>
           <input id="editlName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
             required>
+
         </fieldset>
         <fieldset>
+
           <legend>Contact:</legend>
+
           <label for="editEmail">
             <input id="editEmail" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
               name="email" required>
@@ -78,31 +83,43 @@
             <input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
               required>
           </label>
+
         </fieldset>
         <fieldset>
+
           <legend>Other:</legend>
+
           <label for="editDepartment">
             <input id="editDepartment" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
           </label>
+
           <template is="dom-if" if="[[user.id]]">
             <p class="id">ID: [[user.id]]</p>
           </template>
+
         </fieldset>
         <!-- bplint-enable no-auto-binding -->
         <div class="submit-button-box">
           <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
-            <button on-click="validateSave" type="submit">Save</button>
+
+            <button on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
+
             <template is="dom-if" if="[[!user.id]]">
               <button on-click="cancel" formnovalidate>Cancel</button>
             </template>
+
             <template is="dom-if" if="[[user.id]]">
               <button on-click="delete" type="submit" formnovalidate>Delete</button>
             </template>
+
           </template>
+
           <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
-            <button on-click="editButtonClicked" type="submit">Edit</button>
+            <button on-click="editButtonClicked" type="submit" disabled="[[disableEdit]]">Edit</button>
           </template>
+
         </div>
+
       </form>
     </div>
   </template>
@@ -140,13 +157,10 @@
               };
             }
           },
-          users: {
-            type: Array,
-            value: () => database.getUsers()
-          },
           disableSave: {
             type: Boolean,
-            value: false
+            value: false,
+            observer: 'checkForEmptyFields'
           },
           disableEdit: {
             type: Boolean,
@@ -155,53 +169,53 @@
         };
       }
 
-      save() {
-        let userToSave = Object.assign({}, this.user);
+      save(e) {
+        e.preventDefault();
+        let user = Object.assign({}, this.user);
 
-        this.dispatchEvent(new CustomEvent('save', {
-          bubbles: true,
-          composed: true,
-          detail: { user: userToSave }
-        }));
+        if (user.id) {
+          database.editUser(user);
+        } else {
+          database.saveUser(user);
+        }
 
+        this.lockMultipleEditSave(false);
         this.resetFormState(this.user.id);
       }
-
 
       resetFormState(id) {
         return (id) ? this.toggleMode() : this.clearInputForm();
       }
 
       clearInputForm() {
-
         this.shadowRoot.querySelector('form').reset();
 
         for (let key of Object.keys(this.user)) {
           this.user[key] = '';
         }
+
+        this.emptyFieldsDisableSave();
       }
 
-      validateSave(e) {
-        e.preventDefault();
-        if (this.disableSave) {
-          window.alert('Please save user edits first.');
-          return;
-        }
+      emptyFieldsDisableSave() {
+        if (this.user.id || !this.disableEdit) {
+          let fields = this.shadowRoot.querySelectorAll('input');
 
-        // Makes sure fields are filled
-        for (let key of Object.keys(this.user)) {
-          if (!this.user[key].length) {
-            if (key !== 'id') {
-              window.alert('Please fill out all fields.');
+          for (let field of fields) {
+            if (!field.value.length) {
+              this.disableSave = true;
               return;
             }
           }
+
+          this.disableSave = false;
         }
-        this.save();
+
       }
 
       cancel(e) {
         e.preventDefault();
+
         this.dispatchEvent(new CustomEvent('cancel', {
           bubbles: true,
           composed: true,
@@ -213,21 +227,24 @@
       delete(e) {
         e.preventDefault();
 
-        this.dispatchEvent(new CustomEvent('delete', {
-          bubbles: true,
-          composed: true,
-          detail: { user: this.user }
-        }));
-
+        database.deleteUser(this.user);
+        this.lockMultipleEditSave(false);
         this.mode = this.modes.DISPLAY;
       }
 
-      isMode(currentMode, expectedMode) {
-        return (currentMode === expectedMode);
+      lockMultipleEditSave(bool) {
+        this.dispatchEvent(new CustomEvent('lockMultipleEditSave', {
+          bubbles: true,
+          composed: true,
+          detail: bool
+        }));
+      }
+
+      isMode(current, expected) {
+        return (current === expected);
       }
 
       headerMessage(mode) {
-
         if (mode === this.modes.EDIT) {
           return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
         }
@@ -236,17 +253,7 @@
 
       editButtonClicked(e) {
         e.preventDefault();
-
-        if (this.disableEdit) {
-          window.alert('Please save user edits first.');
-          return;
-        }
-
-        this.dispatchEvent(new CustomEvent('edit', {
-          bubbles: true,
-          composed: true
-        }));
-
+        this.lockMultipleEditSave(true);
         this.toggleMode();
       }
 
@@ -255,12 +262,11 @@
       }
 
       toggleEditable() {
-
         this.shadowRoot.querySelectorAll('input')
-          .forEach(field => {
-            field.readOnly = this.isMode(this.mode, this.modes.DISPLAY);
-            let name = field.className;
-            field.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/edit/, '') : name + ' edit';
+          .forEach(input => {
+            let name = input.className;
+            input.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/edit/, '') : name + ' edit';
+            input.readOnly = this.isMode(this.mode, this.modes.DISPLAY);
           });
       }
     }

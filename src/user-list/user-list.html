@@ -61,7 +61,7 @@
     <div class="display-container">
 
       <div class="user-list-column">
-        <template is="dom-if" if="[[checkForUsers(users)]]">
+        <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
           <h2>There are currently no users in the database. Please create one.</h2>
         </template>
         <template is="dom-repeat" items="[[users]]" as="user">
@@ -72,10 +72,10 @@
       <div class="new-user-column">
         <div class="create-user-component">
           <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
-            <button on-click="showCreateNewUserCard">+ Create New User</button>
+            <button on-click="toggleMode">+ Create New User</button>
           </template>
           <template is="dom-if" if="[[isMode(mode, modes.CREATE_NEW)]]">
-            <user-component disable-save="[[disableFunctionality]]" mode="edit"></user-component>
+            <user-component disable-save="[[disableFunctionality]]" disable-edit="[[disableFunctionality]]" mode="edit"></user-component>
           </template>
         </div>
       </div>
@@ -115,67 +115,51 @@
       connectedCallback() {
         super.connectedCallback();
 
-        this.mode = (this.users.length) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
+        this.initDisplayOrCreate();
+
+        document.addEventListener('lockMultipleEditSave', (e) => {
+          this.disableFunctionality = e.detail;
+        });
+
+        document.addEventListener('databaseUpdated', (e) => {
+          this.updateUserList();
+        });
 
         document.addEventListener('cancel', () => {
-          this.mode = this.modes.DISPLAY;
+          // this.mode = this.modes.DISPLAY;
+          this.toggleMode();
         });
 
-        document.addEventListener('delete', (e) => {
-          database.deleteUser(e.detail.user);
-          this.updateUserList();
-          this.disableFunctionality = false;
-        });
-
-        document.addEventListener('save', (e) => {
-          this.disableFunctionality = false;
-          let user = e.detail.user;
-
-          if (user.id) {
-            this.saveUserEdit(user);
-          } else {
-            this.saveNewUser(user);
-          }
-
-        });
-
-        document.addEventListener('edit', () => {
-          this.disableFunctionality = true;
-        });
-      }
-
-      saveNewUser(user) {
-        database.saveUser(user);
-        this.updateUserList();
-      }
-
-      saveUserEdit(user) {
-        database.editUser(user);
-        this.updateUserList();
       }
 
       disconnectedCallback() {
         super.disconnectedCallback();
+        document.removeEventListener('changeButtonFunctionality');
+        document.removeEventListener('databaseUpdated');
         document.removeEventListener('cancel');
-        document.removeEventListener('delete');
-        document.removeEventListener('save');
-        document.removeEventListener('edit');
       }
 
       isMode(currentMode, expectedMode) {
         return (currentMode === expectedMode);
       }
 
+      initDisplayOrCreate() {
+        this.mode = (this.users.length) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
+      }
+
+      toggleMode() {
+        this.mode = (this.mode === this.modes.CREATE_NEW) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
+      }
+
       showCreateNewUserCard() {
         this.mode = this.modes.CREATE_NEW;
-        this.disableEdit = true;
       }
 
       updateUserList() {
         this.users = database.getUsers();
       }
 
-      checkForUsers(users) {
+      noUsersHeaderMessage(users) {
         return users.length === 0;
       }
 
