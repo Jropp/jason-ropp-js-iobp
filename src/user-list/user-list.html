@@ -115,7 +115,7 @@
       connectedCallback() {
         super.connectedCallback();
 
-        this.initDisplayOrCreate();
+        this.intiMode();
 
         document.addEventListener('lockMultipleEditSave', (e) => {
           this.disableFunctionality = e.detail;
@@ -126,7 +126,6 @@
         });
 
         document.addEventListener('cancel', () => {
-          // this.mode = this.modes.DISPLAY;
           this.toggleMode();
         });
 
@@ -143,7 +142,7 @@
         return (currentMode === expectedMode);
       }
 
-      initDisplayOrCreate() {
+      intiMode() {
         this.mode = (this.users.length) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
       }
 

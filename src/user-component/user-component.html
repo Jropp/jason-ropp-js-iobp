@@ -55,7 +55,7 @@
     </style>
 
     <div id="editUserFields" class="default-card">
-      <form on-keyup="emptyFieldsDisableSave" autocomplete="on">
+      <form on-input="emptyFieldsDisableSave" autocomplete="on">
         <h1>[[headerMessage(mode)]]</h1>
 
         <!-- bplint-disable no-auto-binding -->
@@ -111,9 +111,7 @@
             <template is="dom-if" if="[[user.id]]">
               <button on-click="delete" type="submit" formnovalidate>Delete</button>
             </template>
-
           </template>
-
           <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
             <button on-click="editButtonClicked" type="submit" disabled="[[disableEdit]]">Edit</button>
           </template>
@@ -133,7 +131,6 @@
           // edit, display
           mode: {
             type: String,
-            observer: 'toggleEditable'
           },
           modes: {
             type: Object,
@@ -160,7 +157,6 @@
           disableSave: {
             type: Boolean,
             value: false,
-            observer: 'checkForEmptyFields'
           },
           disableEdit: {
             type: Boolean,
@@ -201,12 +197,11 @@
         if (this.user.id || !this.disableEdit) {
           let fields = this.shadowRoot.querySelectorAll('input');
 
-          for (let field of fields) {
+          fields.forEach((field) => {
             if (!field.value.length) {
-              this.disableSave = true;
-              return;
+              return this.disableSave = true;
             }
-          }
+          });
 
           this.disableSave = false;
         }
