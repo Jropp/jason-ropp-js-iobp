@@ -170,10 +170,6 @@
         if (!this.user.id) {
           this.disableSave = true;
         }
-
-        // if (this.user.id) {
-        //   this.disableSave = false;
-        // }
       }
 
       save(e) {
@@ -186,8 +182,9 @@
           database.saveUser(user);
         }
 
-        this.editInProgress(false);
         this.resetFormState(this.user.id);
+        this.editInProgress(false);
+        this.disableSave = this.checkForEmptyFields();
       }
 
       whenEditOpenChanges(editOpen) {
