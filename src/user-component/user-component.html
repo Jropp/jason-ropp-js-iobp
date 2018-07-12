@@ -176,7 +176,86 @@
         } else {
           this.toggleEditable();
         }
+      }
 
+      cancel(e) {
+        e.preventDefault();
+
+        this.dispatchEvent(new CustomEvent('cancel', {
+          bubbles: true,
+          composed: true,
+        }));
+
+        this.shadowRoot.querySelector('form').reset();
+      }
+
+      checkIfFieldsFilled() {
+
+        let fields = this.shadowRoot.querySelectorAll('input');
+        let fieldsFilled = true;
+
+        fields.forEach(field => {
+          if (!field.value.length) {
+            fieldsFilled = false;
+          }
+        });
+
+        return fieldsFilled;
+      }
+
+      clearInputForm() {
+        this.shadowRoot.querySelector('form').reset();
+        this.disableSave = true;
+        for (let key of Object.keys(this.user)) {
+          this.user[key] = '';
+        }
+      }
+
+      delete(e) {
+        e.preventDefault();
+
+        database.deleteUser(this.user);
+        this.editInProgress(false);
+        this.mode = this.modes.DISPLAY;
+      }
+
+      editButtonClicked(e) {
+        e.preventDefault();
+        this.editInProgress(true);
+        this.toggleMode();
+      }
+
+      editInProgress(bool) {
+        this.dispatchEvent(new CustomEvent('editInProgress', {
+          bubbles: true,
+          composed: true,
+          detail: bool
+        }));
+      }
+
+      formWatcher() {
+        if (!this.editOpen && this.checkIfFieldsFilled()) {
+          this.disableSave = false;
+        }
+
+        if (!this.checkIfFieldsFilled()) {
+          this.disableSave = true;
+        }
+      }
+
+      headerMessage(mode) {
+        if (mode === this.modes.EDIT) {
+          return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
+        }
+        return '';
+      }
+
+      isMode(current, expected) {
+        return (current === expected);
+      }
+
+      resetFormState(id) {
+        return (id) ? this.toggleMode() : this.clearInputForm();
       }
 
       save(e) {
@@ -191,98 +270,6 @@
 
         this.resetFormState(this.user.id);
         this.editInProgress(false);
-        this.disableSave = this.checkForEmptyFields();
-      }
-
-      whenEditOpenChanges(editOpen) {
-        if (!this.user.id) {
-          if (editOpen) {
-            this.disableSave = true;
-          } else {
-            this.disableSave = this.checkForEmptyFields();
-          }
-        }
-      }
-
-      editInProgress(bool) {
-        this.dispatchEvent(new CustomEvent('editInProgress', {
-          bubbles: true,
-          composed: true,
-          detail: bool
-        }));
-      }
-
-      resetFormState(id) {
-        return (id) ? this.toggleMode() : this.clearInputForm();
-      }
-
-      clearInputForm() {
-        this.shadowRoot.querySelector('form').reset();
-
-        for (let key of Object.keys(this.user)) {
-          this.user[key] = '';
-        }
-      }
-
-      checkForEmptyFields() {
-
-        let fields = this.shadowRoot.querySelectorAll('input');
-
-        let fieldsEmpty = false;
-
-        fields.forEach(field => {
-          if (!field.value.length) {
-            fieldsEmpty = true;
-          }
-        });
-
-        return fieldsEmpty;
-      }
-
-      cancel(e) {
-        e.preventDefault();
-
-        this.dispatchEvent(new CustomEvent('cancel', {
-          bubbles: true,
-          composed: true,
-        }));
-
-        this.shadowRoot.querySelector('form').reset();
-      }
-
-      delete(e) {
-        e.preventDefault();
-
-        database.deleteUser(this.user);
-        this.editInProgress(false);
-        this.mode = this.modes.DISPLAY;
-      }
-
-      formWatcher() {
-        if (!this.editOpen && !this.checkForEmptyFields()) {
-          this.disableSave = false;
-        }
-
-        if (this.checkForEmptyFields()) {
-          this.disableSave = true;
-        }
-      }
-
-      isMode(current, expected) {
-        return (current === expected);
-      }
-
-      headerMessage(mode) {
-        if (mode === this.modes.EDIT) {
-          return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
-        }
-        return '';
-      }
-
-      editButtonClicked(e) {
-        e.preventDefault();
-        this.editInProgress(true);
-        this.toggleMode();
       }
 
       toggleMode(e) {
@@ -298,6 +285,13 @@
             input.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/(\s)?edit/, '') : name + ' edit';
             input.readOnly = this.isMode(this.mode, this.modes.DISPLAY);
           });
+      }
+
+      // FIXME: Edit button is not disabling when edit is opened
+      whenEditOpenChanges(editOpen) {
+        if (!this.user.id) {
+          this.disableSave = (editOpen) ? true : !this.checkIfFieldsFilled();
+        }
       }
     }
 
