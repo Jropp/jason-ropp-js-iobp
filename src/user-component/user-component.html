@@ -217,6 +217,7 @@
         database.deleteUser(this.user);
         this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
+        this.toggleEditable();
       }
 
       editButtonClicked(e) {

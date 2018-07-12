@@ -65,7 +65,7 @@
           <h2>There are currently no users in the database. Please create one.</h2>
         </template>
         <template is="dom-repeat" items="[[users]]" as="user">
-          <user-component disable-edit="[[disableFunctionality]]" mode="display" user="[[user]]"></user-component>
+          <user-component edit-open="[[editInProgress]]" mode="display" user="[[user]]"></user-component>
         </template>
       </div>
 
