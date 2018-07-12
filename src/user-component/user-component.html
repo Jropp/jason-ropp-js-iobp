@@ -224,45 +224,45 @@
         let fourDigit = '\\d{4}';
         let phoneFormat = new RegExp(optCountryCode + optDash + areaCode + optDash + threeDigit + optDash + fourDigit);
 
-        return phone.match(phoneFormat) !== null;
+        return phoneFormat.test(phone);
       }
 
       normalizePhoneNumber(phone) {
         let numbers = this.extractPhoneNumbers(phone);
-        let formattedNumber = this.insertPhoneSymbols(numbers);
-
-        return formattedNumber;
+        return this.formatPhoneNumber(numbers);
       }
 
       extractPhoneNumbers(formInput) {
         let numbers = [];
+        let isDigit = /\d/;
 
-        for (let character of formInput) {
-          if (character.match(/\d/)) {
-            numbers.push(character);
+        for (let char of formInput) {
+          if (isDigit.test(char)) {
+            numbers.push(char);
           }
         }
 
         return numbers;
       }
 
-      insertPhoneSymbols(phoneArray) {
+      formatPhoneNumber(phoneArray) {
         phoneArray = phoneArray.reverse();
+        let domesticSymbols = {
+          dash: { loc: 4, text: '-' },
+          spaceLoc: { loc: 8, text: ' ' },
+          leftParLoc: { loc: 9, text: ')' },
+          rightParLoc: { loc: 13, text: '(' },
 
-        let dashLoc = 4;
-        let spaceLoc = 8;
-        let leftParLoc = 9;
-        let rightParLoc = 13;
+        }
+
+        Object.keys(symbols).forEach(symbol => {
+          phoneArray.splice(symbol.loc, 0, symbol.text)
+        });
+
         let domesticNumLength = 14;
-        let intSpaceLoc = 14;
-
-        phoneArray.splice(dashLoc, 0, '-');
-        phoneArray.splice(spaceLoc, 0, ' ');
-        phoneArray.splice(leftParLoc, 0, ')');
-        phoneArray.splice(rightParLoc, 0, '(');
-
+        let interSpaceLoc = 14;
         if (phoneArray.length > domesticNumLength) {
-          phoneArray.splice(intSpaceLoc, 0, ' ');
+          phoneArray.splice(interSpaceLoc, 0, ' ');
 
           let internationalNumPre = '+';
           phoneArray.push(internationalNumPre);
