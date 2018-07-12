@@ -123,8 +123,13 @@
         this.mode = (this.users.length) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
       }
 
+<<<<<<< HEAD
       isMode(currentMode, expectedMode) {
         return (currentMode === expectedMode);
+=======
+      intiMode() {
+        this.mode = (this.users.length) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
+>>>>>>> database-api
       }
 
       noUsersHeaderMessage(users) {
