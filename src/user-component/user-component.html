@@ -156,7 +156,7 @@
           },
           disableSave: {
             type: Boolean,
-            value: true,
+            value: false,
           },
           editOpen: {
             type: Boolean,
@@ -165,13 +165,15 @@
           }
         };
       }
-
       connectedCallback() {
         super.connectedCallback();
-
         if (!this.user.id) {
           this.disableSave = true;
         }
+
+        // if (this.user.id) {
+        //   this.disableSave = false;
+        // }
       }
 
       save(e) {
@@ -231,7 +233,6 @@
         });
 
         return fieldsEmpty;
-
       }
 
       cancel(e) {
@@ -283,6 +284,8 @@
       toggleMode(e) {
         this.mode = this.isMode(this.mode, this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
       }
+
+      // FIXME: It's currently remaining in toggle mode
 
       toggleEditable() {
         this.shadowRoot.querySelectorAll('input')
