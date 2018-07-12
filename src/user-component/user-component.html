@@ -167,9 +167,16 @@
       }
       connectedCallback() {
         super.connectedCallback();
-        if (!this.user.id) {
+        this.initCardState();
+      }
+
+      initCardState() {
+        if (this.mode === this.modes.EDIT) {
           this.disableSave = true;
+        } else {
+          this.toggleEditable();
         }
+
       }
 
       save(e) {
@@ -280,15 +287,15 @@
 
       toggleMode(e) {
         this.mode = this.isMode(this.mode, this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
+        this.toggleEditable();
       }
-
-      // FIXME: It's currently remaining in toggle mode
 
       toggleEditable() {
         this.shadowRoot.querySelectorAll('input')
           .forEach(input => {
             let name = input.className;
-            input.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/\sedit/, '') : name + ' edit';
+
+            input.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/(\s)?edit/, '') : name + ' edit';
             input.readOnly = this.isMode(this.mode, this.modes.DISPLAY);
           });
       }
