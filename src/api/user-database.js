@@ -12,7 +12,7 @@ let database = (() => {
         return user;
       }
     });
-    return "User Not Found";
+    return {};
   }
 
   function editUser(user) {
