@@ -54,8 +54,8 @@
       }
     </style>
 
-    <div id="editUserFields" class="default-card">
-      <form on-input="emptyFieldsDisableSave" autocomplete="on">
+    <div id="checkForEmptyFields" class="default-card">
+      <form on-input="formWatcher" autocomplete="on">
         <h1>[[headerMessage(mode)]]</h1>
 
         <!-- bplint-disable no-auto-binding -->
@@ -113,7 +113,7 @@
             </template>
           </template>
           <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
-            <button on-click="editButtonClicked" type="submit" disabled="[[disableEdit]]">Edit</button>
+            <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
           </template>
 
         </div>
@@ -156,13 +156,22 @@
           },
           disableSave: {
             type: Boolean,
-            value: false,
+            value: true,
           },
-          disableEdit: {
+          editOpen: {
             type: Boolean,
-            value: false
+            value: false,
+            observer: 'whenEditOpenChanges'
           }
         };
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+
+        if (!this.user.id) {
+          this.disableSave = true;
+        }
       }
 
       save(e) {
@@ -175,8 +184,26 @@
           database.saveUser(user);
         }
 
-        this.lockMultipleEditSave(false);
+        this.editInProgress(false);
         this.resetFormState(this.user.id);
+      }
+
+      whenEditOpenChanges(editOpen) {
+        if (!this.user.id) {
+          if (editOpen) {
+            this.disableSave = true;
+          } else {
+            this.disableSave = this.checkForEmptyFields();
+          }
+        }
+      }
+
+      editInProgress(bool) {
+        this.dispatchEvent(new CustomEvent('editInProgress', {
+          bubbles: true,
+          composed: true,
+          detail: bool
+        }));
       }
 
       resetFormState(id) {
@@ -189,22 +216,21 @@
         for (let key of Object.keys(this.user)) {
           this.user[key] = '';
         }
-
-        this.emptyFieldsDisableSave();
       }
 
-      emptyFieldsDisableSave() {
-        if (this.user.id || !this.disableEdit) {
-          let fields = this.shadowRoot.querySelectorAll('input');
+      checkForEmptyFields() {
 
-          fields.forEach((field) => {
-            if (!field.value.length) {
-              return this.disableSave = true;
-            }
-          });
+        let fields = this.shadowRoot.querySelectorAll('input');
 
-          this.disableSave = false;
-        }
+        let fieldsEmpty = false;
+
+        fields.forEach(field => {
+          if (!field.value.length) {
+            fieldsEmpty = true;
+          }
+        });
+
+        return fieldsEmpty;
 
       }
 
@@ -223,16 +249,18 @@
         e.preventDefault();
 
         database.deleteUser(this.user);
-        this.lockMultipleEditSave(false);
+        this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
       }
 
-      lockMultipleEditSave(bool) {
-        this.dispatchEvent(new CustomEvent('lockMultipleEditSave', {
-          bubbles: true,
-          composed: true,
-          detail: bool
-        }));
+      formWatcher() {
+        if (!this.editOpen && !this.checkForEmptyFields()) {
+          this.disableSave = false;
+        }
+
+        if (this.checkForEmptyFields()) {
+          this.disableSave = true;
+        }
       }
 
       isMode(current, expected) {
@@ -248,7 +276,7 @@
 
       editButtonClicked(e) {
         e.preventDefault();
-        this.lockMultipleEditSave(true);
+        this.editInProgress(true);
         this.toggleMode();
       }
 
@@ -260,7 +288,7 @@
         this.shadowRoot.querySelectorAll('input')
           .forEach(input => {
             let name = input.className;
-            input.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/edit/, '') : name + ' edit';
+            input.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/\sedit/, '') : name + ' edit';
             input.readOnly = this.isMode(this.mode, this.modes.DISPLAY);
           });
       }

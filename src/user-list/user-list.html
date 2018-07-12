@@ -75,7 +75,7 @@
             <button on-click="toggleMode">+ Create New User</button>
           </template>
           <template is="dom-if" if="[[isMode(mode, modes.CREATE_NEW)]]">
-            <user-component disable-save="[[disableFunctionality]]" disable-edit="[[disableFunctionality]]" mode="edit"></user-component>
+            <user-component edit-open="[[editInProgress]]" mode="edit"></user-component>
           </template>
         </div>
       </div>
@@ -90,7 +90,7 @@
       static get is() { return 'user-list'; }
       static get properties() {
         return {
-          disableFunctionality: {
+          editInProgress: {
             type: Boolean,
             value: false
           },
@@ -117,8 +117,8 @@
 
         this.intiMode();
 
-        document.addEventListener('lockMultipleEditSave', (e) => {
-          this.disableFunctionality = e.detail;
+        document.addEventListener('editInProgress', (e) => {
+          this.editInProgress = e.detail;
         });
 
         document.addEventListener('databaseUpdated', (e) => {
