@@ -54,76 +54,72 @@
       }
     </style>
 
-    <<<<<<< HEAD <div id="checkForEmptyFields" class="default-card">
+    <div id="checkForEmptyFields" class="default-card">
       <form on-input="formWatcher" autocomplete="on">
-        =======
-        <div id="editUserFields" class="default-card">
-          <form on-input="emptyFieldsDisableSave" autocomplete="on">
-            >>>>>>> database-api
-            <h1>[[headerMessage(mode)]]</h1>
+        <h1>[[headerMessage(mode)]]</h1>
 
-            <!-- bplint-disable no-auto-binding -->
-            <fieldset>
-              <legend>
-                Name:
-              </legend>
+        <!-- bplint-disable no-auto-binding -->
+        <fieldset>
+          <legend>
+            Name:
+          </legend>
 
-              <input id="editfName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-                required>
-              <input id="editlName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-                required>
+          <input id="editfName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+            required>
+          <input id="editlName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+            required>
 
-            </fieldset>
-            <fieldset>
+        </fieldset>
+        <fieldset>
 
-              <legend>Contact:</legend>
+          <legend>Contact:</legend>
 
-              <label for="editEmail">
-                <input id="editEmail" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
-                  name="email" required>
-              </label>
-              <br>
-              <label for="editPhone">
-                <input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
-                  required>
-              </label>
+          <label for="editEmail">
+            <input id="editEmail" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
+              name="email" required>
+          </label>
+          <br>
+          <label for="editPhone">
+            <input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
+              required>
+          </label>
 
-            </fieldset>
-            <fieldset>
+        </fieldset>
+        <fieldset>
 
-              <legend>Other:</legend>
+          <legend>Other:</legend>
 
-              <label for="editDepartment">
-                <input id="editDepartment" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
-              </label>
+          <label for="editDepartment">
+            <input id="editDepartment" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
+          </label>
 
-              <template is="dom-if" if="[[user.id]]">
-                <p class="id">ID: [[user.id]]</p>
-              </template>
+          <template is="dom-if" if="[[user.id]]">
+            <p class="id">ID: [[user.id]]</p>
+          </template>
 
-            </fieldset>
-            <!-- bplint-enable no-auto-binding -->
-            <div class="submit-button-box">
-              <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
+        </fieldset>
+        <!-- bplint-enable no-auto-binding -->
+        <div class="submit-button-box">
+          <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
 
-                <button on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
+            <button on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
-                <template is="dom-if" if="[[!user.id]]">
-                  <button on-click="cancel" formnovalidate>Cancel</button>
-                </template>
+            <template is="dom-if" if="[[!user.id]]">
+              <button on-click="cancel" formnovalidate>Cancel</button>
+            </template>
 
-                <template is="dom-if" if="[[user.id]]">
-                  <button on-click="delete" type="submit" formnovalidate>Delete</button>
-                </template>
-              </template>
-              <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
-                <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
-              </template>
+            <template is="dom-if" if="[[user.id]]">
+              <button on-click="delete" type="submit" formnovalidate>Delete</button>
+            </template>
+          </template>
+          <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
+            <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
+          </template>
 
-            </div>
-
-          </form>
         </div>
+
+      </form>
+    </div>
   </template>
   <script type="module">
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
@@ -160,7 +156,7 @@
           },
           disableSave: {
             type: Boolean,
-            value: false,
+            value: false
           },
           editOpen: {
             type: Boolean,
@@ -193,7 +189,7 @@
         this.shadowRoot.querySelector('form').reset();
       }
 
-      checkIfFieldsFilled() {
+      fieldsFilled() {
 
         let fields = this.shadowRoot.querySelectorAll('input');
         let fieldsFilled = true;
@@ -239,11 +235,11 @@
       }
 
       formWatcher() {
-        if (!this.editOpen && this.checkIfFieldsFilled()) {
+        if (!this.editOpen && this.fieldsFilled()) {
           this.disableSave = false;
         }
 
-        if (!this.checkIfFieldsFilled()) {
+        if (!this.fieldsFilled()) {
           this.disableSave = true;
         }
       }
@@ -260,7 +256,7 @@
       }
 
       resetFormState(id) {
-        return (id) ? this.toggleMode() : this.clearInputForm();
+        return id ? this.toggleMode() : this.clearInputForm();
       }
 
       save(e) {
@@ -294,7 +290,7 @@
 
       whenEditOpenChanges(editOpen) {
         if (!this.user.id) {
-          this.disableSave = (editOpen) ? true : !this.checkIfFieldsFilled();
+          this.disableSave = editOpen ? true : !this.fieldsFilled();
         }
       }
     }

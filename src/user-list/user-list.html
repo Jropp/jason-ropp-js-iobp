@@ -98,11 +98,11 @@
 
         this.initMode();
 
-        document.addEventListener('editInProgress', (e) => {
+        document.addEventListener('editInProgress', e => {
           this.editInProgress = e.detail;
         });
 
-        document.addEventListener('databaseUpdated', (e) => {
+        document.addEventListener('databaseUpdated', e => {
           this.updateUserList();
         });
 
@@ -120,16 +120,11 @@
       }
 
       initMode() {
-        this.mode = (this.users.length) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
+        this.mode = this.users.length ? this.modes.DISPLAY : this.modes.CREATE_NEW;
       }
 
-<<<<<<< HEAD
       isMode(currentMode, expectedMode) {
         return (currentMode === expectedMode);
-=======
-      intiMode() {
-        this.mode = (this.users.length) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
->>>>>>> database-api
       }
 
       noUsersHeaderMessage(users) {
