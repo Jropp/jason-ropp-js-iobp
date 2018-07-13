@@ -22,25 +22,6 @@
         height: 50px;
       }
 
-      .default-card:hover {
-        height: 230px;
-        transition: height .4s ease-out;
-      }
-
-      .default-card:not(:hover) {
-        height: 50px;
-        transition: height .4s ease-in;
-      }
-
-      .default-card:hover>h3 {
-        opacity: 1;
-        transition: opacity 1.4s;
-      }
-
-      hgroup>h3 {
-        opacity: 0;
-      }
-
       button {
         background-color: #7395AE;
         color: black;
@@ -61,21 +42,21 @@
     <div class="display-container">
 
       <div class="user-list-column">
-        <template is="dom-if" if="[[checkForUsers(users)]]">
+        <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
           <h2>There are currently no users in the database. Please create one.</h2>
         </template>
         <template is="dom-repeat" items="[[users]]" as="user">
-          <user-component disable-edit="[[disableFunctionality]]" mode="display" user="[[user]]"></user-component>
+          <user-component edit-open="[[editInProgress]]" mode="display" user="[[user]]"></user-component>
         </template>
       </div>
 
       <div class="new-user-column">
         <div class="create-user-component">
           <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
-            <button on-click="showCreateNewUserCard">+ Create New User</button>
+            <button on-click="toggleMode">+ Create New User</button>
           </template>
           <template is="dom-if" if="[[isMode(mode, modes.CREATE_NEW)]]">
-            <user-component disable-save="[[disableFunctionality]]" mode="edit"></user-component>
+            <user-component edit-open="[[editInProgress]]" mode="edit"></user-component>
           </template>
         </div>
       </div>
@@ -85,17 +66,18 @@
   <script type="module">
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
 
+    import { database } from './../api/user-database.js';
     class UserListElement extends PolymerElement {
       static get is() { return 'user-list'; }
       static get properties() {
         return {
-          disableFunctionality: {
+          editInProgress: {
             type: Boolean,
             value: false
           },
           users: {
             type: Array,
-            value: () => JSON.parse(localStorage.getItem('onboardProjectUsers')) || []
+            value: () => database.getUsers()
           },
           mode: {
             type: String,
@@ -114,95 +96,51 @@
       connectedCallback() {
         super.connectedCallback();
 
-        this.mode = (this.users.length) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
+        this.initMode();
+
+        document.addEventListener('editInProgress', e => {
+          this.editInProgress = e.detail;
+        });
+
+        document.addEventListener('databaseUpdated', e => {
+          this.updateUserList();
+        });
 
         document.addEventListener('cancel', () => {
-          this.mode = this.modes.DISPLAY;
-        });
-
-        document.addEventListener('delete', (e) => {
-          this.delete(e.detail.user);
-          this.disableFunctionality = false;
-        });
-
-        document.addEventListener('save', (e) => {
-          this.save(e.detail.user);
-          this.disableFunctionality = false;
-        });
-
-        document.addEventListener('edit', () => {
-          this.disableFunctionality = true;
+          this.toggleMode();
         });
 
       }
 
       disconnectedCallback() {
         super.disconnectedCallback();
-
+        document.removeEventListener('editInProgress');
+        document.removeEventListener('databaseUpdated');
         document.removeEventListener('cancel');
-
-        document.removeEventListener('delete');
-
-        document.removeEventListener('save');
-
-        document.removeEventListener('edit');
-
       }
 
-      save(user) {
-        let index = this.getIdIndex(user.id);
-
-        const isNewUser = index === -1;
-        if (isNewUser) {
-          user.id = this.createNewUserId();
-          this.users.splice(0, 0, user);
-        } else {
-          this.users.splice(index, 1, user);
-        }
-
-        this.updateLocalStorage();
-      }
-
-      delete(user) {
-        this.users.splice(this.getIdIndex(user.id), 1);
-        this.updateLocalStorage();
-      }
-
-      createNewUserId() {
-        let id = '';
-        let asciiCharsLowest = 33;
-        let asciiCharsHighest = 123;
-        let idLength = 9;
-
-        for (let i = 0; i < idLength; i++) {
-          let charCode = Math.floor(Math.random() * (asciiCharsHighest - asciiCharsLowest)) + asciiCharsLowest;
-          id += String.fromCharCode(charCode);
-        }
-
-        let doesIdExist = this.getIdIndex(id) === -1;
-        return (doesIdExist) ? id : this.createNewUserId();
+      initMode() {
+        this.mode = this.users.length ? this.modes.DISPLAY : this.modes.CREATE_NEW;
       }
 
       isMode(currentMode, expectedMode) {
         return (currentMode === expectedMode);
       }
 
-      getIdIndex(id) {
-        return (this.users) ? this.users.findIndex(val => val.id === id) : -1;
+      noUsersHeaderMessage(users) {
+        return users.length === 0;
       }
 
       showCreateNewUserCard() {
         this.mode = this.modes.CREATE_NEW;
-        this.disableEdit = true;
       }
 
-      updateLocalStorage() {
-        localStorage.setItem('onboardProjectUsers', JSON.stringify(this.users));
-        this.users = JSON.parse(localStorage.getItem('onboardProjectUsers'));
+      toggleMode() {
+        this.mode = (this.mode === this.modes.CREATE_NEW) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
       }
 
-      checkForUsers(users) {
-        return users.length === 0;
+      updateUserList() {
+        this.users = database.getUsers();
       }
 
     }
