@@ -67,11 +67,8 @@
     <div id="checkForEmptyFields" class="default-card">
       <form on-input="formWatcher" autocomplete="on">
         <h1>[[headerMessage(mode)]]</h1>
-        <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
-          <p class="warning">[[warningMessage]]</p>
-        </template>
         <!-- bplint-disable no-auto-binding -->
-        <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
+        <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
           <fieldset>
             <label for="firstName">First:</label>
             <input id="firstName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
@@ -82,7 +79,7 @@
               required>
           </fieldset>
         </template>
-        <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
+        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <h1>[[user.last]], [[user.first]]</h1>
           <p class="warning">[[warningMessage]]</p>
         </template>
@@ -112,13 +109,13 @@
         <!-- bplint-enable no-auto-binding -->
         <div class="submit-button-box">
 
-          <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
-
+          <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
             <button on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
             <template is="dom-if" if="[[!user.id]]">
               <button on-click="cancel" formnovalidate>Cancel</button>
             </template>
+            <p class="warning">[[warningMessage]]</p>
 
             <template is="dom-if" if="[[user.id]]">
               <button on-click="delete" type="submit" formnovalidate>Delete</button>
@@ -126,7 +123,7 @@
 
           </template>
 
-          <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
+          <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
             <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
           </template>
 
@@ -171,7 +168,6 @@
           disableSave: {
             type: Boolean,
             value: false,
-            observer: 'setWarningMessage'
           },
           editOpen: {
             type: Boolean,
@@ -272,12 +268,12 @@
         return '';
       }
 
-      isMode(current, expected) {
-        return (current === expected);
+      isMode(expectedMode) {
+        return (expectedMode === this.mode);
       }
 
-      resetFormState(id) {
-        return id ? this.toggleMode() : this.clearInputForm();
+      resetFormState(editedUser) {
+        return editedUser ? this.toggleMode() : this.clearInputForm();
       }
 
       save(e) {
@@ -295,7 +291,7 @@
       }
 
       toggleMode(e) {
-        this.mode = this.isMode(this.mode, this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
+        this.mode = this.isMode(this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
         this.toggleEditable();
       }
 
@@ -304,15 +300,15 @@
           .forEach(input => {
             let name = input.className;
 
-            input.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/(\s)?edit/, '') : name + ' edit';
-            input.readOnly = this.isMode(this.mode, this.modes.DISPLAY);
+            input.className = this.isMode(this.modes.DISPLAY) ? name.replace(/(\s)?edit/, '') : name + ' edit';
+            input.readOnly = this.isMode(this.modes.DISPLAY);
           });
       }
 
       whenEditOpenChanges(editOpen) {
         if (!this.user.id) {
-          this.disableSave = editOpen ? true : !this.fieldsFilled();
-          this.warningMessage = editOpen ? 'Please save user edits first.' : '';
+          this.disableSave = editOpen || !this.fieldsFilled();
+          this.warningMessage = editOpen ? 'Please save other user edits before saving this one.' : '';
         }
       }
     }
