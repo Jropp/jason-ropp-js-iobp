@@ -64,8 +64,8 @@
       }
     </style>
 
-    <div id="editUserFields" class="default-card">
-      <form autocomplete="on">
+    <div id="checkForEmptyFields" class="default-card">
+      <form on-input="formWatcher" autocomplete="on">
         <h1>[[headerMessage(mode)]]</h1>
         <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
           <p class="warning">[[warningMessage]]</p>
@@ -114,7 +114,7 @@
 
           <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
 
-            <button on-click="save" type="submit">Save</button>
+            <button on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
             <template is="dom-if" if="[[!user.id]]">
               <button on-click="cancel" formnovalidate>Cancel</button>
@@ -127,10 +127,11 @@
           </template>
 
           <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
-            <button on-click="editButtonClicked" type="submit">Edit</button>
+            <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
           </template>
 
         </div>
+
       </form>
     </div>
   </template>
@@ -144,7 +145,6 @@
           // edit, display
           mode: {
             type: String,
-            observer: 'toggleEditable'
           },
           modes: {
             type: Object,
@@ -168,80 +168,37 @@
               };
             }
           },
-          users: {
-            type: Array,
-            value: () => database.getUsers()
-          },
           disableSave: {
             type: Boolean,
             value: false,
             observer: 'setWarningMessage'
           },
-          disableEdit: {
+          editOpen: {
             type: Boolean,
             value: false,
-            observer: 'setWarningMessage'
+            observer: 'whenEditOpenChanges'
           },
           warningMessage: {
-            type: String
+            type: String,
           }
         };
       }
-
-      save(e) {
-        e.preventDefault();
-
-        let userToSave = Object.assign({}, this.user);
-
-        if (this.validateSave()) {
-
-          if (!this.user.id) {
-            this.clearInputForm();
-          } else {
-            this.toggleMode();
-          }
-
-          this.dispatchEvent(new CustomEvent('save', {
-            bubbles: true,
-            composed: true,
-            detail: { user: userToSave }
-          }));
-        }
+      connectedCallback() {
+        super.connectedCallback();
+        this.initCardState();
       }
 
-      clearInputForm() {
-
-        this.shadowRoot.querySelector('form').reset();
-        this.setWarningMessage('');
-
-        for (let key of Object.keys(this.user)) {
-          this.user[key] = '';
+      initCardState() {
+        if (this.mode === this.modes.EDIT) {
+          this.disableSave = true;
+        } else {
+          this.toggleEditable();
         }
-
-      }
-
-      validateSave() {
-        if (this.disableSave) {
-          this.setWarningMessage('Please save user edits first.');
-          // window.alert('Please save user edits first.');
-          return false;
-        }
-
-        // Makes sure fields are filled
-        for (let key of Object.keys(this.user)) {
-          if (!this.user[key].length) {
-            if (key !== 'id') {
-              this.setWarningMessage('Please fill out all fields.');
-              // window.alert('Please fill out all fields.');
-              return false;
-            }
-          }
-        }
-        return true;
       }
 
       cancel(e) {
         e.preventDefault();
+
         this.dispatchEvent(new CustomEvent('cancel', {
           bubbles: true,
           composed: true,
@@ -250,20 +207,62 @@
         this.shadowRoot.querySelector('form').reset();
       }
 
+      fieldsFilled() {
+
+        let fields = this.shadowRoot.querySelectorAll('input');
+        let fieldsFilled = true;
+
+        fields.forEach(field => {
+          if (!field.value.length) {
+            fieldsFilled = false;
+          }
+        });
+
+        return fieldsFilled;
+      }
+
+      clearInputForm() {
+        this.shadowRoot.querySelector('form').reset();
+        this.setWarningMessage('');
+
+        this.disableSave = true;
+        for (let key of Object.keys(this.user)) {
+          this.user[key] = '';
+        }
+
+      }
+
       delete(e) {
         e.preventDefault();
 
-        this.dispatchEvent(new CustomEvent('delete', {
-          bubbles: true,
-          composed: true,
-          detail: { user: this.user }
-        }));
-
+        database.deleteUser(this.user);
+        this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
+        this.toggleEditable();
       }
 
-      isMode(currentMode, expectedMode) {
-        return (currentMode === expectedMode);
+      editButtonClicked(e) {
+        e.preventDefault();
+        this.editInProgress(true);
+        this.toggleMode();
+      }
+
+      editInProgress(bool) {
+        this.dispatchEvent(new CustomEvent('editInProgress', {
+          bubbles: true,
+          composed: true,
+          detail: bool
+        }));
+      }
+
+      formWatcher() {
+        if (!this.editOpen && this.fieldsFilled()) {
+          this.disableSave = false;
+        }
+
+        if (!this.fieldsFilled()) {
+          this.disableSave = true;
+        }
       }
 
       headerMessage(mode) {
@@ -273,41 +272,48 @@
         return '';
       }
 
-      setWarningMessage(message) {
-        // if (message === Boolean) {
-        //   this.warningMessage = '';
-        // }
-        this.warningMessage = (typeof message === 'boolean') ? '' : message;
+      isMode(current, expected) {
+        return (current === expected);
       }
 
-      editButtonClicked(e) {
-        e.preventDefault();
+      resetFormState(id) {
+        return id ? this.toggleMode() : this.clearInputForm();
+      }
 
-        if (this.disableEdit) {
-          this.setWarningMessage('Please save user edits first.');
-          return;
+      save(e) {
+        e.preventDefault();
+        let user = Object.assign({}, this.user);
+
+        if (user.id) {
+          database.editUser(user);
+        } else {
+          database.saveUser(user);
         }
 
-        this.dispatchEvent(new CustomEvent('edit', {
-          bubbles: true,
-          composed: true
-        }));
-
-        this.toggleMode();
+        this.resetFormState(this.user.id);
+        this.editInProgress(false);
       }
 
       toggleMode(e) {
         this.mode = this.isMode(this.mode, this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
+        this.toggleEditable();
       }
 
       toggleEditable() {
-
         this.shadowRoot.querySelectorAll('input')
-          .forEach(field => {
-            field.readOnly = this.isMode(this.mode, this.modes.DISPLAY);
-            let name = field.className;
-            field.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/edit/, '') : name + ' edit';
+          .forEach(input => {
+            let name = input.className;
+
+            input.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/(\s)?edit/, '') : name + ' edit';
+            input.readOnly = this.isMode(this.mode, this.modes.DISPLAY);
           });
+      }
+
+      whenEditOpenChanges(editOpen) {
+        if (!this.user.id) {
+          this.disableSave = editOpen ? true : !this.fieldsFilled();
+          this.warningMessage = editOpen ? 'Please save user edits first.' : '';
+        }
       }
     }
 

@@ -5,13 +5,14 @@ let database = (() => {
     return JSON.parse(localStorage.getItem("onboardProjectUsers")) || [];
   }
 
-  function getUser(userId) {
+  function getUserById(userId) {
     let users = getUsers();
     users.forEach(user => {
       if (user.id === userId) {
         return user;
       }
     });
+    return {};
   }
 
   function editUser(user) {
@@ -26,7 +27,6 @@ let database = (() => {
     let users = getUsers();
     user.id = createNewUserId();
     users.splice(0, 0, user);
-
     updateLocalStorage(users);
   }
 
@@ -47,6 +47,12 @@ let database = (() => {
 
   function updateLocalStorage(users) {
     localStorage.setItem("onboardProjectUsers", JSON.stringify(users));
+    document.dispatchEvent(
+      new CustomEvent("databaseUpdated", {
+        bubbles: true,
+        composed: true
+      })
+    );
   }
 
   function createNewUserId() {
@@ -68,7 +74,7 @@ let database = (() => {
 
   return {
     getUsers: getUsers,
-    getUser: getUser,
+    getUserById: getUserById,
     saveUser: saveUser,
     editUser: editUser,
     deleteUser: deleteUser,
