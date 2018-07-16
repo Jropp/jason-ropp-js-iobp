@@ -93,7 +93,11 @@
           <label for="phone">Phone:</label>
           <input id="phone" type="tel" class="phone edit" placeholder="(xxx) xxx-xxxx" autocomplete="tel" value="{{user.phone::change}}"
             required>
-          <p class="warning">[[phoneFormatMessage]]</p>
+          <br>
+
+          <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
+            <p class="warning">[[phoneFormatMessage]]</p>
+          </template>
 
           <label for="department">Department:</label>
           <input id="department" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
@@ -122,6 +126,7 @@
             </template>
 
             <p class="warning">[[warningMessage]]</p>
+
 
           </template>
 
@@ -187,6 +192,7 @@
       connectedCallback() {
         super.connectedCallback();
         this.initCardState();
+        this.formatUserData();
       }
 
       initCardState() {
@@ -274,6 +280,12 @@
         }));
       }
 
+      formatUserData() {
+        if (this.user.id.length) {
+          this.set('user.phone', this.insertPhoneSymbols());
+        }
+      }
+
       formWatcher() {
         if (!this.editOpen && this.fieldsFilled()) {
           this.disableSave = false;
@@ -289,6 +301,31 @@
           return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
         }
         return '';
+      }
+
+      insertPhoneSymbols() {
+        let phoneArray = this.user.phone.split('');
+        let domesticSymbols = [
+          { name: "dash", loc: 4, text: "-" },
+          { name: "spaceLoc", loc: 8, text: " " },
+          { name: "leftParLoc", loc: 9, text: ")" },
+          { name: "rightParLoc", loc: 13, text: "(" }
+        ];
+
+        domesticSymbols.forEach(symbol => {
+          phoneArray.splice(symbol.loc, 0, symbol.text);
+        });
+
+        let domesticNumLength = 14;
+        let interSpaceLoc = 14;
+        if (phoneArray.length > domesticNumLength) {
+          phoneArray.splice(interSpaceLoc, 0, " ");
+          let internationalNumPre = "+";
+          phoneArray.push(internationalNumPre);
+        }
+
+        phoneArray = phoneArray.reverse();
+        return phoneArray.join("");
       }
 
       isMode(expectedMode) {
