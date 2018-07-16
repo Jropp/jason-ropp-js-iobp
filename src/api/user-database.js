@@ -2,9 +2,7 @@ export { database };
 
 let database = (() => {
   function getUsers() {
-    let users = JSON.parse(localStorage.getItem("onboardProjectUsers")) || [];
-
-    return typeof users === "array" ? users : [users];
+    return JSON.parse(localStorage.getItem("onboardProjectUsers"));
   }
 
   function getUserById(userId) {
@@ -26,7 +24,7 @@ let database = (() => {
   }
 
   function saveUser(user) {
-    let users = getUsers();
+    let users = getUsers() ? getUsers() : [];
     let formattedUser = formatUserData(user);
     users.splice(0, 0, formattedUser);
     updateLocalStorage(users);
@@ -34,9 +32,8 @@ let database = (() => {
 
   function deleteUser(user) {
     let users = getUsers();
-    let formatedUser = formatUserData(user);
     users.splice(getIdIndex(user.id, users), 1);
-    updateLocalStorage(formatedUser);
+    updateLocalStorage(users);
   }
 
   function deleteUsers() {
