@@ -112,14 +112,15 @@
           <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
             <button on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
-            <template is="dom-if" if="[[!user.id]]">
-              <button on-click="cancel" formnovalidate>Cancel</button>
-            </template>
-            <p class="warning">[[warningMessage]]</p>
-
             <template is="dom-if" if="[[user.id]]">
               <button on-click="delete" type="submit" formnovalidate>Delete</button>
             </template>
+
+            <template is="dom-if" if="[[!user.id]]">
+              <button on-click="cancel" formnovalidate>Cancel</button>
+            </template>
+
+            <p class="warning">[[warningMessage]]</p>
 
           </template>
 
