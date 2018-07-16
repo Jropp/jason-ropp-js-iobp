@@ -64,14 +64,11 @@
       }
     </style>
 
-    <div id="editUserFields" class="default-card">
-      <form autocomplete="on">
+    <div id="checkForEmptyFields" class="default-card">
+      <form on-input="formWatcher" autocomplete="on">
         <h1>[[headerMessage(mode)]]</h1>
-        <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
-          <p class="warning">[[warningMessage]]</p>
-        </template>
         <!-- bplint-disable no-auto-binding -->
-        <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
+        <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
           <fieldset>
             <label for="firstName">First:</label>
             <input id="firstName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
@@ -82,7 +79,7 @@
               required>
           </fieldset>
         </template>
-        <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
+        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <h1>[[user.last]], [[user.first]]</h1>
           <p class="warning">[[warningMessage]]</p>
         </template>
@@ -96,7 +93,7 @@
           <label for="phone">Phone:</label>
           <input id="phone" type="tel" class="phone edit" placeholder="(xxx) xxx-xxxx" autocomplete="tel" value="{{user.phone::change}}"
             required>
-          <br>
+          <p class="warning">[[phoneFormatMessage]]</p>
 
           <label for="department">Department:</label>
           <input id="department" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
@@ -113,29 +110,33 @@
         <!-- bplint-enable no-auto-binding -->
         <div class="submit-button-box">
 
-          <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
-            <button on-click="normalizeUserInfo" type="submit">Save</button>
-
-            <template is="dom-if" if="[[!user.id]]">
-              <button on-click="cancel" formnovalidate>Cancel</button>
-            </template>
+          <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
+            <button on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
             <template is="dom-if" if="[[user.id]]">
               <button on-click="delete" type="submit" formnovalidate>Delete</button>
             </template>
 
+            <template is="dom-if" if="[[!user.id]]">
+              <button on-click="cancel" formnovalidate>Cancel</button>
+            </template>
+
+            <p class="warning">[[warningMessage]]</p>
+
           </template>
 
-          <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
-            <button on-click="editButtonClicked" type="submit">Edit</button>
+          <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+            <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
           </template>
 
         </div>
+
       </form>
     </div>
   </template>
   <script type="module">
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
+    import { database } from './../api/user-database.js';
     class UserComponentElement extends PolymerElement {
       static get is() { return 'user-component'; }
       static get properties() {
@@ -143,7 +144,6 @@
           // edit, display
           mode: {
             type: String,
-            observer: 'toggleEditable'
           },
           modes: {
             type: Object,
@@ -170,143 +170,36 @@
           disableSave: {
             type: Boolean,
             value: false,
-            observer: 'setWarningMessage'
           },
-          disableEdit: {
+          editOpen: {
             type: Boolean,
             value: false,
-            observer: 'setWarningMessage'
+            observer: 'whenEditOpenChanges'
           },
           warningMessage: {
-            type: String
+            type: String,
+          },
+          phoneFormatMessage: {
+            type: String,
           }
         };
       }
+      connectedCallback() {
+        super.connectedCallback();
+        this.initCardState();
+      }
 
-      normalizeUserInfo(e) {
-        e.preventDefault();
-
-        if (this.checkPhoneFormat(this.user.phone)) {
-          this.user.phone = this.normalizePhoneNumber(this.user.phone);
+      initCardState() {
+        if (this.mode === this.modes.EDIT) {
+          this.disableSave = true;
         } else {
-          window.alert('Please format number as (xxx) xxx-xxxx');
-          return;
-        }
-
-        this.save();
-      }
-
-      save(e) {
-
-        let validatedUserToSave = Object.assign({}, this.user);
-
-        if (this.validateSave()) {
-
-          if (!this.user.id) {
-            this.clearInputForm();
-          } else {
-            this.toggleMode();
-          }
-
-          this.dispatchEvent(new CustomEvent('save', {
-            bubbles: true,
-            composed: true,
-            detail: { user: validatedUserToSave }
-          }));
+          this.toggleEditable();
         }
       }
-
-      checkPhoneFormat(phone) {
-        let optCountryCode = '(^\\d{1,3})?';
-        let optDash = '[-\\s]?';
-        let areaCode = '(^)?\\(?\\d{3}\\)?';
-        let threeDigit = '\\d{3}';
-        let fourDigit = '\\d{4}';
-        let phoneFormat = new RegExp(optCountryCode + optDash + areaCode + optDash + threeDigit + optDash + fourDigit);
-
-        return phoneFormat.test(phone);
-      }
-
-      normalizePhoneNumber(phone) {
-        let numbers = this.extractPhoneNumbers(phone);
-        return this.formatPhoneNumber(numbers);
-      }
-
-      extractPhoneNumbers(formInput) {
-        let numbers = [];
-        let isDigit = /\d/;
-
-        for (let char of formInput) {
-          if (isDigit.test(char)) {
-            numbers.push(char);
-          }
-        }
-
-        return numbers;
-      }
-
-      formatPhoneNumber(phoneArray) {
-        phoneArray = phoneArray.reverse();
-        let domesticSymbols = {
-          dash: { loc: 4, text: '-' },
-          spaceLoc: { loc: 8, text: ' ' },
-          leftParLoc: { loc: 9, text: ')' },
-          rightParLoc: { loc: 13, text: '(' },
-
-        }
-
-        Object.keys(symbols).forEach(symbol => {
-          phoneArray.splice(symbol.loc, 0, symbol.text)
-        });
-
-        let domesticNumLength = 14;
-        let interSpaceLoc = 14;
-        if (phoneArray.length > domesticNumLength) {
-          phoneArray.splice(interSpaceLoc, 0, ' ');
-
-          let internationalNumPre = '+';
-          phoneArray.push(internationalNumPre);
-        }
-
-        phoneArray = phoneArray.reverse();
-        return phoneArray.join('');
-      }
-
-      clearInputForm() {
-
-        this.shadowRoot.querySelector('form').reset();
-        this.setWarningMessage('');
-
-        for (let key of Object.keys(this.user)) {
-          this.user[key] = '';
-        }
-
-      }
-
-      validateSave() {
-        if (this.disableSave) {
-          this.setWarningMessage('Please save user edits first.');
-          // window.alert('Please save user edits first.');
-          return false;
-        }
-
-        // Makes sure fields are filled
-        for (let key of Object.keys(this.user)) {
-          if (!this.user[key].length) {
-            if (key !== 'id') {
-              this.setWarningMessage('Please fill out all fields.');
-              // window.alert('Please fill out all fields.');
-              return false;
-            }
-          }
-        }
-        return true;
-      }
-
-      validatePhoneNumber() { }
 
       cancel(e) {
         e.preventDefault();
+
         this.dispatchEvent(new CustomEvent('cancel', {
           bubbles: true,
           composed: true,
@@ -315,20 +208,81 @@
         this.shadowRoot.querySelector('form').reset();
       }
 
+      validateUserInputFormat() {
+        if (this.checkPhoneFormat(this.user.phone)) {
+          return true;
+        } else {
+          this.togglePhoneFormatMessage();
+          return false;
+        }
+      }
+
+      fieldsFilled() {
+
+        let fields = this.shadowRoot.querySelectorAll('input');
+        let fieldsFilled = true;
+
+        fields.forEach(field => {
+          if (!field.value.length) {
+            fieldsFilled = false;
+          }
+        });
+
+        return fieldsFilled;
+      }
+
+      checkPhoneFormat(phone) {
+        let optCountryCode = '(^\\d{1,3})?';
+        let optDash = '[-\\s]?';
+        let areaCode = '(^)?\\(?\\d{3}\\)?';
+        let threeDigit = '\\d{3}';
+        let fourDigit = '\\d{4}$';
+        let phoneFormat = new RegExp(optCountryCode + optDash + areaCode + optDash + threeDigit + optDash + fourDigit);
+        return phoneFormat.test(phone);
+      }
+
+      clearInputForm() {
+        this.shadowRoot.querySelector('form').reset();
+        this.warningMessage = '';
+        this.togglePhoneFormatMessage();
+
+        this.disableSave = true;
+        for (let key of Object.keys(this.user)) {
+          this.user[key] = '';
+        }
+      }
+
       delete(e) {
         e.preventDefault();
 
-        this.dispatchEvent(new CustomEvent('delete', {
-          bubbles: true,
-          composed: true,
-          detail: { user: this.user }
-        }));
-
+        database.deleteUser(this.user);
+        this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
+        this.toggleEditable();
       }
 
-      isMode(currentMode, expectedMode) {
-        return (currentMode === expectedMode);
+      editButtonClicked(e) {
+        e.preventDefault();
+        this.editInProgress(true);
+        this.toggleMode();
+      }
+
+      editInProgress(bool) {
+        this.dispatchEvent(new CustomEvent('editInProgress', {
+          bubbles: true,
+          composed: true,
+          detail: bool
+        }));
+      }
+
+      formWatcher() {
+        if (!this.editOpen && this.fieldsFilled()) {
+          this.disableSave = false;
+        }
+
+        if (!this.fieldsFilled()) {
+          this.disableSave = true;
+        }
       }
 
       headerMessage(mode) {
@@ -338,41 +292,54 @@
         return '';
       }
 
-      setWarningMessage(message) {
-        // if (message === Boolean) {
-        //   this.warningMessage = '';
-        // }
-        this.warningMessage = (typeof message === 'boolean') ? '' : message;
+      isMode(expectedMode) {
+        return (expectedMode === this.mode);
       }
 
-      editButtonClicked(e) {
+      resetFormState(editedUser) {
+        return editedUser ? this.toggleMode() : this.clearInputForm();
+      }
+
+      save(e) {
         e.preventDefault();
+        if (this.validateUserInputFormat()) {
 
-        if (this.disableEdit) {
-          this.setWarningMessage('Please save user edits first.');
-          return;
+          let user = Object.assign({}, this.user);
+
+          if (user.id) {
+            database.editUser(user);
+          } else {
+            database.saveUser(user);
+          }
+
+          this.resetFormState(this.user.id);
+          this.editInProgress(false);
         }
-
-        this.dispatchEvent(new CustomEvent('edit', {
-          bubbles: true,
-          composed: true
-        }));
-
-        this.toggleMode();
       }
 
       toggleMode(e) {
-        this.mode = this.isMode(this.mode, this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
+        this.mode = this.isMode(this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
+        this.toggleEditable();
+      }
+      togglePhoneFormatMessage() {
+        this.phoneFormatMessage = (this.phoneFormatMessage === '') ? 'Please format phone number as (xxx) xxx-xxxx' : '';
       }
 
       toggleEditable() {
-
         this.shadowRoot.querySelectorAll('input')
-          .forEach(field => {
-            field.readOnly = this.isMode(this.mode, this.modes.DISPLAY);
-            let name = field.className;
-            field.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/edit/, '') : name + ' edit';
+          .forEach(input => {
+            let name = input.className;
+
+            input.className = this.isMode(this.modes.DISPLAY) ? name.replace(/(\s)?edit/, '') : name + ' edit';
+            input.readOnly = this.isMode(this.modes.DISPLAY);
           });
+      }
+
+      whenEditOpenChanges(editOpen) {
+        if (!this.user.id) {
+          this.disableSave = editOpen || !this.fieldsFilled();
+          this.warningMessage = editOpen ? 'Please save other user edits before saving this one.' : '';
+        }
       }
     }
 

@@ -5,13 +5,14 @@ let database = (() => {
     return JSON.parse(localStorage.getItem("onboardProjectUsers")) || [];
   }
 
-  function getUser(userId) {
+  function getUserById(userId) {
     let users = getUsers();
     users.forEach(user => {
       if (user.id === userId) {
         return user;
       }
     });
+    return {};
   }
 
   function editUser(user) {
@@ -25,8 +26,8 @@ let database = (() => {
   function saveUser(user) {
     let users = getUsers();
     user.id = createNewUserId();
-    users.splice(0, 0, user);
-
+    let normalizedUser = normalizeUserData(user);
+    users.splice(0, 0, normalizedUser);
     updateLocalStorage(users);
   }
 
@@ -45,8 +46,64 @@ let database = (() => {
     return users ? users.findIndex(val => val.id === id) : -1;
   }
 
+  function normalizeUserData(user) {
+    user.phone = normalizePhoneNumber(user);
+    return user;
+  }
+
+  function normalizePhoneNumber(user) {
+    let numbers = extractPhoneNumbers(user.phone);
+    let formattedNumber = insertPhoneSymbols(numbers);
+    return formattedNumber;
+  }
+
+  function extractPhoneNumbers(userPhoneInput) {
+    let numbers = [];
+    let isDigit = /\d/;
+
+    for (let char of userPhoneInput) {
+      if (isDigit.test(char)) {
+        numbers.push(char);
+      }
+    }
+
+    return numbers;
+  }
+
+  function insertPhoneSymbols(phoneArray) {
+    phoneArray = phoneArray.reverse();
+    let domesticSymbols = [
+      { name: "dash", loc: 4, text: "-" },
+      { name: "spaceLoc", loc: 8, text: " " },
+      { name: "leftParLoc", loc: 9, text: ")" },
+      { name: "rightParLoc", loc: 13, text: "(" }
+    ];
+
+    domesticSymbols.forEach(symbol => {
+      phoneArray.splice(symbol.loc, 0, symbol.text);
+    });
+
+    let domesticNumLength = 14;
+    let interSpaceLoc = 14;
+    if (phoneArray.length > domesticNumLength) {
+      phoneArray.splice(interSpaceLoc, 0, " ");
+
+      let internationalNumPre = "+";
+      phoneArray.push(internationalNumPre);
+    }
+
+    phoneArray = phoneArray.reverse();
+    return phoneArray.join("");
+  }
+
   function updateLocalStorage(users) {
     localStorage.setItem("onboardProjectUsers", JSON.stringify(users));
+    document.dispatchEvent(
+      new CustomEvent("databaseUpdated", {
+        bubbles: true,
+        composed: true
+      })
+    );
   }
 
   function createNewUserId() {
@@ -68,7 +125,7 @@ let database = (() => {
 
   return {
     getUsers: getUsers,
-    getUser: getUser,
+    getUserById: getUserById,
     saveUser: saveUser,
     editUser: editUser,
     deleteUser: deleteUser,
