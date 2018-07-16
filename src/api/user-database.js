@@ -25,7 +25,6 @@ let database = (() => {
 
   function saveUser(user) {
     let users = getUsers();
-    user.id = createNewUserId();
     let normalizedUser = normalizeUserData(user);
     users.splice(0, 0, normalizedUser);
     updateLocalStorage(users);
@@ -33,8 +32,9 @@ let database = (() => {
 
   function deleteUser(user) {
     let users = getUsers();
+    let normalizedUser = normalizeUserData(user);
     users.splice(getIdIndex(user.id, users), 1);
-    updateLocalStorage(users);
+    updateLocalStorage(normalizedUser);
   }
 
   function deleteUsers() {
@@ -47,6 +47,9 @@ let database = (() => {
   }
 
   function normalizeUserData(user) {
+    if (!user.id) {
+      user.id = user.id = createNewUserId();
+    }
     user.phone = normalizePhoneNumber(user);
     return user;
   }
@@ -87,7 +90,6 @@ let database = (() => {
     let interSpaceLoc = 14;
     if (phoneArray.length > domesticNumLength) {
       phoneArray.splice(interSpaceLoc, 0, " ");
-
       let internationalNumPre = "+";
       phoneArray.push(internationalNumPre);
     }

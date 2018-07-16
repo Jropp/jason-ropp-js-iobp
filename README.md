@@ -4,21 +4,14 @@
 
 This app allows you to create and edit user profiles, each of which have an ID, Name, Number, and Email Address.
 
-<<<<<<< HEAD
 To create a new user, click the 'Create User' button and fill out the form. Users will be added to the local storage database via the database API.
-=======
-To create a new user, click the 'Create User' button and fill out the form. Users will be added to the local storage database.
->>>>>>> master
 
 ## how to use
 
 ### Warning
 
-<<<<<<< HEAD
-=======
-Don't spit into the wind.
+Don't spit into the wind
 
->>>>>>> master
 ### Create User
 
 Click on 'Create New User' button, enter a user. If you leave a field empty, the save button will remain disabled.
@@ -31,13 +24,11 @@ You should be able to click the edit button and edit the fields for that user an
 
 If you already have an edit in process, all other edit and save buttons in other cards will be disabled.
 
-<<<<<<< HEAD
 If you begin to edit a card and try to save a new user or save your edit before saving the open edit, it will prompt you to save the other open edit first.
 
 If you click, delete, the user you selected to be deleted should disappear immediately, even if you have left an input field empty.
-=======
+
 If you leave a field empty the save button will remain disabled.
->>>>>>> master
 
 If you click delete, the user you selected to be deleted should disappear immediately, even if you have left an input field empty.
 
@@ -54,8 +45,6 @@ User component has two mode settings:
 Changing that mode in the code will cause the state of the card to be that mode on load.
 
 If no user is passed into the component it will serve as a 'create new user' card.
-<<<<<<< HEAD
-=======
 
 #### Disable Functionality
 
@@ -64,7 +53,6 @@ When an edit button is clicked in a user-component, that user-component dispatch
 `<user-component disableEdit=['true', 'false'] disableSave=['true', 'false']><user-component>`
 
 While disableEdit and disableSave have distinct uses in their respective 'New User' and 'Edit User' user-components, it is adviseable to send information into both the disableEdit and disableSave if both types of user-component are being used on the same page.
->>>>>>> master
 
 ### NPM Scripts
 
@@ -114,11 +102,7 @@ If you want to bundle the files locally to see how they will be organized in web
 
 To view the bundled files from the server:
 
-<<<<<<< HEAD
-`localhost:1820/localhost:8080/webpack-dev-server` in your browser.
-=======
 `localhost:1820/localhost:1820/webpack-dev-server` in your browser.
->>>>>>> master
 
 ##### Notes
 
