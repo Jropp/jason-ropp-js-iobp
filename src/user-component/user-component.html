@@ -115,6 +115,7 @@
         <div class="submit-button-box">
 
           <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
+            <!-- FIXME: this is staying disabled on edit -->
             <button on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
             <template is="dom-if" if="[[user.id]]">
@@ -285,8 +286,6 @@
       }
 
       formatUserData(user) {
-        console.log(user);
-
         if (user.id.length) {
           user.phone = this.insertPhoneSymbols(user.phone);
           this.user = user;
@@ -368,7 +367,7 @@
       }
 
       togglePhoneFormatMessage() {
-        // FIXME: This keeps popping up the message after deleting a user card or saving an edit. Also pops up randomly when you click edit on a card
+        // TODO:Check to see if you actually need a separate function for this
         this.phoneFormatMessage = (this.phoneFormatMessage === '') ? 'Please format phone number as (xxx) xxx-xxxx' : '';
       }
 
@@ -386,6 +385,11 @@
         if (!this.user.id) {
           this.disableSave = editOpen || !this.fieldsFilled();
           this.warningMessage = editOpen ? 'Please save other user edits before saving this one.' : '';
+        }
+
+        // FIXME: this fixes the bug that is disabling save for the open user edit, but can probably be fixed by reduction of code
+        else {
+          this.disableSave = false;
         }
       }
     }
