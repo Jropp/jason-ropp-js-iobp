@@ -243,7 +243,6 @@
 
       clearInputForm() {
         this.shadowRoot.querySelector('form').reset();
-        this.warningMessage = '';
         this.togglePhoneFormatMessage();
 
         this.disableSave = true;
@@ -296,8 +295,8 @@
         return (expectedMode === this.mode);
       }
 
-      resetFormState(editedUser) {
-        return editedUser ? this.toggleMode() : this.clearInputForm();
+      resetFormState(isEditedUser) {
+        return isEditedUser ? this.toggleMode() : this.clearInputForm();
       }
 
       save(e) {
@@ -319,8 +318,10 @@
 
       toggleMode(e) {
         this.mode = this.isMode(this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
+        this.togglePhoneFormatMessage();
         this.toggleEditable();
       }
+
       togglePhoneFormatMessage() {
         this.phoneFormatMessage = (this.phoneFormatMessage === '') ? 'Please format phone number as (xxx) xxx-xxxx' : '';
       }
