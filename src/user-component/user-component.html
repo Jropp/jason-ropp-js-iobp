@@ -186,13 +186,17 @@
           },
           phoneFormatMessage: {
             type: String,
+          },
+          userToDisplay: {
+            type: Object,
+            observer: 'formatUserData'
           }
         };
       }
+
       connectedCallback() {
         super.connectedCallback();
         this.initCardState();
-        this.formatUserData();
       }
 
       initCardState() {
@@ -280,9 +284,12 @@
         }));
       }
 
-      formatUserData() {
-        if (this.user.id.length) {
-          this.set('user.phone', this.insertPhoneSymbols());
+      formatUserData(user) {
+        console.log(user);
+
+        if (user.id.length) {
+          user.phone = this.insertPhoneSymbols(user.phone);
+          this.user = user;
         }
       }
 
@@ -303,8 +310,9 @@
         return '';
       }
 
-      insertPhoneSymbols() {
-        let phoneArray = this.user.phone.split('');
+      insertPhoneSymbols(phoneNumber) {
+        let phoneArray = phoneNumber.split('');
+        phoneArray = phoneArray.reverse();
         let domesticSymbols = [
           { name: "dash", loc: 4, text: "-" },
           { name: "spaceLoc", loc: 8, text: " " },
@@ -360,6 +368,7 @@
       }
 
       togglePhoneFormatMessage() {
+        // FIXME: This keeps popping up the message after deleting a user card or saving an edit. Also pops up randomly when you click edit on a card
         this.phoneFormatMessage = (this.phoneFormatMessage === '') ? 'Please format phone number as (xxx) xxx-xxxx' : '';
       }
 
