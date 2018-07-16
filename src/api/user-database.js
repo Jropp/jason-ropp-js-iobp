@@ -2,7 +2,9 @@ export { database };
 
 let database = (() => {
   function getUsers() {
-    return JSON.parse(localStorage.getItem("onboardProjectUsers")) || [];
+    let users = JSON.parse(localStorage.getItem("onboardProjectUsers")) || [];
+
+    return typeof users === "array" ? users : [users];
   }
 
   function getUserById(userId) {
@@ -25,16 +27,16 @@ let database = (() => {
 
   function saveUser(user) {
     let users = getUsers();
-    let normalizedUser = normalizeUserData(user);
-    users.splice(0, 0, normalizedUser);
+    let formattedUser = formatUserData(user);
+    users.splice(0, 0, formattedUser);
     updateLocalStorage(users);
   }
 
   function deleteUser(user) {
     let users = getUsers();
-    let normalizedUser = normalizeUserData(user);
+    let formatedUser = formatUserData(user);
     users.splice(getIdIndex(user.id, users), 1);
-    updateLocalStorage(normalizedUser);
+    updateLocalStorage(formatedUser);
   }
 
   function deleteUsers() {
@@ -46,11 +48,11 @@ let database = (() => {
     return users ? users.findIndex(val => val.id === id) : -1;
   }
 
-  function normalizeUserData(user) {
+  function formatUserData(user) {
     if (!user.id) {
       user.id = user.id = createNewUserId();
     }
-    user.phone = normalizePhoneNumber(user);
+    user.phone = getDigitsFromNumber(user.phone);
     return user;
   }
 
@@ -60,17 +62,16 @@ let database = (() => {
     return formattedNumber;
   }
 
-  function extractPhoneNumbers(userPhoneInput) {
+  function getDigitsFromNumber(userPhoneInput) {
     let numbers = [];
     let isDigit = /\d/;
-
     for (let char of userPhoneInput) {
       if (isDigit.test(char)) {
         numbers.push(char);
       }
     }
 
-    return numbers;
+    return numbers.join("");
   }
 
   function insertPhoneSymbols(phoneArray) {
