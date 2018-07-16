@@ -35,7 +35,7 @@
           <h2>There are currently no users in the database. Please create one.</h2>
         </template>
         <template is="dom-repeat" items="[[users]]" as="user">
-          <user-component edit-open="[[editInProgress]]" mode="display" user="[[user]]"></user-component>
+          <user-component edit-open="[[editInProgress]]" mode="display" user-to-display="[[user]]"></user-component>
         </template>
       </div>
 
@@ -92,7 +92,7 @@
         });
 
         document.addEventListener('databaseUpdated', e => {
-          this.updateUserList();
+          this.users = database.getUsers();
         });
 
         document.addEventListener('cancel', () => {
@@ -126,10 +126,6 @@
 
       toggleMode() {
         this.mode = (this.mode === this.modes.CREATE_NEW) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
-      }
-
-      updateUserList() {
-        this.users = database.getUsers();
       }
 
     }
