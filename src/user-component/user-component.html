@@ -313,10 +313,10 @@
         let phoneArray = phoneNumber.split('');
         phoneArray = phoneArray.reverse();
         let domesticSymbols = [
-          { name: "dash", loc: 4, text: "-" },
-          { name: "spaceLoc", loc: 8, text: " " },
-          { name: "leftParLoc", loc: 9, text: ")" },
-          { name: "rightParLoc", loc: 13, text: "(" }
+          { name: 'dash', loc: 4, text: '-' },
+          { name: 'spaceLoc', loc: 8, text: ' ' },
+          { name: 'leftParLoc', loc: 9, text: ')' },
+          { name: 'rightParLoc', loc: 13, text: '(' }
         ];
 
         domesticSymbols.forEach(symbol => {
@@ -326,13 +326,13 @@
         let domesticNumLength = 14;
         let interSpaceLoc = 14;
         if (phoneArray.length > domesticNumLength) {
-          phoneArray.splice(interSpaceLoc, 0, " ");
-          let internationalNumPre = "+";
+          phoneArray.splice(interSpaceLoc, 0, ' ');
+          let internationalNumPre = '+';
           phoneArray.push(internationalNumPre);
         }
 
         phoneArray = phoneArray.reverse();
-        return phoneArray.join("");
+        return phoneArray.join('');
       }
 
       isMode(expectedMode) {
@@ -385,13 +385,17 @@
         if (!this.user.id) {
           this.disableSave = editOpen || !this.fieldsFilled();
           this.warningMessage = editOpen ? 'Please save other user edits before saving this one.' : '';
-        }
-
-        // FIXME: this fixes the bug that is disabling save for the open user edit, but can probably be fixed by reduction of code
-        else {
+        } else {
           this.disableSave = false;
         }
+
+        // FIXME: this fixes the bug
+        // that is disabling save for the open user edit, but can probably be fixed by reduction of code.
+
+        // NOW NOT WORKING, not even in the current issue branch.
+
       }
+
     }
 
     customElements.define(UserComponentElement.is, UserComponentElement);

@@ -17,8 +17,9 @@ let database = (() => {
 
   function editUser(user) {
     let users = getUsers();
+    let formattedUser = formatUserData(user);
     let index = getIdIndex(user.id);
-    users.splice(index, 1, user);
+    users.splice(index, 1, formattedUser);
 
     updateLocalStorage(users);
   }
