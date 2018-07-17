@@ -87,17 +87,19 @@
 
         this.initMode();
 
-        document.addEventListener('editInProgress', e => {
-          this.editInProgress = e.detail;
+        document.addEventListener('cancel', () => {
+          this.toggleMode();
         });
 
         document.addEventListener('databaseUpdated', e => {
           this.users = database.getUsers();
         });
 
-        document.addEventListener('cancel', () => {
-          this.toggleMode();
+        document.addEventListener('editInProgress', e => {
+          this.editInProgress = e.detail;
         });
+
+
 
       }
 
@@ -118,10 +120,6 @@
 
       noUsersHeaderMessage(users) {
         return !users.length;
-      }
-
-      showCreateNewUserCard() {
-        this.mode = this.modes.CREATE_NEW;
       }
 
       toggleMode() {
