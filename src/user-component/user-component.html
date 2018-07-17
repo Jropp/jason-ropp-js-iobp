@@ -174,7 +174,7 @@
           },
           disableSave: {
             type: Boolean,
-            value: false,
+            value: true,
           },
           editOpen: {
             type: Boolean,
@@ -196,13 +196,11 @@
 
       connectedCallback() {
         super.connectedCallback();
-        this.initCardState();
+        this.initDisplayCard();
       }
 
-      initCardState() {
-        if (this.mode === this.modes.EDIT) {
-          this.disableSave = true;
-        } else {
+      initDisplayCard() {
+        if (this.isMode(this.modes.DISPLAY)) {
           this.toggleEditable();
         }
       }
@@ -215,33 +213,25 @@
           composed: true,
         }));
 
-        this.shadowRoot.querySelector('form').reset();
+        this.resetFormState();
       }
 
-      validateUserInputFormat() {
-        if (this.checkPhoneFormat(this.user.phone)) {
-          return true;
-        } else {
-          this.phoneFormatMessage = 'Please format phone number as (xxx) xxx-xxxx';
-          return false;
-        }
-      }
-
-      fieldsFilled() {
-
+      // TODO: Is there a way to get rid of let fieldsEmpty without breaking functionality?
+      fieldsEmpty() {
         let fields = this.shadowRoot.querySelectorAll('input');
-        let fieldsFilled = true;
+        let fieldsEmpty = false;
 
         fields.forEach(field => {
           if (!field.value.length) {
-            fieldsFilled = false;
+            fieldsEmpty = true;
           }
         });
 
-        return fieldsFilled;
+        return fieldsEmpty;
       }
 
       checkPhoneFormat(phone) {
+        // FIXME: currently a too long phone number is passing the test
         let optCountryCode = '(^\\d{1,3})?';
         let optDash = '[-\\s]?';
         let areaCode = '(^)?\\(?\\d{3}\\)?';
@@ -251,9 +241,8 @@
         return phoneFormat.test(phone);
       }
 
-      clearInputForm() {
+      clearNewUserForm() {
         this.shadowRoot.querySelector('form').reset();
-        this.phoneFormatMessage = '';
 
         this.disableSave = true;
         for (let key of Object.keys(this.user)) {
@@ -292,12 +281,13 @@
       }
 
       formWatcher() {
-        if (!this.editOpen && this.fieldsFilled()) {
-          this.disableSave = false;
+        if (this.editOpen || this.fieldsEmpty()) {
+          this.disableSave = true;
         }
 
-        if (!this.fieldsFilled()) {
-          this.disableSave = true;
+        if (!this.fieldsEmpty()) {
+          debugger;
+          this.disableSave = false;
         }
       }
 
@@ -339,12 +329,20 @@
       }
 
       resetFormState(isEditedUser) {
-        return isEditedUser ? this.toggleMode() : this.clearInputForm();
+        this.phoneFormatMessage = '';
+        this.editInProgress(false);
+
+        if (isEditedUser) {
+          this.toggleMode();
+        } else {
+          this.clearNewUserForm();
+        }
+
       }
 
       save(e) {
         e.preventDefault();
-        if (this.validateUserInputFormat()) {
+        if (this.checkPhoneFormat(this.user.phone)) {
 
           let user = Object.assign({}, this.user);
 
@@ -354,9 +352,9 @@
             database.saveUser(user);
           }
 
-          this.phoneFormatMessage = '';
           this.resetFormState(this.user.id);
-          this.editInProgress(false);
+        } else {
+          this.phoneFormatMessage = 'Please format phone number as (xxx) xxx-xxxx';
         }
       }
 
@@ -370,23 +368,18 @@
           .forEach(input => {
             let name = input.className;
 
-            input.className = this.isMode(this.modes.DISPLAY) ? name.replace(/(\s)?edit/, '') : name + ' edit';
+            input.className = this.isMode(this.modes.DISPLAY) ? name.replace(/\sedit/, '') : name + ' edit';
             input.readOnly = this.isMode(this.modes.DISPLAY);
           });
       }
 
       whenEditOpenChanges(editOpen) {
         if (!this.user.id) {
-          this.disableSave = editOpen || !this.fieldsFilled();
+          this.disableSave = editOpen || this.fieldsEmpty();
           this.warningMessage = editOpen ? 'Please save other user edits before saving this one.' : '';
         } else {
           this.disableSave = false;
         }
-
-        // FIXME: this fixes the bug
-        // that is disabling save for the open user edit, but can probably be fixed by reduction of code.
-
-        // NOW NOT WORKING, not even in the current issue branch.
 
       }
 
