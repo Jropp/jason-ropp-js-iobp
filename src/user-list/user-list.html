@@ -41,10 +41,10 @@
 
       <div class="new-user-column">
         <div class="create-user-component">
-          <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
+          <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
             <button on-click="toggleMode">+ Create New User</button>
           </template>
-          <template is="dom-if" if="[[isMode(mode, modes.CREATE_NEW)]]">
+          <template is="dom-if" if="[[isMode(modes.CREATE_NEW,mode)]]">
             <user-component edit-open="[[editInProgress]]" mode="edit"></user-component>
           </template>
         </div>
@@ -112,12 +112,12 @@
         this.mode = this.users.length ? this.modes.DISPLAY : this.modes.CREATE_NEW;
       }
 
-      isMode(currentMode, expectedMode) {
-        return (currentMode === expectedMode);
+      isMode(expectedMode) {
+        return (expectedMode === this.mode);
       }
 
       noUsersHeaderMessage(users) {
-        return users.length === 0;
+        return !users.length;
       }
 
       showCreateNewUserCard() {
@@ -125,7 +125,7 @@
       }
 
       toggleMode() {
-        this.mode = (this.mode === this.modes.CREATE_NEW) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
+        this.mode = (this.isMode(this.modes.CREATE_NEW)) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
       }
 
     }
