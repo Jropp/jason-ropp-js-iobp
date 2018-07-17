@@ -231,19 +231,13 @@
       }
 
       checkPhoneFormat(phone) {
-        // FIXME: BUG currently a too long phone number is passing the test. The problem is that the optional country code is not erroring out if its too long, it just matches using the other non optional parts
-
-        // Pseudocode fix
-
-        // ^ 1-3d (\s | -) plus area code OR just area code
-
         let optCountryCode = '(^\\d{1,3})?';
         let optDash = '[-\\s]?';
         let areaCode = '(^)?\\(?\\d{3}\\)?';
         let threeDigit = '\\d{3}';
         let fourDigit = '\\d{4}$';
         // new RegExp(optCountryCode + optDash + areaCode + optDash + threeDigit + optDash + fourDigit);
-        let phoneFormat = /(^\d{1,3})?((\s|-))?(^)?(\()?\d\d\d(\))?((\s|-))?\d\d\d((\s|-))?\d\d\d\d$/
+        let phoneFormat = /(^\d{1,3}((\s|-))?\(?\d\d\d\)?|^\(?\d\d\d\)?)((\s|-))?\d\d\d((\s|-))?\d\d\d\d$/
         return phoneFormat.test(phone);
       }
 
