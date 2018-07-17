@@ -115,7 +115,6 @@
         <div class="submit-button-box">
 
           <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
-            <!-- FIXME: this is staying disabled on edit -->
             <button on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
             <template is="dom-if" if="[[user.id]]">
@@ -223,7 +222,7 @@
         if (this.checkPhoneFormat(this.user.phone)) {
           return true;
         } else {
-          this.togglePhoneFormatMessage();
+          this.phoneFormatMessage = 'Please format phone number as (xxx) xxx-xxxx';
           return false;
         }
       }
@@ -254,7 +253,7 @@
 
       clearInputForm() {
         this.shadowRoot.querySelector('form').reset();
-        this.togglePhoneFormatMessage();
+        this.phoneFormatMessage = '';
 
         this.disableSave = true;
         for (let key of Object.keys(this.user)) {
@@ -355,6 +354,7 @@
             database.saveUser(user);
           }
 
+          this.phoneFormatMessage = '';
           this.resetFormState(this.user.id);
           this.editInProgress(false);
         }
@@ -362,13 +362,7 @@
 
       toggleMode(e) {
         this.mode = this.isMode(this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
-        this.togglePhoneFormatMessage();
         this.toggleEditable();
-      }
-
-      togglePhoneFormatMessage() {
-        // TODO:Check to see if you actually need a separate function for this
-        this.phoneFormatMessage = (this.phoneFormatMessage === '') ? 'Please format phone number as (xxx) xxx-xxxx' : '';
       }
 
       toggleEditable() {
