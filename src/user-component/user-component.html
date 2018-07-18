@@ -229,14 +229,12 @@
         return fieldsEmpty;
       }
 
-      checkPhoneFormat(phone) {
-        let countryAndAreaCode = '(^\\d{1,3}((\\s|-))?\\(?\\d{3}\\)?|^\\(?\\d{3}\\)?)';
-        let optDash = '((\\s|-))?';
-        let threeDigit = '\\d{3}';
-        let fourDigit = '\\d{4}$';
+      checkPhoneInput(phone) {
+        let digits = phone.replace(/\D/g, '');
+        let internationalMaxLength = 13;
+        let domesticNumLength = 10;
 
-        let phoneFormat = new RegExp(countryAndAreaCode + optDash + threeDigit + optDash + fourDigit);
-        return phoneFormat.test(phone);
+        return digits.length >= domesticNumLength && digits.length <= internationalMaxLength;
       }
 
       clearNewUserForm() {
@@ -339,7 +337,7 @@
 
       save(e) {
         e.preventDefault();
-        if (this.checkPhoneFormat(this.user.phone)) {
+        if (this.checkPhoneInput(this.user.phone)) {
 
           let user = Object.assign({}, this.user);
 

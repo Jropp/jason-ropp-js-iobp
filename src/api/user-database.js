@@ -54,39 +54,8 @@ let database = (() => {
     return user;
   }
 
-  function normalizePhoneNumber(user) {
-    let numbers = extractPhoneNumbers(user.phone);
-    let formattedNumber = insertPhoneSymbols(numbers);
-    return formattedNumber;
-  }
-
   function getDigitsFromNumber(userPhoneInput) {
     return userPhoneInput.replace(/\D/g, "");
-  }
-
-  function insertPhoneSymbols(phoneArray) {
-    phoneArray = phoneArray.reverse();
-    let domesticSymbols = [
-      { name: "dash", loc: 4, text: "-" },
-      { name: "spaceLoc", loc: 8, text: " " },
-      { name: "leftParLoc", loc: 9, text: ")" },
-      { name: "rightParLoc", loc: 13, text: "(" }
-    ];
-
-    domesticSymbols.forEach(symbol => {
-      phoneArray.splice(symbol.loc, 0, symbol.text);
-    });
-
-    let domesticNumLength = 14;
-    let interSpaceLoc = 14;
-    if (phoneArray.length > domesticNumLength) {
-      phoneArray.splice(interSpaceLoc, 0, " ");
-      let internationalNumPre = "+";
-      phoneArray.push(internationalNumPre);
-    }
-
-    phoneArray = phoneArray.reverse();
-    return phoneArray.join("");
   }
 
   function updateLocalStorage(users) {
