@@ -113,7 +113,7 @@
       }
 
       isMode(expectedMode) {
-        return (expectedMode === this.mode);
+        return expectedMode === this.mode;
       }
 
       noUsersHeaderMessage(users) {
@@ -121,7 +121,7 @@
       }
 
       toggleMode() {
-        this.mode = (this.isMode(this.modes.CREATE_NEW)) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
+        this.mode = this.isMode(this.modes.CREATE_NEW) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
       }
 
     }

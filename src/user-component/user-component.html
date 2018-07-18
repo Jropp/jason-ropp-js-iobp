@@ -180,6 +180,7 @@
             value: false,
             observer: 'whenEditOpenChanges'
           },
+
           warningMessage: {
             type: String,
           },
@@ -189,6 +190,13 @@
           userToDisplay: {
             type: Object,
             observer: 'formatUserData'
+          },
+          messages: {
+            type: Object,
+            value: {
+              PHONE_FORMAT: 'Please format phone number as (xxx) xxx-xxxx',
+              EDIT_OPEN: 'Please save other user edits before saving this one.'
+            }
           }
         };
       }
@@ -230,11 +238,11 @@
       }
 
       checkPhoneInput(phone) {
-        let digits = phone.replace(/\D/g, '');
-        let internationalMaxLength = 13;
-        let domesticNumLength = 10;
+        let phoneDigits = phone.replace(/\D/g, '');
+        let internationalDigitMax = 13;
+        let domesticDigitLength = 10;
 
-        return digits.length >= domesticNumLength && digits.length <= internationalMaxLength;
+        return phoneDigits.length >= domesticDigitLength && phoneDigits.length <= internationalDigitMax;
       }
 
       clearNewUserForm() {
@@ -307,9 +315,9 @@
           phoneArray.splice(symbol.loc, 0, symbol.text);
         });
 
-        let domesticNumLength = 14;
+        let domesticNumCharLength = 14;
         let interSpaceLoc = 14;
-        if (phoneArray.length > domesticNumLength) {
+        if (phoneArray.length > domesticNumCharLength) {
           phoneArray.splice(interSpaceLoc, 0, ' ');
           let internationalNumPre = '+';
           phoneArray.push(internationalNumPre);
@@ -349,7 +357,7 @@
 
           this.resetFormState(this.user.id);
         } else {
-          this.phoneFormatMessage = 'Please format phone number as (xxx) xxx-xxxx';
+          this.phoneFormatMessage = this.messages.PHONE_FORMAT;
         }
       }
 
@@ -371,7 +379,7 @@
       whenEditOpenChanges(editOpen) {
         if (!this.user.id) {
           this.disableSave = editOpen || this.fieldsEmpty();
-          this.warningMessage = editOpen ? 'Please save other user edits before saving this one.' : '';
+          this.warningMessage = editOpen ? this.messages.EDIT_OPEN : '';
         } else {
           this.disableSave = false;
         }
