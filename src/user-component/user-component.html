@@ -86,7 +86,7 @@
 
         <fieldset>
           <label for="email">Email:</label>
-          <input id="email" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
+          <input id="email" type="email" on-blur="validateEmailInput" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
             name="email" required>
           <br>
 
@@ -303,6 +303,37 @@
             input.className = this.isMode(this.modes.DISPLAY) ? name.replace(/(\s)?edit/, '') : name + ' edit';
             input.readOnly = this.isMode(this.modes.DISPLAY);
           });
+      }
+
+      /*
+      TODO:
+
+      Test email input. DONE
+      Set warning message. DONE
+      Disable Save. DONE
+      Fire function on-blur DONE
+      Test
+        Bugs:
+          1. Disable save doesn't hold against other checks
+          2. Warning message should be shown again if open edit is closed
+          3. Email enabling save is a loophole for getting a bad phone number in maybe?
+             This actually is probably solved in the validate phone branch
+
+
+
+
+      BONUS:
+
+      add on-blur check to phone input
+      */
+      validateEmailInput(e) {
+        let emailFormat = /^\S+@\S+\.\S+$/;
+        let formEmailInput = e.target.value;
+        let isValidEmail = emailFormat.test(formEmailInput);
+
+        this.warningMessage = isValidEmail ? '' : 'Please format email input as xxxx@xxxxx.xxx';
+
+        this.disableSave = !isValidEmail;
       }
 
       whenEditOpenChanges(editOpen) {
