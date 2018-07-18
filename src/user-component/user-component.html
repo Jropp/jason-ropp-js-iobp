@@ -81,7 +81,6 @@
         </template>
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <h1>[[user.last]], [[user.first]]</h1>
-          <p class="warning">[[warningMessage]]</p>
         </template>
 
         <fieldset>
@@ -216,7 +215,6 @@
         this.resetFormState();
       }
 
-      // TODO: Is there a way to get rid of let fieldsEmpty without breaking functionality?
       fieldsEmpty() {
         let fields = this.shadowRoot.querySelectorAll('input');
         let fieldsEmpty = false;
@@ -224,6 +222,7 @@
         fields.forEach(field => {
           if (!field.value.length) {
             fieldsEmpty = true;
+            return;
           }
         });
 
@@ -233,7 +232,6 @@
       checkPhoneFormat(phone) {
         let countryAndAreaCode = '(^\\d{1,3}((\\s|-))?\\(?\\d{3}\\)?|^\\(?\\d{3}\\)?)';
         let optDash = '((\\s|-))?';
-        let areaCode = '(^)?\\(?\\d{3}\\)?';
         let threeDigit = '\\d{3}';
         let fourDigit = '\\d{4}$';
 
