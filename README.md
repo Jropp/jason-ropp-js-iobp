@@ -8,10 +8,6 @@ To create a new user, click the 'Create User' button and fill out the form. User
 
 ## how to use
 
-### Warning
-
-Don't spit into the wind
-
 ### Create User
 
 Click on 'Create New User' button, enter a user. If you leave a field empty, the save button will remain disabled.
