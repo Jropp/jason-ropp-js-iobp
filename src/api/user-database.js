@@ -48,7 +48,7 @@ let database = (() => {
 
   function formatUserData(user) {
     if (!user.id) {
-      user.id = user.id = createNewUserId();
+      user.id = createNewUserId();
     }
     user.phone = getDigitsFromNumber(user.phone);
     return user;
@@ -61,15 +61,7 @@ let database = (() => {
   }
 
   function getDigitsFromNumber(userPhoneInput) {
-    let numbers = [];
-    let isDigit = /\d/;
-    for (let char of userPhoneInput) {
-      if (isDigit.test(char)) {
-        numbers.push(char);
-      }
-    }
-
-    return numbers.join("");
+    return userPhoneInput.replace(/\D/g, "");
   }
 
   function insertPhoneSymbols(phoneArray) {
