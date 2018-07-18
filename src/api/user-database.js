@@ -7,27 +7,25 @@ let database = (() => {
 
   function getUserById(userId) {
     let users = getUsers();
+    let match = {};
+
     users.forEach(user => {
       if (user.id === userId) {
-        return user;
+        match = user;
       }
     });
-    return {};
+    return match;
   }
 
   function editUser(user) {
     let users = getUsers();
-    let formattedUser = formatUserData(user);
-    let index = getIdIndex(user.id);
-    users.splice(index, 1, formattedUser);
-
+    users.splice(getIdIndex(user.id), 1, formatUserData(user));
     updateLocalStorage(users);
   }
 
   function saveUser(user) {
     let users = getUsers() ? getUsers() : [];
-    let formattedUser = formatUserData(user);
-    users.splice(0, 0, formattedUser);
+    users.splice(0, 0, formatUserData(user));
     updateLocalStorage(users);
   }
 
@@ -47,9 +45,7 @@ let database = (() => {
   }
 
   function formatUserData(user) {
-    if (!user.id) {
-      user.id = createNewUserId();
-    }
+    user.id = user.id || createNewUserId();
     user.phone = getDigitsFromNumber(user.phone);
     return user;
   }
