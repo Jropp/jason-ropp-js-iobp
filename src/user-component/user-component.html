@@ -174,6 +174,16 @@
             value: false,
             observer: 'whenEditOpenChanges'
           },
+          messages: {
+            type: Object,
+            value: () => {
+              return {
+                EDIT_OPEN: 'Please save other user edits before saving this one.',
+                PHONE_FORMAT: 'Please format phone as (xxx) xxx-xxxx',
+                EMAIL_FORMAT: 'Please format email input as xxxx@xxxxx.xxx'
+              }
+            }
+          },
           warningMessage: {
             type: String,
           }
@@ -185,10 +195,9 @@
       }
 
       initCardState() {
-        // FIXME: User email warning message is persisting after cancel and reopened card
         if (this.mode === this.modes.EDIT) {
           this.disableSave = true;
-          this.warningMessage = this.openEdit ? 'Please save other user edits before saving this one.' : ''
+          this.warningMessage = '';
         } else {
           this.toggleEditable();
         }
@@ -250,27 +259,31 @@
         }));
       }
 
-      formWatcher() {
-        // FIXME: empty fields are not disabling save in an open edit
-        // FIXME: email format warning message not displaying in open edit. Button is disabling properly though.
+      emailInputWatcher() {
+        let editUser = this.user.id;
+        let isValidEmail = this.validateEmailInput(this.user.email);
 
+        this.disableSave = (this.editOpen && !editUser) || !isValidEmail || !this.fieldsFilled();
+
+        this.updateWarningMessages();
+      }
+
+      formWatcher() {
 
         if (!this.editOpen && this.fieldsFilled() && this.validateEmailInput(this.user.email)) {
           this.disableSave = false;
         }
 
         if (this.editOpen || !this.fieldsFilled() || !this.validateEmailInput(this.user.email)) {
+
           this.disableSave = true;
         }
-
-        this.disableSave = !this.validateEmailInput(this.user.email);
       }
 
       headerMessage(mode) {
         if (mode === this.modes.EDIT) {
           return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
         }
-
         return '';
       }
 
@@ -311,66 +324,20 @@
           });
       }
 
-      /*
-      TODO:
+      updateWarningMessages() {
+        let openEditWarning = this.messages.EDIT_OPEN;
+        let emailFormatWarning = this.messages.EMAIL_FORMAT;
+        let isNewUser = !this.user.id;
 
-      Test email input. DONE
-      Set warning message. DONE
-      Disable Save. DONE
-      Fire function on-blur DONE
-      Test
-        Bugs:
-            1. FIXME: empty fields is not disabling save in an open edit
-            1. FIXME: if you start deleting an email one character at a time from the end, save is enabled (it reads .co as a valid format)
-
-
-
-        COMPLETED
-          1. Disable save doesn't hold against other checks SOFAR DONE
-              a. Fields filled DONE
-              b. Open Edit Closed DONE
-          2. Warning message should be shown again if open edit is closed DONE SLOPPY
-              b. use query selector instead of args
-              c. update calls to it
-          4. Correcting email while open edit enables save button DONE
-          5. Email warning shows when user card is loaded DONE
-
-      BONUS:
-
-      add on-blur check to phone input
-      */
-
-      emailInputWatcher() {
-        let editUser = this.user.id;
-        let isValidEmail = this.validateEmailInput(this.user.email);
-        if (isValidEmail) {
-          this.warningMessage = this.editOpen && !this.user.id ? 'Please save other user edits before saving this one.' : '';
-        } else {
-          if (editUser) {
-            this.warningMessage = !this.editOpen ? '' : 'Please format email input as xxxx@xxxxx.xxx';
+        if (this.editOpen) {
+          if (isNewUser) {
+            this.warningMessage = openEditWarning;
           } else {
-            this.warningMessage = this.editOpen ? 'Please save other user edits before saving this one.' : 'Please format email input as xxxx@xxxxx.xxx';
+            this.warningMessage = this.validateEmailInput() ? '' : emailFormatWarning;
           }
-
-
-
+        } else {
+          this.warningMessage = this.validateEmailInput() ? '' : emailFormatWarning;
         }
-
-        // TODO: Refactor these to eliminate redundancy
-        // To keep email from taking over the open edit warning
-
-
-        // if (!this.editOpen) {
-        //   this.warningMessage = isValidEmail ? '' : 'Please format email input as xxxx@xxxxx.xxx';
-        // }
-
-        // // So message displays in open edit
-        // if (this.editOpen && this.user.id) {
-        //   this.warningMessage = isValidEmail ? '' : 'Please format email input as xxxx@xxxxx.xxx';
-        // }
-
-        // TODO: Redundancy that can be put into its own function?
-        this.disableSave = (this.editOpen && !this.user.id) || !isValidEmail || !this.fieldsFilled();
       }
 
       validateEmailInput() {
@@ -380,16 +347,10 @@
 
       whenEditOpenChanges(editOpen) {
         if (!this.user.id) {
-          // TODO: Redundancy that can be put into its own function?
+
           this.disableSave = editOpen || !this.fieldsFilled() || !this.validateEmailInput();
 
-          if (!this.validateEmailInput() && !editOpen) {
-            console.log('x');
-
-            this.warningMessage = 'Please format email input as xxxx@xxxxx.xxx';
-          } else {
-            this.warningMessage = editOpen ? 'Please save other user edits before saving this one.' : '';
-          }
+          this.updateWarningMessages();
         }
       }
     }
