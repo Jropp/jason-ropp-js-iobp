@@ -81,7 +81,6 @@
         </template>
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <h1>[[user.last]], [[user.first]]</h1>
-          <p class="warning">[[warningMessage]]</p>
         </template>
 
         <fieldset>
@@ -175,6 +174,16 @@
             value: false,
             observer: 'whenEditOpenChanges'
           },
+          messages: {
+            type: Object,
+            value: () => {
+              return {
+                EDIT_OPEN: 'Please save other user edits before saving this one.',
+                PHONE_FORMAT: 'Please format phone as (xxx) xxx-xxxx',
+                EMAIL_FORMAT: 'Please format email input as xxxx@xxxxx.xxx'
+              }
+            }
+          },
           warningMessage: {
             type: String,
           }
@@ -188,7 +197,7 @@
       initCardState() {
         if (this.mode === this.modes.EDIT) {
           this.disableSave = true;
-          this.warningMessage = this.openEdit ? 'Please save other user edits before saving this one.' : ''
+          this.warningMessage = '';
         } else {
           this.toggleEditable();
         }
@@ -221,7 +230,6 @@
 
       clearInputForm() {
         this.shadowRoot.querySelector('form').reset();
-        this.setWarningMessage('');
 
         this.disableSave = true;
         for (let key of Object.keys(this.user)) {
@@ -251,12 +259,23 @@
         }));
       }
 
+      emailInputWatcher() {
+        let editUser = this.user.id;
+        let isValidEmail = this.validateEmailInput(this.user.email);
+
+        this.disableSave = (this.editOpen && !editUser) || !isValidEmail || !this.fieldsFilled();
+
+        this.updateWarningMessages();
+      }
+
       formWatcher() {
+
         if (!this.editOpen && this.fieldsFilled() && this.validateEmailInput(this.user.email)) {
           this.disableSave = false;
         }
 
         if (this.editOpen || !this.fieldsFilled() || !this.validateEmailInput(this.user.email)) {
+
           this.disableSave = true;
         }
       }
@@ -265,12 +284,11 @@
         if (mode === this.modes.EDIT) {
           return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
         }
-
         return '';
       }
 
       isMode(expectedMode) {
-        return (expectedMode === this.mode);
+        return expectedMode === this.mode;
       }
 
       resetFormState(editedUser) {
@@ -306,59 +324,33 @@
           });
       }
 
-      /*
-      TODO:
+      updateWarningMessages() {
+        let openEditWarning = this.messages.EDIT_OPEN;
+        let emailFormatWarning = this.messages.EMAIL_FORMAT;
+        let isNewUser = !this.user.id;
 
-      Test email input. DONE
-      Set warning message. DONE
-      Disable Save. DONE
-      Fire function on-blur DONE
-      Test
-        Bugs:
-
-
-        TODO
-
-
-
-        COMPLETED
-          1. Disable save doesn't hold against other checks SOFAR DONE
-              a. Fields filled DONE
-              b. Open Edit Closed DONE
-          2. Warning message should be shown again if open edit is closed DONE SLOPPY
-              b. use query selector instead of args
-              c. update calls to it
-          4. Correcting email while open edit enables save button DONE
-          5. Email warning shows when user card is loaded DONE
-
-      BONUS:
-
-      add on-blur check to phone input
-      */
-
-      emailInputWatcher() {
-
-        let userInput = this.user.email;
-        let isValidEmail = this.validateEmailInput(userInput);
-
-        this.warningMessage = isValidEmail ? '' : 'Please format email input as xxxx@xxxxx.xxx';
-
-        this.disableSave = !isValidEmail || this.editOpen || !this.fieldsFilled();
-        debugger;
+        if (this.editOpen) {
+          if (isNewUser) {
+            this.warningMessage = openEditWarning;
+          } else {
+            this.warningMessage = this.validateEmailInput() ? '' : emailFormatWarning;
+          }
+        } else {
+          this.warningMessage = this.validateEmailInput() ? '' : emailFormatWarning;
+        }
       }
 
-      validateEmailInput(userInput) {
+      validateEmailInput() {
         let emailFormat = /^\S+@\S+\.\S+$/;
-        return emailFormat.test(userInput);
+        return emailFormat.test(this.user.email);
       }
 
       whenEditOpenChanges(editOpen) {
         if (!this.user.id) {
-          this.disableSave = editOpen || !this.fieldsFilled() || !this.validateEmailInput(this.user.email);
-          this.warningMessage = editOpen ? 'Please save other user edits before saving this one.' : '';
-          if (!editOpen) {
-            this.emailInputWatcher();
-          }
+
+          this.disableSave = editOpen || !this.fieldsFilled() || !this.validateEmailInput();
+
+          this.updateWarningMessages();
         }
       }
     }
