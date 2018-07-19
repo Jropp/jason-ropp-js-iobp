@@ -90,8 +90,8 @@
           <br>
 
           <label for="phone">Phone:</label>
-          <input id="phone" type="tel" class="phone edit" placeholder="(xxx) xxx-xxxx" autocomplete="tel" value="{{user.phone::change}}"
-            required>
+          <input id="phone" type="tel" on-blur="phoneInputWatcher" class="phone edit" placeholder="(xxx) xxx-xxxx" autocomplete="tel"
+            value="{{user.phone::change}}" required>
           <br>
 
           <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
@@ -343,22 +343,27 @@
 
       }
 
+      phoneInputWatcher() {
+        if (!this.checkPhoneInput(this.user.phone)) {
+          this.phoneFormatMessage = this.messages.PHONE_FORMAT;
+          this.disableSave = true;
+        } else {
+          this.phoneFormatMessage = '';
+        }
+      }
+
       save(e) {
         e.preventDefault();
-        if (this.checkPhoneInput(this.user.phone)) {
 
-          let user = Object.assign({}, this.user);
+        let user = Object.assign({}, this.user);
 
-          if (user.id) {
-            database.editUser(user);
-          } else {
-            database.saveUser(user);
-          }
-
-          this.resetFormState(this.user.id);
+        if (user.id) {
+          database.editUser(user);
         } else {
-          this.phoneFormatMessage = this.messages.PHONE_FORMAT;
+          database.saveUser(user);
         }
+
+        this.resetFormState(this.user.id);
       }
 
       toggleMode(e) {
