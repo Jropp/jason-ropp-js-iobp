@@ -188,6 +188,7 @@
       initCardState() {
         if (this.mode === this.modes.EDIT) {
           this.disableSave = true;
+          this.warningMessage = this.openEdit ? 'Please save other user edits before saving this one.' : ''
         } else {
           this.toggleEditable();
         }
@@ -315,25 +316,29 @@
       Test
         Bugs:
 
-          PULL IN CHANGES FROM MASTER
+
+        TODO
+
+
+
+        COMPLETED
           1. Disable save doesn't hold against other checks SOFAR DONE
               a. Fields filled DONE
               b. Open Edit Closed DONE
           2. Warning message should be shown again if open edit is closed DONE SLOPPY
               b. use query selector instead of args
               c. update calls to it
-          3. Email enabling save is a loophole for getting a bad phone number in maybe?
-             This actually is probably solved in the validate phone branch
-          4. Correcting email while open edit enables save button
+          4. Correcting email while open edit enables save button DONE
+          5. Email warning shows when user card is loaded DONE
 
       BONUS:
 
       add on-blur check to phone input
       */
-      // FIXME: shouldn't use two args here, see if there is another way, actually just use a query selector for all instances, or see if this .user works
-      emailInputWatcher(e, arg) {
 
-        let userInput = e ? e.target.value : arg;
+      emailInputWatcher() {
+
+        let userInput = this.user.email;
         let isValidEmail = this.validateEmailInput(userInput);
 
         this.warningMessage = isValidEmail ? '' : 'Please format email input as xxxx@xxxxx.xxx';
@@ -352,7 +357,7 @@
           this.disableSave = editOpen || !this.fieldsFilled() || !this.validateEmailInput(this.user.email);
           this.warningMessage = editOpen ? 'Please save other user edits before saving this one.' : '';
           if (!editOpen) {
-            this.emailInputWatcher(null, this.user.email);
+            this.emailInputWatcher();
           }
         }
       }
