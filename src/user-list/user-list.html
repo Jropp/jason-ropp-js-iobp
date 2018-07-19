@@ -12,21 +12,11 @@
         padding: 10px;
       }
 
-      .default-card {
-        background-color: #B1A296;
-        width: 300px;
-        padding: 10px;
-        margin: 10px;
-        border-radius: 5px;
-        box-shadow: 3px 3px 2px black;
-        height: 50px;
-      }
-
       button {
+        height: 40px;
+        border: none;
         background-color: #7395AE;
         color: black;
-        border: none;
-        height: 40px;
         border-radius: 3px;
       }
 
@@ -40,7 +30,6 @@
       }
     </style>
     <div class="display-container">
-
       <div class="user-list-column">
         <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
           <h2>There are currently no users in the database. Please create one.</h2>

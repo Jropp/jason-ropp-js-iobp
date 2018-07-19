@@ -10,6 +10,46 @@
         display: block;
       }
 
+      .default-card {
+        width: fit-content;
+        min-width: 500px;
+        min-height: 400px;
+        margin: 5px;
+        padding: 15px;
+        border: #7395ae 1px solid;
+        border-radius: 5px;
+        box-shadow: 3px 3px 2px lightgrey;
+        background-color: white;
+      }
+
+      fieldset {
+        margin: 10px;
+        border: #7395ae 2px solid;
+        border-radius: 3px;
+      }
+
+      .default-card>input .first-name .last-name {
+        width: 20px;
+      }
+
+      input {
+        margin: 5px;
+        border: none;
+        font-size: 20px
+      }
+
+      .edit {
+        border-bottom: lightgray solid 1px;
+      }
+
+      .email {
+        width: 50%;
+      }
+
+      .id {
+        font-size: 20px;
+      }
+
       button {
         margin: 10px;
         width: 60px;
@@ -18,101 +58,73 @@
         background-color: #7395ae;
       }
 
-      .default-card {
-        background-color: white;
-        min-width: 300px;
-        width: fit-content;
-        padding: 15px;
-        margin: 5px;
-        border: lightgray 1px solid;
-        border-radius: 5px;
-        box-shadow: 3px 3px 2px lightgrey;
-      }
-
-      .default-card>input .first-name .last-name {
-        width: 20px;
-      }
-
-      .edit {
-        border-bottom: lightgray solid 1px;
-      }
-
-      .email {
-        font-size: 14px;
-        width: 50%;
-      }
-
-      input {
-        margin: 5px;
-        border: none;
+      .warning {
+        color: red;
         font-size: 20px;
-      }
-
-      .id {
-        font-size: 15px;
-        margin-left: 6px;
       }
     </style>
 
     <div id="checkForEmptyFields" class="default-card">
       <form on-input="formWatcher" autocomplete="on">
         <h1>[[headerMessage(mode)]]</h1>
-
         <!-- bplint-disable no-auto-binding -->
-        <fieldset>
-          <legend>
-            Name:
-          </legend>
-
-          <input id="editfName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-            required>
-          <input id="editlName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-            required>
-
-        </fieldset>
-        <fieldset>
-
-          <legend>Contact:</legend>
-
-          <label for="editEmail">
-            <input id="editEmail" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
-              name="email" required>
-          </label>
-          <br>
-          <label for="editPhone">
-            <input id="editPhone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}"
+        <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
+          <fieldset>
+            <label for="firstName">First:</label>
+            <input id="firstName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
               required>
-          </label>
 
-        </fieldset>
+            <label for="lastName">Last:</label>
+            <input id="lastName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+              required>
+          </fieldset>
+        </template>
+        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+          <h1>[[user.last]], [[user.first]]</h1>
+          <p class="warning">[[warningMessage]]</p>
+        </template>
+
         <fieldset>
+          <label for="email">Email:</label>
+          <input id="email" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
+            name="email" required>
+          <br>
 
-          <legend>Other:</legend>
+          <label for="phone">Phone:</label>
+          <input id="phone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
+          <br>
 
-          <label for="editDepartment">
-            <input id="editDepartment" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
-          </label>
-
-          <template is="dom-if" if="[[user.id]]">
-            <p class="id">ID: [[user.id]]</p>
-          </template>
-
+          <label for="department">Department:</label>
+          <input id="department" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
         </fieldset>
+
+        <template is="dom-if" if="[[user.id]]">
+          <fieldset>
+            <div id="id">
+              <h3>ID:</h3>
+              <p class="id">[[user.id]]</p>
+            </div>
+          </fieldset>
+        </template>
         <!-- bplint-enable no-auto-binding -->
         <div class="submit-button-box">
-          <template is="dom-if" if="[[isMode(mode, modes.EDIT)]]">
 
+          <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
             <button on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
+
+            <template is="dom-if" if="[[user.id]]">
+              <button on-click="delete" type="submit" formnovalidate>Delete</button>
+            </template>
 
             <template is="dom-if" if="[[!user.id]]">
               <button on-click="cancel" formnovalidate>Cancel</button>
             </template>
 
-            <template is="dom-if" if="[[user.id]]">
-              <button on-click="delete" type="submit" formnovalidate>Delete</button>
-            </template>
+            <p class="warning">[[warningMessage]]</p>
+
           </template>
-          <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
+
+          <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
             <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
           </template>
 
@@ -156,12 +168,15 @@
           },
           disableSave: {
             type: Boolean,
-            value: false
+            value: false,
           },
           editOpen: {
             type: Boolean,
             value: false,
             observer: 'whenEditOpenChanges'
+          },
+          warningMessage: {
+            type: String,
           }
         };
       }
@@ -205,6 +220,8 @@
 
       clearInputForm() {
         this.shadowRoot.querySelector('form').reset();
+        this.setWarningMessage('');
+
         this.disableSave = true;
         for (let key of Object.keys(this.user)) {
           this.user[key] = '';
@@ -213,7 +230,6 @@
 
       delete(e) {
         e.preventDefault();
-
         database.deleteUser(this.user);
         this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
@@ -248,15 +264,16 @@
         if (mode === this.modes.EDIT) {
           return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
         }
+
         return '';
       }
 
-      isMode(current, expected) {
-        return (current === expected);
+      isMode(expectedMode) {
+        return (expectedMode === this.mode);
       }
 
-      resetFormState(id) {
-        return id ? this.toggleMode() : this.clearInputForm();
+      resetFormState(editedUser) {
+        return editedUser ? this.toggleMode() : this.clearInputForm();
       }
 
       save(e) {
@@ -274,7 +291,7 @@
       }
 
       toggleMode(e) {
-        this.mode = this.isMode(this.mode, this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
+        this.mode = this.isMode(this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
         this.toggleEditable();
       }
 
@@ -283,14 +300,15 @@
           .forEach(input => {
             let name = input.className;
 
-            input.className = this.isMode(this.mode, this.modes.DISPLAY) ? name.replace(/(\s)?edit/, '') : name + ' edit';
-            input.readOnly = this.isMode(this.mode, this.modes.DISPLAY);
+            input.className = this.isMode(this.modes.DISPLAY) ? name.replace(/(\s)?edit/, '') : name + ' edit';
+            input.readOnly = this.isMode(this.modes.DISPLAY);
           });
       }
 
       whenEditOpenChanges(editOpen) {
         if (!this.user.id) {
-          this.disableSave = editOpen ? true : !this.fieldsFilled();
+          this.disableSave = editOpen || !this.fieldsFilled();
+          this.warningMessage = editOpen ? 'Please save other user edits before saving this one.' : '';
         }
       }
     }

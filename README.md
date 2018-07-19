@@ -4,13 +4,11 @@
 
 This app allows you to create and edit user profiles, each of which have an ID, Name, Number, and Email Address.
 
-To create a new user, click the 'Create User' button and fill out the form. Users will be added to the local storage database.
+To create a new user, click the 'Create User' button and fill out the form. Users will be added to the local storage database via the database API.
 
 ## how to use
 
 ### Warning
-
-Don't spit into the wind.
 
 ### Create User
 
@@ -24,7 +22,7 @@ You should be able to click the edit button and edit the fields for that user an
 
 If you already have an edit in process, all other edit and save buttons in other cards will be disabled.
 
-If you leave a field empty the save button will remain disabled.
+If you begin to edit a card and try to save a new user or save your edit before saving the open edit, it will prompt you to save the other open edit first.
 
 If you click delete, the user you selected to be deleted should disappear immediately, even if you have left an input field empty.
 
@@ -44,11 +42,9 @@ If no user is passed into the component it will serve as a 'create new user' car
 
 #### Disable Functionality
 
-When an edit button is clicked in a user-component, that user-component dispatches an event to disable (or enable on save) the edit buttons of other cards if the parent (in this case user-list) chooses to pass disabling down into the user-component.
+When an edit button is clicked in a user-component, that user-component dispatches an event received by user-list to let other components know that there is an open edit. The user component uses this boolean to enable/disable save and edit buttons when another edit is open.
 
-`<user-component disableEdit=['true', 'false'] disableSave=['true', 'false']><user-component>`
-
-While disableEdit and disableSave have distinct uses in their respective 'New User' and 'Edit User' user-components, it is adviseable to send information into both the disableEdit and disableSave if both types of user-component are being used on the same page.
+`<user-component edit-open="[true,false]"><user-component>`
 
 ### NPM Scripts
 
@@ -98,7 +94,7 @@ If you want to bundle the files locally to see how they will be organized in web
 
 To view the bundled files from the server:
 
-`localhost:1820/localhost:1820/webpack-dev-server` in your browser.
+`localhost:1820/localhost:8080/webpack-dev-server` in your browser.
 
 ##### Notes
 
