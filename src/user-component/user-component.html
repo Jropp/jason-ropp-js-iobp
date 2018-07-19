@@ -256,7 +256,6 @@
 
       delete(e) {
         e.preventDefault();
-
         database.deleteUser(this.user);
         this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
@@ -298,6 +297,7 @@
         if (mode === this.modes.EDIT) {
           return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
         }
+
         return '';
       }
 

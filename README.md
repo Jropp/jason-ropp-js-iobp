@@ -44,11 +44,9 @@ If no user is passed into the component it will serve as a 'create new user' car
 
 #### Disable Functionality
 
-When an edit button is clicked in a user-component, that user-component dispatches an event to disable (or enable on save) the edit buttons of other cards if the parent (in this case user-list) chooses to pass disabling down into the user-component.
+When an edit button is clicked in a user-component, that user-component dispatches an event received by user-list to let other components know that there is an open edit. The user component uses this boolean to enable/disable save and edit buttons when another edit is open.
 
-`<user-component disableEdit=['true', 'false'] disableSave=['true', 'false']><user-component>`
-
-While disableEdit and disableSave have distinct uses in their respective 'New User' and 'Edit User' user-components, it is adviseable to send information into both the disableEdit and disableSave if both types of user-component are being used on the same page.
+`<user-component edit-open="[true,false]"><user-component>`
 
 ### NPM Scripts
 
@@ -98,7 +96,7 @@ If you want to bundle the files locally to see how they will be organized in web
 
 To view the bundled files from the server:
 
-`localhost:1820/localhost:1820/webpack-dev-server` in your browser.
+`localhost:1820/localhost:8080/webpack-dev-server` in your browser.
 
 ##### Notes
 
