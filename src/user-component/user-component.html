@@ -238,7 +238,7 @@
           }
         });
 
-        return fieldsFilled;
+        return fieldsEmpty;
       }
 
       checkPhoneInput(phone) {
@@ -297,9 +297,23 @@
           this.disableSave = this.editOpen || formCheck;
         } else {
           this.disableSave = formCheck;
+
+        }
+      }
+
+      formatUserData(user) {
+        if (user.id.length) {
+          user.phone = this.insertPhoneSymbols(user.phone);
+          this.user = user;
+        }
+      }
+
+      formWatcher() {
+        if (this.editOpen || this.fieldsEmpty()) {
+          this.disableSave = true;
         }
 
-        if (this.fieldsFilled()) {
+        if (!this.fieldsEmpty()) {
           this.disableSave = false;
         }
       }
