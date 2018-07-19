@@ -189,6 +189,7 @@
           }
         };
       }
+
       connectedCallback() {
         super.connectedCallback();
         this.initCardState();
@@ -325,7 +326,6 @@
       }
 
       updateWarningMessages() {
-        // FIXME: Not yet accounting for a new empty user card init
         let openEditWarning = this.messages.EDIT_OPEN;
         let emailFormatWarning = this.messages.EMAIL_FORMAT;
         let isNewUser = !this.user.id;
@@ -337,7 +337,13 @@
             this.warningMessage = this.validateEmailInput() ? '' : emailFormatWarning;
           }
         } else {
-          this.warningMessage = this.validateEmailInput() ? '' : emailFormatWarning;
+          let emailInProgress = this.user.email;
+
+          if (emailInProgress) {
+            this.warningMessage = this.validateEmailInput() ? '' : emailFormatWarning;
+          } else {
+            this.warningMessage = '';
+          }
         }
       }
 
