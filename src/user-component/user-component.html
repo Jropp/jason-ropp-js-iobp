@@ -197,10 +197,10 @@
       initCardState() {
         if (this.mode === this.modes.EDIT) {
           this.disableSave = true;
-          this.warningMessage = '';
         } else {
           this.toggleEditable();
         }
+        this.warningMessage = '';
       }
 
       cancel(e) {
@@ -212,6 +212,7 @@
         }));
 
         this.shadowRoot.querySelector('form').reset();
+        this.warningMessage = '';
       }
 
       fieldsFilled() {
@@ -269,14 +270,13 @@
       }
 
       formWatcher() {
+        let isNewUserCard = !this.user.id;
+        let formCheck = !this.fieldsFilled() || !this.validateEmailInput();
 
-        if (!this.editOpen && this.fieldsFilled() && this.validateEmailInput(this.user.email)) {
-          this.disableSave = false;
-        }
-
-        if (this.editOpen || !this.fieldsFilled() || !this.validateEmailInput(this.user.email)) {
-
-          this.disableSave = true;
+        if (isNewUserCard) {
+          this.disableSave = this.editOpen || formCheck;
+        } else {
+          this.disableSave = formCheck;
         }
       }
 
@@ -325,6 +325,7 @@
       }
 
       updateWarningMessages() {
+        // FIXME: Not yet accounting for a new empty user card init
         let openEditWarning = this.messages.EDIT_OPEN;
         let emailFormatWarning = this.messages.EMAIL_FORMAT;
         let isNewUser = !this.user.id;
