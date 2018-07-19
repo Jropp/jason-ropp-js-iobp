@@ -86,7 +86,7 @@
 
         <fieldset>
           <label for="email">Email:</label>
-          <input id="email" type="email" on-blur="validateEmailInput" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
+          <input id="email" type="email" on-blur="emailInputWatcher" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
             name="email" required>
           <br>
 
@@ -251,11 +251,11 @@
       }
 
       formWatcher() {
-        if (!this.editOpen && this.fieldsFilled()) {
+        if (!this.editOpen && this.fieldsFilled() && this.validateEmailInput(this.user.email)) {
           this.disableSave = false;
         }
 
-        if (!this.fieldsFilled()) {
+        if (this.editOpen || !this.fieldsFilled() || !this.validateEmailInput(this.user.email)) {
           this.disableSave = true;
         }
       }
@@ -314,32 +314,46 @@
       Fire function on-blur DONE
       Test
         Bugs:
-          1. Disable save doesn't hold against other checks
-          2. Warning message should be shown again if open edit is closed
+
+          PULL IN CHANGES FROM MASTER
+          1. Disable save doesn't hold against other checks SOFAR DONE
+              a. Fields filled DONE
+              b. Open Edit Closed DONE
+          2. Warning message should be shown again if open edit is closed DONE SLOPPY
+              b. use query selector instead of args
+              c. update calls to it
           3. Email enabling save is a loophole for getting a bad phone number in maybe?
              This actually is probably solved in the validate phone branch
-
-
-
+          4. Correcting email while open edit enables save button
 
       BONUS:
 
       add on-blur check to phone input
       */
-      validateEmailInput(e) {
-        let emailFormat = /^\S+@\S+\.\S+$/;
-        let formEmailInput = e.target.value;
-        let isValidEmail = emailFormat.test(formEmailInput);
+      // FIXME: shouldn't use two args here, see if there is another way, actually just use a query selector for all instances, or see if this .user works
+      emailInputWatcher(e, arg) {
+
+        let userInput = e ? e.target.value : arg;
+        let isValidEmail = this.validateEmailInput(userInput);
 
         this.warningMessage = isValidEmail ? '' : 'Please format email input as xxxx@xxxxx.xxx';
 
-        this.disableSave = !isValidEmail;
+        this.disableSave = !isValidEmail || this.editOpen || !this.fieldsFilled();
+        debugger;
+      }
+
+      validateEmailInput(userInput) {
+        let emailFormat = /^\S+@\S+\.\S+$/;
+        return emailFormat.test(userInput);
       }
 
       whenEditOpenChanges(editOpen) {
         if (!this.user.id) {
-          this.disableSave = editOpen || !this.fieldsFilled();
+          this.disableSave = editOpen || !this.fieldsFilled() || !this.validateEmailInput(this.user.email);
           this.warningMessage = editOpen ? 'Please save other user edits before saving this one.' : '';
+          if (!editOpen) {
+            this.emailInputWatcher(null, this.user.email);
+          }
         }
       }
     }
