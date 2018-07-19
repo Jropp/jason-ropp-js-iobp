@@ -252,6 +252,9 @@
       }
 
       formWatcher() {
+        // FIXME: empty fields are not disabling save in an open edit
+
+
         if (!this.editOpen && this.fieldsFilled() && this.validateEmailInput(this.user.email)) {
           this.disableSave = false;
         }
@@ -259,6 +262,8 @@
         if (this.editOpen || !this.fieldsFilled() || !this.validateEmailInput(this.user.email)) {
           this.disableSave = true;
         }
+
+        this.disableSave = !this.validateEmailInput(this.user.email);
       }
 
       headerMessage(mode) {
@@ -315,9 +320,8 @@
       Fire function on-blur DONE
       Test
         Bugs:
-
-
-        TODO
+            1. FIXME: empty fields is not disabling save in an open edit
+            1. FIXME: if you start deleting an email one character at a time from the end, save is enabled (it reads .co as a valid format)
 
 
 
@@ -337,27 +341,33 @@
       */
 
       emailInputWatcher() {
+        let isValidEmail = this.validateEmailInput(this.user.email);
 
-        let userInput = this.user.email;
-        let isValidEmail = this.validateEmailInput(userInput);
 
-        this.warningMessage = isValidEmail ? '' : 'Please format email input as xxxx@xxxxx.xxx';
+        if (!this.editOpen) {
+          this.warningMessage = isValidEmail ? '' : 'Please format email input as xxxx@xxxxx.xxx';
+        }
 
-        this.disableSave = !isValidEmail || this.editOpen || !this.fieldsFilled();
-        debugger;
+        // TODO: Redundancy that can be put into its own function?
+        this.disableSave = (this.editOpen && !this.user.id) || !isValidEmail || !this.fieldsFilled();
       }
 
-      validateEmailInput(userInput) {
+      validateEmailInput() {
         let emailFormat = /^\S+@\S+\.\S+$/;
-        return emailFormat.test(userInput);
+        return emailFormat.test(this.user.email);
       }
 
       whenEditOpenChanges(editOpen) {
         if (!this.user.id) {
-          this.disableSave = editOpen || !this.fieldsFilled() || !this.validateEmailInput(this.user.email);
-          this.warningMessage = editOpen ? 'Please save other user edits before saving this one.' : '';
-          if (!editOpen) {
-            this.emailInputWatcher();
+          // TODO: Redundancy that can be put into its own function?
+          this.disableSave = editOpen || !this.fieldsFilled() || !this.validateEmailInput();
+
+          if (!this.validateEmailInput() && !editOpen) {
+            console.log('x');
+
+            this.warningMessage = 'Please format email input as xxxx@xxxxx.xxx';
+          } else {
+            this.warningMessage = editOpen ? 'Please save other user edits before saving this one.' : '';
           }
         }
       }
