@@ -8,8 +8,6 @@ To create a new user, click the 'Create User' button and fill out the form. User
 
 ## how to use
 
-### Warning
-
 ### Create User
 
 Click on 'Create New User' button, enter a user. If you leave a field empty, the save button will remain disabled.
@@ -23,6 +21,10 @@ You should be able to click the edit button and edit the fields for that user an
 If you already have an edit in process, all other edit and save buttons in other cards will be disabled.
 
 If you begin to edit a card and try to save a new user or save your edit before saving the open edit, it will prompt you to save the other open edit first.
+
+If you click, delete, the user you selected to be deleted should disappear immediately, even if you have left an input field empty.
+
+If you leave a field empty the save button will remain disabled.
 
 If you click delete, the user you selected to be deleted should disappear immediately, even if you have left an input field empty.
 

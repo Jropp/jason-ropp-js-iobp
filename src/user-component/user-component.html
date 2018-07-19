@@ -90,8 +90,13 @@
           <br>
 
           <label for="phone">Phone:</label>
-          <input id="phone" type="tel" class="phone edit" placeholder="phone" autocomplete="tel" value="{{user.phone::change}}" required>
+          <input id="phone" type="tel" on-blur="phoneInputWatcher" class="phone edit" placeholder="(xxx) xxx-xxxx" autocomplete="tel"
+            value="{{user.phone::change}}" required>
           <br>
+
+          <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
+            <p class="warning">[[phoneFormatMessage]]</p>
+          </template>
 
           <label for="department">Department:</label>
           <input id="department" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
@@ -120,6 +125,7 @@
             </template>
 
             <p class="warning">[[warningMessage]]</p>
+
 
           </template>
 
@@ -167,7 +173,7 @@
           },
           disableSave: {
             type: Boolean,
-            value: false,
+            value: true,
           },
           editOpen: {
             type: Boolean,
@@ -186,19 +192,24 @@
           },
           warningMessage: {
             type: String,
-          }
+          },
+          phoneFormatMessage: {
+            type: String,
+          },
+          userToDisplay: {
+            type: Object,
+            observer: 'formatUserData'
+          },
         };
       }
 
       connectedCallback() {
         super.connectedCallback();
-        this.initCardState();
+        this.initDisplayCard();
       }
 
-      initCardState() {
-        if (this.mode === this.modes.EDIT) {
-          this.disableSave = true;
-        } else {
+      initDisplayCard() {
+        if (this.isMode(this.modes.DISPLAY)) {
           this.toggleEditable();
         }
         this.warningMessage = '';
@@ -217,20 +228,28 @@
       }
 
       fieldsFilled() {
-
         let fields = this.shadowRoot.querySelectorAll('input');
-        let fieldsFilled = true;
+        let fieldsFilled = false;
 
         fields.forEach(field => {
           if (!field.value.length) {
-            fieldsFilled = false;
+            fieldsFilled = true;
+            return; // eslint-disable-line no-useless-return
           }
         });
 
         return fieldsFilled;
       }
 
-      clearInputForm() {
+      checkPhoneInput(phone) {
+        let phoneDigits = phone.replace(/\D/g, '');
+        let internationalDigitMax = 13;
+        let domesticDigitLength = 10;
+
+        return phoneDigits.length >= domesticDigitLength && phoneDigits.length <= internationalDigitMax;
+      }
+
+      clearNewUserForm() {
         this.shadowRoot.querySelector('form').reset();
 
         this.disableSave = true;
@@ -279,6 +298,10 @@
         } else {
           this.disableSave = formCheck;
         }
+
+        if (this.fieldsFilled()) {
+          this.disableSave = false;
+        }
       }
 
       headerMessage(mode) {
@@ -288,16 +311,60 @@
         return '';
       }
 
+      insertPhoneSymbols(phoneNumber) {
+        let phoneArray = phoneNumber.split('');
+        phoneArray = phoneArray.reverse();
+        let domesticSymbols = [
+          { name: 'dash', loc: 4, text: '-' },
+          { name: 'spaceLoc', loc: 8, text: ' ' },
+          { name: 'leftParLoc', loc: 9, text: ')' },
+          { name: 'rightParLoc', loc: 13, text: '(' }
+        ];
+
+        domesticSymbols.forEach(symbol => {
+          phoneArray.splice(symbol.loc, 0, symbol.text);
+        });
+
+        let domesticNumCharLength = 14;
+        let interSpaceLoc = 14;
+        if (phoneArray.length > domesticNumCharLength) {
+          phoneArray.splice(interSpaceLoc, 0, ' ');
+          let internationalNumPre = '+';
+          phoneArray.push(internationalNumPre);
+        }
+
+        phoneArray = phoneArray.reverse();
+        return phoneArray.join('');
+      }
+
       isMode(expectedMode) {
         return expectedMode === this.mode;
       }
 
-      resetFormState(editedUser) {
-        return editedUser ? this.toggleMode() : this.clearInputForm();
+      resetFormState(isEditedUser) {
+        this.phoneFormatMessage = '';
+        this.editInProgress(false);
+
+        if (isEditedUser) {
+          this.toggleMode();
+        } else {
+          this.clearNewUserForm();
+        }
+
+      }
+
+      phoneInputWatcher() {
+        if (!this.checkPhoneInput(this.user.phone)) {
+          this.phoneFormatMessage = this.messages.PHONE_FORMAT;
+          this.disableSave = true;
+        } else {
+          this.phoneFormatMessage = '';
+        }
       }
 
       save(e) {
         e.preventDefault();
+
         let user = Object.assign({}, this.user);
 
         if (user.id) {
@@ -307,7 +374,6 @@
         }
 
         this.resetFormState(this.user.id);
-        this.editInProgress(false);
       }
 
       toggleMode(e) {
@@ -320,7 +386,7 @@
           .forEach(input => {
             let name = input.className;
 
-            input.className = this.isMode(this.modes.DISPLAY) ? name.replace(/(\s)?edit/, '') : name + ' edit';
+            input.className = this.isMode(this.modes.DISPLAY) ? name.replace(/\sedit/, '') : name + ' edit';
             input.readOnly = this.isMode(this.modes.DISPLAY);
           });
       }
@@ -359,7 +425,9 @@
 
           this.updateWarningMessages();
         }
+
       }
+
     }
 
     customElements.define(UserComponentElement.is, UserComponentElement);
