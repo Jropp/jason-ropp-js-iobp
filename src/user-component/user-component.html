@@ -81,7 +81,6 @@
         </template>
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <h1>[[user.last]], [[user.first]]</h1>
-          <p class="warning">[[warningMessage]]</p>
         </template>
 
         <fieldset>
@@ -186,6 +185,7 @@
       }
 
       initCardState() {
+        // FIXME: User email warning message is persisting after cancel and reopened card
         if (this.mode === this.modes.EDIT) {
           this.disableSave = true;
           this.warningMessage = this.openEdit ? 'Please save other user edits before saving this one.' : ''
@@ -221,7 +221,6 @@
 
       clearInputForm() {
         this.shadowRoot.querySelector('form').reset();
-        this.setWarningMessage('');
 
         this.disableSave = true;
         for (let key of Object.keys(this.user)) {
@@ -253,6 +252,7 @@
 
       formWatcher() {
         // FIXME: empty fields are not disabling save in an open edit
+        // FIXME: email format warning message not displaying in open edit. Button is disabling properly though.
 
 
         if (!this.editOpen && this.fieldsFilled() && this.validateEmailInput(this.user.email)) {
@@ -275,7 +275,7 @@
       }
 
       isMode(expectedMode) {
-        return (expectedMode === this.mode);
+        return expectedMode === this.mode;
       }
 
       resetFormState(editedUser) {
@@ -341,12 +341,33 @@
       */
 
       emailInputWatcher() {
+        let editUser = this.user.id;
         let isValidEmail = this.validateEmailInput(this.user.email);
+        if (isValidEmail) {
+          this.warningMessage = this.editOpen && !this.user.id ? 'Please save other user edits before saving this one.' : '';
+        } else {
+          if (editUser) {
+            this.warningMessage = !this.editOpen ? '' : 'Please format email input as xxxx@xxxxx.xxx';
+          } else {
+            this.warningMessage = this.editOpen ? 'Please save other user edits before saving this one.' : 'Please format email input as xxxx@xxxxx.xxx';
+          }
 
 
-        if (!this.editOpen) {
-          this.warningMessage = isValidEmail ? '' : 'Please format email input as xxxx@xxxxx.xxx';
+
         }
+
+        // TODO: Refactor these to eliminate redundancy
+        // To keep email from taking over the open edit warning
+
+
+        // if (!this.editOpen) {
+        //   this.warningMessage = isValidEmail ? '' : 'Please format email input as xxxx@xxxxx.xxx';
+        // }
+
+        // // So message displays in open edit
+        // if (this.editOpen && this.user.id) {
+        //   this.warningMessage = isValidEmail ? '' : 'Please format email input as xxxx@xxxxx.xxx';
+        // }
 
         // TODO: Redundancy that can be put into its own function?
         this.disableSave = (this.editOpen && !this.user.id) || !isValidEmail || !this.fieldsFilled();
