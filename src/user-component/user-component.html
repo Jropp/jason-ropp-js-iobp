@@ -181,7 +181,6 @@
             value: false,
             observer: 'whenEditOpenChanges'
           },
-
           openEditMessage: {
             type: String,
           },
@@ -309,7 +308,6 @@
 
       resetAllMessages() {
         this.phoneFormatMessage = '';
-        this.openEditMessage = '';
       }
 
       save(e) {
@@ -359,7 +357,6 @@
           this.openEditMessage = editInProgress ? openEditWarning : '';
         }
       }
-
 
       whenEditOpenChanges(editOpen) {
         this.formWatcher();
