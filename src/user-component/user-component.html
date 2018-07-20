@@ -334,7 +334,6 @@
 
       resetAllMessages() {
         this.phoneFormatMessage = '';
-        this.openEditMessage = '';
       }
 
       save(e) {
@@ -391,18 +390,7 @@
         }
       }
 
-      whenEditOpenChanges(editOpen) {
-        if (!this.user.id) {
-
-          this.disableSave = editOpen || !this.fieldsFilled() || !email.checkEmailInput();
-
-          this.updateWarningMessages();
-
-        }
-
-      }
-
-      whenEditOpenChanges(editOpen) {
+      whenEditOpenChanges() {
         this.formWatcher();
       }
     }
