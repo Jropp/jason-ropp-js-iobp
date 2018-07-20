@@ -145,8 +145,7 @@
   <script type="module">
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
     import { database } from './../api/user-database.js';
-    import { phone } from './../api/utils.js';
-    import { email } from './../api/utils.js';
+    import { phone, email } from './../api/utils.js';
     class UserComponentElement extends PolymerElement {
       static get is() { return 'user-component'; }
       static get properties() {
@@ -193,7 +192,7 @@
                 EDIT_OPEN: 'Please save other user edits before saving this one.',
                 PHONE_FORMAT: 'Please format phone as (xxx) xxx-xxxx',
                 EMAIL_FORMAT: 'Please format email input as xxxx@xxxxx.xxx'
-              }
+              };
             }
           },
           openEditMessage: {
@@ -287,7 +286,12 @@
       }
 
       formWatcher() {
-        this.disableSave = (this.editOpen && !this.user.id) || this.fieldsFilled() || !phone.checkPhoneInput(this.user.phone) || !email.checkEmailInput(this.user.email);
+        let editOpenInNewUser = this.editOpen && !this.user.id;
+        let noEmptyFields = this.fieldsFilled();
+        let properPhoneFormat = !phone.checkPhoneInput(this.user.phone);
+        let properEmailFormat = !email.checkEmailInput(this.user.email);
+
+        this.disableSave = editOpenInNewUser || noEmptyFields || properPhoneFormat || properEmailFormat;
 
         this.updateWarningMessages();
       }
