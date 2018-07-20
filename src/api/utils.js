@@ -1,3 +1,4 @@
+export { phone };
 export { email };
 
 let phone = (() => {
@@ -45,9 +46,9 @@ let phone = (() => {
 })();
 
 let email = (() => {
-  function checkEmailInput() {
+  function checkEmailInput(email) {
     let emailFormat = /^\S+@\S+\.\S+$/;
-    return emailFormat.test(this.user.email);
+    return emailFormat.test(email);
   }
 
   return {

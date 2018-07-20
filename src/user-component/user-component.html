@@ -85,9 +85,13 @@
 
         <fieldset>
           <label for="email">Email:</label>
-          <input id="email" type="email" on-blur="emailInputWatcher" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
+          <input id="email" type="email" on-blur="formWatcher" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
             name="email" required>
           <br>
+
+          <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
+            <p class="warning">[[emailFormatMessage]]</p>
+          </template>
 
           <label for="phone">Phone:</label>
           <input id="phone" type="tel" on-blur="formWatcher" class="phone edit" placeholder="(xxx) xxx-xxxx" autocomplete="tel" value="{{user.phone::change}}"
@@ -180,7 +184,7 @@
           editOpen: {
             type: Boolean,
             value: false,
-            observer: 'whenEditOpenChanges'
+            observer: 'formWatcher'
           },
           messages: {
             type: Object,
@@ -226,7 +230,7 @@
         }));
 
         this.shadowRoot.querySelector('form').reset();
-        this.warningMessage = '';
+        this.resetAllMessages();
       }
 
       fieldsFilled() {
@@ -240,7 +244,7 @@
           }
         });
 
-        return fieldsEmpty;
+        return fieldsFilled;
       }
 
       clearNewUserForm() {
@@ -274,26 +278,6 @@
         }));
       }
 
-      emailInputWatcher() {
-        let editUser = this.user.id;
-        let isValidEmail = email.checkEmailInput(this.user.email);
-
-        this.disableSave = (this.editOpen && !editUser) || !isValidEmail || !this.fieldsFilled();
-
-        this.updateWarningMessages();
-      }
-
-      formWatcher() {
-        let isNewUserCard = !this.user.id;
-        let formCheck = !this.fieldsFilled() || !email.checkEmailInput();
-
-        if (isNewUserCard) {
-          this.disableSave = this.editOpen || formCheck;
-        } else {
-          this.disableSave = formCheck;
-
-        }
-      }
 
       formatUserData(user) {
         if (user.id.length) {
@@ -303,8 +287,7 @@
       }
 
       formWatcher() {
-
-        this.disableSave = (this.editOpen && !this.user.id) || this.fieldsEmpty() || !phone.checkPhoneInput(this.user.phone);
+        this.disableSave = (this.editOpen && !this.user.id) || this.fieldsFilled() || !phone.checkPhoneInput(this.user.phone) || !email.checkEmailInput(this.user.email);
 
         this.updateWarningMessages();
       }
@@ -333,6 +316,7 @@
       }
 
       resetAllMessages() {
+        this.emailFormatMessage = '';
         this.phoneFormatMessage = '';
       }
 
@@ -382,16 +366,12 @@
         }
 
         if (emailInProgress) {
-          this.emailFormatMessage = email.checkEmailInput() ? emailWarning : '';
+          this.emailFormatMessage = email.checkEmailInput(this.user.email) ? '' : emailWarning;
         }
 
         if (isNewUser) {
           this.openEditMessage = editInProgress ? openEditWarning : '';
         }
-      }
-
-      whenEditOpenChanges() {
-        this.formWatcher();
       }
     }
 
