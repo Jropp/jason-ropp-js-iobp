@@ -124,7 +124,7 @@
               <button on-click="cancel" formnovalidate>Cancel</button>
             </template>
 
-            <p class="warning">[[warningMessage]]</p>
+            <p class="warning">[[openEditMessage]]</p>
 
 
           </template>
@@ -182,7 +182,7 @@
             observer: 'whenEditOpenChanges'
           },
 
-          warningMessage: {
+          openEditMessage: {
             type: String,
           },
           phoneFormatMessage: {
@@ -277,13 +277,8 @@
       }
 
       formWatcher() {
-        this.disableSave = this.editOpen || this.fieldsEmpty() || !phone.checkPhoneInput(this.user.phone);
 
-        if (!phone.checkPhoneInput(this.user.phone)) {
-          this.disableSave = true;
-        } else {
-          this.phoneFormatMessage = '';
-        }
+        this.disableSave = (this.editOpen && !this.user.id) || this.fieldsEmpty() || !phone.checkPhoneInput(this.user.phone);
 
         this.updateWarningMessages();
       }
@@ -301,7 +296,6 @@
       }
 
       resetFormState(isEditedUser) {
-        this.phoneFormatMessage = '';
         this.editInProgress(false);
 
         if (isEditedUser) {
@@ -310,6 +304,12 @@
           this.clearNewUserForm();
         }
 
+        this.resetAllMessages();
+      }
+
+      resetAllMessages() {
+        this.phoneFormatMessage = '';
+        this.openEditMessage = '';
       }
 
       save(e) {
@@ -342,38 +342,28 @@
       }
 
       updateWarningMessages() {
-        let openEditWarning = this.messages.EDIT_OPEN;
-        let phoneFormatWarning = this.messages.PHONE_FORMAT;
         let isNewUser = !this.user.id;
 
-        if (this.editOpen) {
-          if (isNewUser) {
-            this.warningMessage = openEditWarning;
-          } else {
-            this.warningMessage = phone.checkPhoneInput(this.user.phone) ? '' : phoneFormatWarning;
-          }
-        } else {
-          let phoneInProgress = this.user.phone;
+        let editInProgress = this.editOpen;
+        let phoneInProgress = this.user.phone;
 
-          if (phoneInProgress) {
-            this.warningMessage = phone.checkPhoneInput(this.user.phone) ? '' : phoneFormatWarning;
-          } else {
-            this.warningMessage = '';
-          }
+        let openEditWarning = this.messages.EDIT_OPEN;
+        let phoneFormatWarning = this.messages.PHONE_FORMAT;
+
+
+        if (phoneInProgress) {
+          this.phoneFormatMessage = phone.checkPhoneInput(this.user.phone) ? '' : phoneFormatWarning;
+        }
+
+        if (isNewUser) {
+          this.openEditMessage = editInProgress ? openEditWarning : '';
         }
       }
+
 
       whenEditOpenChanges(editOpen) {
-        if (!this.user.id) {
-          this.disableSave = editOpen || this.fieldsEmpty();
-
-          this.formWatcher();
-        } else {
-          this.disableSave = false;
-        }
-
+        this.formWatcher();
       }
-
     }
 
     customElements.define(UserComponentElement.is, UserComponentElement);
