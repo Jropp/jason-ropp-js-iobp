@@ -90,8 +90,8 @@
           <br>
 
           <label for="phone">Phone:</label>
-          <input id="phone" type="tel" on-blur="phoneInputWatcher" class="phone edit" placeholder="(xxx) xxx-xxxx" autocomplete="tel"
-            value="{{user.phone::change}}" required>
+          <input id="phone" type="tel" on-blur="formWatcher" class="phone edit" placeholder="(xxx) xxx-xxxx" autocomplete="tel" value="{{user.phone::change}}"
+            required>
           <br>
 
           <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
@@ -141,6 +141,7 @@
   <script type="module">
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
     import { database } from './../api/user-database.js';
+    import { phone } from './../api/utils.js';
     class UserComponentElement extends PolymerElement {
       static get is() { return 'user-component'; }
       static get properties() {
@@ -237,14 +238,6 @@
         return fieldsEmpty;
       }
 
-      checkPhoneInput(phone) {
-        let phoneDigits = phone.replace(/\D/g, '');
-        let internationalDigitMax = 13;
-        let domesticDigitLength = 10;
-
-        return phoneDigits.length >= domesticDigitLength && phoneDigits.length <= internationalDigitMax;
-      }
-
       clearNewUserForm() {
         this.shadowRoot.querySelector('form').reset();
 
@@ -278,18 +271,19 @@
 
       formatUserData(user) {
         if (user.id.length) {
-          user.phone = this.insertPhoneSymbols(user.phone);
+          user.phone = phone.insertPhoneSymbols(user.phone);
           this.user = user;
         }
       }
 
       formWatcher() {
-        if (this.editOpen || this.fieldsEmpty()) {
-          this.disableSave = true;
-        }
+        this.disableSave = this.editOpen || this.fieldsEmpty() || !phone.checkPhoneInput(this.user.phone);
 
-        if (!this.fieldsEmpty()) {
-          this.disableSave = false;
+        if (!phone.checkPhoneInput(this.user.phone)) {
+          this.phoneFormatMessage = this.messages.PHONE_FORMAT;
+          this.disableSave = true;
+        } else {
+          this.phoneFormatMessage = '';
         }
       }
 
@@ -299,32 +293,6 @@
         }
 
         return '';
-      }
-
-      insertPhoneSymbols(phoneNumber) {
-        let phoneArray = phoneNumber.split('');
-        phoneArray = phoneArray.reverse();
-        let domesticSymbols = [
-          { name: 'dash', loc: 4, text: '-' },
-          { name: 'spaceLoc', loc: 8, text: ' ' },
-          { name: 'leftParLoc', loc: 9, text: ')' },
-          { name: 'rightParLoc', loc: 13, text: '(' }
-        ];
-
-        domesticSymbols.forEach(symbol => {
-          phoneArray.splice(symbol.loc, 0, symbol.text);
-        });
-
-        let domesticNumCharLength = 14;
-        let interSpaceLoc = 14;
-        if (phoneArray.length > domesticNumCharLength) {
-          phoneArray.splice(interSpaceLoc, 0, ' ');
-          let internationalNumPre = '+';
-          phoneArray.push(internationalNumPre);
-        }
-
-        phoneArray = phoneArray.reverse();
-        return phoneArray.join('');
       }
 
       isMode(expectedMode) {
@@ -341,15 +309,6 @@
           this.clearNewUserForm();
         }
 
-      }
-
-      phoneInputWatcher() {
-        if (!this.checkPhoneInput(this.user.phone)) {
-          this.phoneFormatMessage = this.messages.PHONE_FORMAT;
-          this.disableSave = true;
-        } else {
-          this.phoneFormatMessage = '';
-        }
       }
 
       save(e) {
