@@ -280,11 +280,12 @@
         this.disableSave = this.editOpen || this.fieldsEmpty() || !phone.checkPhoneInput(this.user.phone);
 
         if (!phone.checkPhoneInput(this.user.phone)) {
-          this.phoneFormatMessage = this.messages.PHONE_FORMAT;
           this.disableSave = true;
         } else {
           this.phoneFormatMessage = '';
         }
+
+        this.updateWarningMessages();
       }
 
       headerMessage(mode) {
@@ -340,10 +341,33 @@
           });
       }
 
+      updateWarningMessages() {
+        let openEditWarning = this.messages.EDIT_OPEN;
+        let phoneFormatWarning = this.messages.PHONE_FORMAT;
+        let isNewUser = !this.user.id;
+
+        if (this.editOpen) {
+          if (isNewUser) {
+            this.warningMessage = openEditWarning;
+          } else {
+            this.warningMessage = phone.checkPhoneInput(this.user.phone) ? '' : phoneFormatWarning;
+          }
+        } else {
+          let phoneInProgress = this.user.phone;
+
+          if (phoneInProgress) {
+            this.warningMessage = phone.checkPhoneInput(this.user.phone) ? '' : phoneFormatWarning;
+          } else {
+            this.warningMessage = '';
+          }
+        }
+      }
+
       whenEditOpenChanges(editOpen) {
         if (!this.user.id) {
           this.disableSave = editOpen || this.fieldsEmpty();
-          this.warningMessage = editOpen ? this.messages.EDIT_OPEN : '';
+
+          this.formWatcher();
         } else {
           this.disableSave = false;
         }
