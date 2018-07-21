@@ -94,7 +94,7 @@
             required>
           <br>
 
-          <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
+          <template is="dom-if" if="[[displayPhoneFormatMessage]]">
             <p class="warning">[[phoneFormatMessage]]</p>
           </template>
 
@@ -185,7 +185,9 @@
           },
           displayOpenEditMessage: {
             type: Boolean,
-            value: true
+          },
+          displayPhoneFormatMessage: {
+            type: Boolean,
           },
           openEditMessage: {
             type: String,
@@ -193,16 +195,11 @@
           },
           phoneFormatMessage: {
             type: String,
+            value: 'Please format phone number as (xxx) xxx-xxxx'
           },
           userToDisplay: {
             type: Object,
             observer: 'formatUserData'
-          },
-          messages: {
-            type: Object,
-            value: {
-              PHONE_FORMAT: 'Please format phone number as (xxx) xxx-xxxx'
-            }
           }
         };
       }
@@ -210,6 +207,7 @@
       connectedCallback() {
         super.connectedCallback();
         this.initDisplayCard();
+        this.updateWarningMessages();
       }
 
       initDisplayCard() {
@@ -313,7 +311,7 @@
       }
 
       resetAllMessages() {
-        this.phoneFormatMessage = '';
+        this.displayPhoneFormatMessage = false;
       }
 
       save(e) {
@@ -347,13 +345,10 @@
 
       updateWarningMessages() {
         let isNewUser = !this.user.id;
-
         let phoneInProgress = this.user.phone;
-        let phoneFormatWarning = this.messages.PHONE_FORMAT;
-
 
         if (phoneInProgress) {
-          this.phoneFormatMessage = ValidateUtil.checkPhoneInput(this.user.phone) ? '' : phoneFormatWarning;
+          this.displayPhoneFormatMessage = !ValidateUtil.checkPhoneInput(this.user.phone);
         }
 
         if (isNewUser) {
