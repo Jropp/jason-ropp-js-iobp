@@ -124,7 +124,9 @@
               <button on-click="cancel" formnovalidate>Cancel</button>
             </template>
 
-            <p class="warning">[[openEditMessage]]</p>
+            <template is="dom-if" if="[[displayOpenEditMessage]]">
+              <p class="warning">[[openEditMessage]]</p>
+            </template>
 
 
           </template>
@@ -181,8 +183,13 @@
             value: false,
             observer: 'whenEditOpenChanges'
           },
+          displayOpenEditMessage: {
+            type: Boolean,
+            value: true
+          },
           openEditMessage: {
             type: String,
+            value: 'Please save other user edits before saving this one.'
           },
           phoneFormatMessage: {
             type: String,
@@ -194,8 +201,7 @@
           messages: {
             type: Object,
             value: {
-              PHONE_FORMAT: 'Please format phone number as (xxx) xxx-xxxx',
-              EDIT_OPEN: 'Please save other user edits before saving this one.'
+              PHONE_FORMAT: 'Please format phone number as (xxx) xxx-xxxx'
             }
           }
         };
@@ -342,10 +348,7 @@
       updateWarningMessages() {
         let isNewUser = !this.user.id;
 
-        let editInProgress = this.editOpen;
         let phoneInProgress = this.user.phone;
-
-        let openEditWarning = this.messages.EDIT_OPEN;
         let phoneFormatWarning = this.messages.PHONE_FORMAT;
 
 
@@ -354,7 +357,7 @@
         }
 
         if (isNewUser) {
-          this.openEditMessage = editInProgress ? openEditWarning : '';
+          this.displayOpenEditMessage = this.editOpen;
         }
       }
 
