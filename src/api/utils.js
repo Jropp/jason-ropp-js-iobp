@@ -1,7 +1,5 @@
-export { phone };
-
-let phone = (() => {
-  function insertPhoneSymbols(phoneNumber) {
+class ValidateUtil {
+  static insertPhoneSymbols(phoneNumber) {
     let phoneArray = phoneNumber.split("");
     phoneArray = phoneArray.reverse();
     let domesticSymbols = [
@@ -27,7 +25,7 @@ let phone = (() => {
     return phoneArray.join("");
   }
 
-  function checkPhoneInput(phone) {
+  static checkPhoneInput(phone) {
     let phoneDigits = phone.replace(/\D/g, "");
     let internationalDigitMax = 13;
     let domesticDigitLength = 10;
@@ -37,9 +35,6 @@ let phone = (() => {
       phoneDigits.length <= internationalDigitMax
     );
   }
+}
 
-  return {
-    insertPhoneSymbols: insertPhoneSymbols,
-    checkPhoneInput: checkPhoneInput
-  };
-})();
+module.exports = ValidateUtil;

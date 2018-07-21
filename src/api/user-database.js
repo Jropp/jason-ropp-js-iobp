@@ -2,7 +2,7 @@ export { database };
 
 let database = (() => {
   function getUsers() {
-    return JSON.parse(localStorage.getItem("onboardProjectUsers"));
+    return JSON.parse(localStorage.getItem("onboardProjectUsers")) || [];
   }
 
   function getUserById(userId) {
