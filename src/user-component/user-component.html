@@ -281,12 +281,10 @@
         }));
       }
 
-
+      // FIXME: Does this if statement need to be here?
       formatUserData(user) {
-        if (user.id) {
-          user.phone = ValidateUtil.insertPhoneSymbols(user.phone);
-          this.user = user;
-        }
+        user.phone = ValidateUtil.insertPhoneSymbols(user.phone);
+        this.user = user;
       }
 
       formWatcher() {
