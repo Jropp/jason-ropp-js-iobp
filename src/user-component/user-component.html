@@ -242,11 +242,11 @@
 
       fieldsFilled() {
         let fields = this.shadowRoot.querySelectorAll('input');
-        let fieldsFilled = false;
+        let fieldsFilled = true;
 
         fields.forEach(field => {
           if (!field.value.length) {
-            fieldsFilled = true;
+            fieldsFilled = false;
             return; // eslint-disable-line no-useless-return
           }
         });
@@ -256,11 +256,7 @@
 
       clearNewUserForm() {
         this.shadowRoot.querySelector('form').reset();
-
         this.disableSave = true;
-        for (let key of Object.keys(this.user)) {
-          this.user[key] = '';
-        }
       }
 
       delete(e) {
@@ -287,7 +283,7 @@
 
 
       formatUserData(user) {
-        if (user.id.length) {
+        if (user.id) {
           user.phone = ValidateUtil.insertPhoneSymbols(user.phone);
           this.user = user;
         }
@@ -295,11 +291,11 @@
 
       formWatcher() {
         let editOpenInNewUser = this.editOpen && !this.user.id;
-        let noEmptyFields = this.fieldsFilled();
-        let properPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
-        let properEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
+        let emptyFields = !this.fieldsFilled();
+        let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
+        let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
 
-        this.disableSave = editOpenInNewUser || noEmptyFields || properPhoneFormat || properEmailFormat;
+        this.disableSave = editOpenInNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
 
         this.updateWarningMessages();
       }
@@ -315,12 +311,16 @@
         return expectedMode === this.mode;
       }
 
-      resetFormState(isEditedUser) {
+      resetFormState() {
         this.editInProgress(false);
+        let isNewUserCard = !this.user.id;
+        let isUserEditCard = this.user.id;
 
-        if (isEditedUser) {
+        if (isUserEditCard) {
           this.toggleMode();
-        } else {
+        }
+
+        if (isNewUserCard) {
           this.clearNewUserForm();
         }
 
@@ -343,7 +343,7 @@
           database.saveUser(user);
         }
 
-        this.resetFormState(this.user.id);
+        this.resetFormState();
       }
 
       toggleMode(e) {
@@ -363,21 +363,19 @@
 
       updateWarningMessages() {
         let isNewUser = !this.user.id;
-
-        let editInProgress = this.editOpen;
         let emailInProgress = this.user.email;
         let phoneInProgress = this.user.phone;
 
         if (emailInProgress) {
           this.displayEmailFormatMessage = !ValidateUtil.checkEmailInput(this.user.email);
+        }
 
-          if (phoneInProgress) {
-            this.displayPhoneFormatMessage = !ValidateUtil.checkPhoneInput(this.user.phone);
-          }
+        if (phoneInProgress) {
+          this.displayPhoneFormatMessage = !ValidateUtil.checkPhoneInput(this.user.phone);
+        }
 
-          if (isNewUser) {
-            this.displayOpenEditMessage = this.editOpen;
-          }
+        if (isNewUser) {
+          this.displayOpenEditMessage = this.editOpen;
         }
       }
 
