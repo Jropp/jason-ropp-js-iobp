@@ -77,8 +77,8 @@ let database = (() => {
       id += String.fromCharCode(charCode);
     }
 
-    let doesIdExist = getIdIndex(id) !== -1;
-    return doesIdExist ? createNewUserId() : id;
+    let idAlreadyExists = getIdIndex(id) !== -1;
+    return idAlreadyExists ? createNewUserId() : id;
   }
 
   return {

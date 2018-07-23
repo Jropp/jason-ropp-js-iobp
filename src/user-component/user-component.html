@@ -281,7 +281,11 @@
 
       formWatcher() {
 
-        this.disableSave = (this.editOpen && !this.user.id) || this.fieldsEmpty() || !ValidateUtil.checkPhoneInput(this.user.phone);
+        let editOpenAndNewUser = this.editOpen && !this.user.id;
+        let emptyFields = this.fieldsEmpty();
+        let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
+
+        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat;
 
         this.updateWarningMessages();
       }
