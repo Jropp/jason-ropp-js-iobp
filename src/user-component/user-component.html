@@ -38,7 +38,7 @@
         width: 0;
         height: 0;
         opacity: 0;
-        transition: opacity .5s, width .4s, height .4s;
+        transition: opacity .4s, width .5s, height .5s;
       }
 
       .hidden>* {
@@ -59,7 +59,16 @@
       input {
         margin: 5px;
         border: none;
-        font-size: 20px
+        font-size: 20px;
+        width: auto;
+      }
+
+      .first-name {
+        width: 150px;
+      }
+
+      .last-name {
+        width: 150px;
       }
 
       .edit {
@@ -245,7 +254,11 @@
 
       connectedCallback() {
         super.connectedCallback();
-        this.initDisplayCard();
+        if (this.user.id) {
+          this.initDisplayCard();
+        } else {
+          this.toggleNewUserCardDisplay();
+        }
         this.updateWarningMessages();
       }
 
