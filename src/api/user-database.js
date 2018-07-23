@@ -58,8 +58,6 @@ let database = (() => {
 
   function titleCaseName(name) {
     let loweredCase = name.slice(1).toLowerCase();
-    console.log(name.charAt(0).toUpperCase() + loweredCase);
-
     return name.charAt(0).toUpperCase() + loweredCase;
   }
 
