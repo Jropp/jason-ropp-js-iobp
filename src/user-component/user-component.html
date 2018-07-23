@@ -291,7 +291,7 @@
       formWatcher() {
 
         let editOpenAndNewUser = this.editOpen && !this.user.id;
-        let emptyFields = this.fieldsEmpty();
+        let emptyFields = !this.fieldsFilled();
         let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
 
         this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat;
