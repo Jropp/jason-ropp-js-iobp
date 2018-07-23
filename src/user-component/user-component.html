@@ -281,7 +281,6 @@
         }));
       }
 
-
       formatUserData(user) {
         if (user.id) {
           user.phone = ValidateUtil.insertPhoneSymbols(user.phone);
@@ -290,12 +289,12 @@
       }
 
       formWatcher() {
-        let editOpenInNewUser = this.editOpen && !this.user.id;
-        let emptyFields = !this.fieldsFilled();
-        let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
-        let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
 
-        this.disableSave = editOpenInNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
+        let editOpenAndNewUser = this.editOpen && !this.user.id;
+        let emptyFields = this.fieldsEmpty();
+        let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
+
+        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat;
 
         this.updateWarningMessages();
       }
