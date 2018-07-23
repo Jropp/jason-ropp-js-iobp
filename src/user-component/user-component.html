@@ -12,14 +12,38 @@
 
       .default-card {
         width: fit-content;
-        min-width: 500px;
-        min-height: 400px;
+        width: 500px;
+        height: 400px;
         margin: 5px;
         padding: 15px;
         border: #7395ae 1px solid;
         border-radius: 5px;
         box-shadow: 3px 3px 2px lightgrey;
         background-color: white;
+      }
+
+      .visible {
+        width: 500;
+        height: 400;
+        opacity: 1;
+        transition: width .5s, height .5s;
+      }
+
+      .visible>* {
+        opacity: 1;
+        transition: opacity 1.2s;
+      }
+
+      .hidden {
+        width: 0;
+        height: 0;
+        opacity: 0;
+        transition: opacity .5s, width .4s, height .4s;
+      }
+
+      .hidden>* {
+        opacity: 0;
+        transition: width .4s, height .4s;
       }
 
       fieldset {
@@ -64,7 +88,7 @@
       }
     </style>
 
-    <div id="checkForEmptyFields" class="default-card">
+    <div id="userCard" class="default-card">
       <form on-input="formWatcher" autocomplete="on">
         <h1>[[headerMessage(mode)]]</h1>
         <!-- bplint-disable no-auto-binding -->
@@ -195,6 +219,10 @@
           },
           displayEmailFormatMessage: {
             type: Boolean,
+          },
+          isVisible: {
+            type: Boolean,
+            observer: 'toggleNewUserCardDisplay'
           },
           openEditMessage: {
             type: String,
@@ -358,6 +386,16 @@
             input.className = this.isMode(this.modes.DISPLAY) ? name.replace(/\sedit/, '') : name + ' edit';
             input.readOnly = this.isMode(this.modes.DISPLAY);
           });
+      }
+
+      toggleNewUserCardDisplay() {
+        let card = this.shadowRoot.querySelector('#userCard');
+        let name = card.className;
+        let regexToReplace = this.isVisible ? /\shidden/ : /\svisible/
+        let newClass = this.isVisible ? ' visible' : ' hidden';
+        card.className = regexToReplace.test(name) ? name.replace(regexToReplace, newClass) : card.className + newClass;
+        console.log(card);
+
       }
 
       updateWarningMessages() {
