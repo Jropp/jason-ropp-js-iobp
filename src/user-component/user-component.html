@@ -300,7 +300,6 @@
             this.toggleNewUserCardDisplay();
           }
         }
-
         this.updateWarningMessages();
       }
 
@@ -348,6 +347,7 @@
         this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
         this.toggleEditable();
+        this.resetAllMessages();
       }
 
       editButtonClicked(e) {
@@ -376,8 +376,9 @@
         let editOpenAndNewUser = this.editOpen && !this.user.id;
         let emptyFields = !this.fieldsFilled();
         let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
+        let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
 
-        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat;
+        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
 
         this.updateWarningMessages();
       }
