@@ -411,11 +411,9 @@
       toggleNewUserCardDisplay() {
         let card = this.shadowRoot.querySelector('#userCard');
         let name = card.className;
-        let regexToReplace = this.isVisible ? /\shidden/ : /\svisible/
+        let regexToReplace = this.isVisible ? /\shidden/ : /\svisible/;
         let newClass = this.isVisible ? ' visible' : ' hidden';
         card.className = regexToReplace.test(name) ? name.replace(regexToReplace, newClass) : card.className + newClass;
-        console.log(card);
-
       }
 
       updateWarningMessages() {
