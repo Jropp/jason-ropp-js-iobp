@@ -48,9 +48,9 @@
           <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
             <button on-click="toggleMode">+ Create New User</button>
           </template>
-          <template is="dom-if" if="[[isMode(modes.CREATE_NEW,mode)]]">
-            <user-component edit-open="[[editInProgress]]" mode="edit"></user-component>
-          </template>
+
+          <user-component is-visible="[[expandNewUserCard]]" class="new-user-card" edit-open="[[editInProgress]]" mode="edit"></user-component>
+
         </div>
       </div>
     </div>
@@ -74,6 +74,9 @@
           },
           mode: {
             type: String,
+          },
+          expandNewUserCard: {
+            type: Boolean,
           },
           modes: {
             type: Object,
@@ -125,6 +128,7 @@
       }
 
       toggleMode() {
+        this.expandNewUserCard = !this.isMode(this.modes.CREATE_NEW);
         this.mode = this.isMode(this.modes.CREATE_NEW) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
       }
 

@@ -17,14 +17,38 @@
 
       .default-card {
         width: fit-content;
-        min-width: 500px;
-        min-height: 320px;
+        width: 500px;
+        height: 400px;
         margin: 5px;
         padding: 15px;
         border: var(--secondary-color) 1px solid;
         border-radius: 5px;
         box-shadow: 3px 3px 2px lightgrey;
         background-color: var(--primary-color);
+      }
+
+      .visible {
+        width: 500;
+        height: 400;
+        opacity: 1;
+        transition: width .5s, height .5s;
+      }
+
+      .visible>* {
+        opacity: 1;
+        transition: opacity 1.2s;
+      }
+
+      .hidden {
+        width: 0;
+        height: 0;
+        opacity: 0;
+        transition: opacity .4s, width .5s, height .5s;
+      }
+
+      .hidden>* {
+        opacity: 0;
+        transition: width .4s, height .4s;
       }
 
       fieldset {
@@ -40,7 +64,16 @@
       input {
         margin: 5px;
         border: none;
-        font-size: 20px
+        font-size: 20px;
+        width: auto;
+      }
+
+      .first-name {
+        width: 150px;
+      }
+
+      .last-name {
+        width: 150px;
       }
 
       .edit {
@@ -75,7 +108,7 @@
       }
     </style>
 
-    <div id="checkForEmptyFields" class="default-card">
+    <div id="userCard" class="default-card">
       <form on-input="formWatcher" autocomplete="on">
         <h1>[[headerMessage(mode)]]</h1>
         <!-- bplint-disable no-auto-binding -->
@@ -203,6 +236,10 @@
           displayEmailFormatMessage: {
             type: Boolean,
           },
+          isVisible: {
+            type: Boolean,
+            observer: 'toggleNewUserCardDisplay'
+          },
           openEditMessage: {
             type: String,
             value: 'Please save other user edits before saving this one.'
@@ -224,7 +261,11 @@
 
       connectedCallback() {
         super.connectedCallback();
-        this.initDisplayCard();
+        if (this.user.id) {
+          this.initDisplayCard();
+        } else {
+          this.toggleNewUserCardDisplay();
+        }
         this.updateWarningMessages();
       }
 
@@ -365,6 +406,16 @@
             input.className = this.isMode(this.modes.DISPLAY) ? name.replace(/\sedit/, '') : name + ' edit';
             input.readOnly = this.isMode(this.modes.DISPLAY);
           });
+      }
+
+      toggleNewUserCardDisplay() {
+        let card = this.shadowRoot.querySelector('#userCard');
+        let name = card.className;
+        let regexToReplace = this.isVisible ? /\shidden/ : /\svisible/
+        let newClass = this.isVisible ? ' visible' : ' hidden';
+        card.className = regexToReplace.test(name) ? name.replace(regexToReplace, newClass) : card.className + newClass;
+        console.log(card);
+
       }
 
       updateWarningMessages() {
