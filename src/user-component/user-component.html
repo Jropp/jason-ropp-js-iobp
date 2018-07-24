@@ -11,18 +11,24 @@
         --primary-color: white;
         --secondary-color: #0070b7;
         --tertiary-color: #fca902;
+        --light-gray: #e4e7ea;
         --warning-color: red;
       }
 
       .default-card {
-        width: 500px;
+        text-align: center;
+        width: 450px;
+        padding: 30px 60px 40px 60px;
         height: auto;
         margin: 5px;
-        padding: 15px;
-        border: var(--secondary-color) 1px solid;
         border-radius: 5px;
         box-shadow: 3px 3px 2px lightgrey;
         background-color: var(--primary-color);
+      }
+
+      form {
+        margin: auto;
+        width: 79%;
       }
 
       .visible {
@@ -46,37 +52,23 @@
         transition: width .4s, height .4s;
       }
 
-      fieldset {
-        margin: 10px;
-        border-radius: 3px;
-        border: var(--secondary-color) 2px solid;
-      }
-
-      .default-card>input .first-name .last-name {
-        width: 20px;
-      }
-
       input {
-        width: auto;
-        margin: 5px;
+        display: inline-block;
+        height: 40px;
+        width: 100%;
+        margin-top: 10px;
         border: none;
+        outline: none;
         font-size: 20px;
+        border-bottom: var(--secondary-color) solid 1px;
       }
 
-      .first-name {
-        width: 150px;
+      input:focus {
+        border-bottom: var(--tertiary-color) solid 2px;
       }
 
-      .last-name {
-        width: 150px;
-      }
-
-      .edit {
-        border-bottom: lightgray solid 1px;
-      }
-
-      .email {
-        width: 50%;
+      input:read-only {
+        border: none;
       }
 
       .id {
@@ -88,18 +80,22 @@
         font-size: 14px;
       }
 
+      .submit-button-box {
+        margin: auto;
+      }
+
       button {
-        margin: 10px;
-        margin-top: 20px;
-        width: 60px;
-        height: 30px;
+        margin-top: 30px;
+        width: 175px;
+        height: 40px;
         border-radius: 3px;
+        background-color: var(--tertiary-color);
         box-shadow: 1px 1px 1px lightgrey;
       }
 
       .warning {
         color: var(--warning-color);
-        font-size: 20px;
+        font-size: 10px;
       }
 
       @keyframes expand {
@@ -142,15 +138,13 @@
         <h1>[[headerMessage(mode)]]</h1>
         <!-- bplint-disable no-auto-binding -->
         <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
-          <fieldset>
-            <label for="firstName">First:</label>
-            <input id="firstName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-              required>
+          <label for="firstName"></label>
+          <input id="firstName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+            required>
 
-            <label for="lastName">Last:</label>
-            <input id="lastName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-              required>
-          </fieldset>
+          <label for="lastName"></label>
+          <input id="lastName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+            required>
         </template>
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <h1>[[user.last]], [[user.first]]</h1>
@@ -160,28 +154,26 @@
           </div>
         </template>
 
-        <fieldset>
-          <label for="email">Email:</label>
-          <input id="email" type="email" on-blur="formWatcher" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
-            name="email" required>
-          <br>
+        <label for="email"></label>
+        <input id="email" type="email" on-blur="formWatcher" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
+          name="email" required>
+        <br>
 
-          <template is="dom-if" if="[[displayEmailFormatMessage]]">
-            <p class="warning">[[emailFormatMessage]]</p>
-          </template>
+        <template is="dom-if" if="[[displayEmailFormatMessage]]">
+          <p class="warning">[[emailFormatMessage]]</p>
+        </template>
 
-          <label for="phone">Phone:</label>
-          <input id="phone" type="tel" on-blur="formWatcher" class="phone edit" placeholder="(xxx) xxx-xxxx" autocomplete="tel" value="{{user.phone::change}}"
-            required>
-          <br>
+        <label for="phone"></label>
+        <input id="phone" type="tel" on-blur="formWatcher" class="phone edit" placeholder="(xxx) xxx-xxxx" autocomplete="tel" value="{{user.phone::change}}"
+          required>
+        <br>
 
-          <template is="dom-if" if="[[displayPhoneFormatMessage]]">
-            <p class="warning">[[phoneFormatMessage]]</p>
-          </template>
+        <template is="dom-if" if="[[displayPhoneFormatMessage]]">
+          <p class="warning">[[phoneFormatMessage]]</p>
+        </template>
 
-          <label for="department">Department:</label>
-          <input id="department" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
-        </fieldset>
+        <label for="department"></label>
+        <input id="department" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
 
         <!-- bplint-enable no-auto-binding -->
         <div class="submit-button-box">
@@ -436,9 +428,6 @@
       toggleEditable() {
         this.shadowRoot.querySelectorAll('input')
           .forEach(input => {
-            let name = input.className;
-
-            input.className = this.isMode(this.modes.DISPLAY) ? name.replace(/\sedit/, '') : name + ' edit';
             input.readOnly = this.isMode(this.modes.DISPLAY);
           });
       }
