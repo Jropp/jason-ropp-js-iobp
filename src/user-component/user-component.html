@@ -16,9 +16,8 @@
       }
 
       .default-card {
-        width: fit-content;
         width: 500px;
-        height: 400px;
+        height: 300px;
         margin: 5px;
         padding: 15px;
         border: var(--secondary-color) 1px solid;
@@ -28,20 +27,16 @@
       }
 
       .visible {
-        width: 500;
-        height: 400;
-        opacity: 1;
-        transition: width .5s, height .5s;
+        animation: expand .4s;
+        height: auto;
       }
 
       .visible>* {
-        opacity: 1;
-        transition: opacity 1.2s;
+        animation: fade-in .5s;
       }
 
       .hidden {
-        width: 0;
-        height: 0;
+        animation: collapse .4s;
         opacity: 0;
         transition: opacity .4s, width .5s, height .5s;
       }
@@ -53,8 +48,8 @@
 
       fieldset {
         margin: 10px;
-        border: var(--secondary-color) 2px solid;
         border-radius: 3px;
+        border: var(--secondary-color) 2px solid;
       }
 
       .default-card>input .first-name .last-name {
@@ -62,10 +57,10 @@
       }
 
       input {
+        width: auto;
         margin: 5px;
         border: none;
         font-size: 20px;
-        width: auto;
       }
 
       .first-name {
@@ -105,6 +100,40 @@
       .warning {
         color: var(--warning-color);
         font-size: 20px;
+      }
+
+      @keyframes expand {
+        0% {
+          height: 0px;
+          width: 0px;
+        }
+        100% {
+          height: 340px;
+          width: 500px;
+        }
+      }
+
+      @keyframes collapse {
+        0% {
+          height: 340px;
+          width: 500px;
+        }
+        100% {
+          height: 0px;
+          width: 0px;
+        }
+      }
+
+      @keyframes fade-in {
+        0% {
+          opacity: 0;
+        }
+        50% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
       }
     </style>
 
