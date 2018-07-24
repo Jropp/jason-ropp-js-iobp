@@ -24,28 +24,35 @@
         background-color: var(--tertiary-color);
       }
 
-      .grid-container {
+      .columns {
+        display: grid;
+        grid-template-columns: 33fr 33fr 33fr;
+      }
+
+      .card-container {
         display: grid;
         grid-template-rows: auto 500px;
       }
-
-      .create-user-component {}
     </style>
-    <div class="grid-container">
-      <div class="create-user-component">
-        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-          <button on-click="toggleMode">+ Create New User</button>
-        </template>
-        <user-component is-visible="[[expandNewUserCard]]" class="new-user-card" edit-open="[[editInProgress]]" mode="edit"></user-component>
+    <div class="columns">
+      <div class="column-1"></div>
+      <div class="card-container column-2">
+        <div class="create-user-row">
+          <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+            <button on-click="toggleMode">+ Create New User</button>
+          </template>
+          <user-component is-visible="[[expandNewUserCard]]" class="new-user-card" edit-open="[[editInProgress]]" mode="edit"></user-component>
+        </div>
+        <div class="user-list-row">
+          <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
+            <h2>There are currently no users in the database. Please create one.</h2>
+          </template>
+          <template is="dom-repeat" items="[[users]]" as="user">
+            <user-component edit-open="[[editInProgress]]" mode="display" user-to-display="[[user]]"></user-component>
+          </template>
+        </div>
       </div>
-      <div class="user-list-column">
-        <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
-          <h2>There are currently no users in the database. Please create one.</h2>
-        </template>
-        <template is="dom-repeat" items="[[users]]" as="user">
-          <user-component edit-open="[[editInProgress]]" mode="display" user-to-display="[[user]]"></user-component>
-        </template>
-      </div>
+      <div class="colum-3"></div>
     </div>
 
   </template>

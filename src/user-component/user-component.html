@@ -16,7 +16,7 @@
 
       .default-card {
         width: 500px;
-        height: 350px;
+        height: auto;
         margin: 5px;
         padding: 15px;
         border: var(--secondary-color) 1px solid;
@@ -37,6 +37,7 @@
       .hidden {
         animation: collapse .4s;
         opacity: 0;
+        height: 0;
         transition: opacity .4s, width .5s, height .5s;
       }
 
@@ -295,10 +296,8 @@
         super.connectedCallback();
         if (this.user.id) {
           this.initDisplayCard();
-        } else {
-          if (this.users.length) {
-            this.toggleNewUserCardDisplay();
-          }
+        } else if (this.users.length) {
+          this.toggleNewUserCardDisplay();
         }
         this.updateWarningMessages();
       }
@@ -445,7 +444,7 @@
       }
 
       toggleNewUserCardDisplay() {
-        let card = this.shadowRoot.querySelector('#userCard');
+        let card = this.shadowRoot.querySelector('form');
         let name = card.className;
         let regexToReplace = this.isVisible ? /\shidden/ : /\svisible/;
         let newClass = this.isVisible ? ' visible' : ' hidden';
