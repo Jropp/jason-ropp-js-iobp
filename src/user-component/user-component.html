@@ -234,6 +234,10 @@
               };
             }
           },
+          users: {
+            type: Object,
+            value: () => database.getUsers()
+          },
           user: {
             type: Object,
             value: () => {
@@ -293,8 +297,12 @@
         if (this.user.id) {
           this.initDisplayCard();
         } else {
-          this.toggleNewUserCardDisplay();
+          console.log(this.users);
+          if (this.users.length) {
+            this.toggleNewUserCardDisplay();
+          }
         }
+
         this.updateWarningMessages();
       }
 
