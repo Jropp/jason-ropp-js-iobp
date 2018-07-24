@@ -8,23 +8,28 @@
     <style>
       :host {
         display: block;
+        font-family: Arial, Helvetica, sans-serif;
+        --primary-color: white;
+        --secondary-color: #0070b7;
+        --tertiary-color: #fca902;
+        --warning-color: red;
       }
 
       .default-card {
         width: fit-content;
         min-width: 500px;
-        min-height: 400px;
+        min-height: 320px;
         margin: 5px;
         padding: 15px;
-        border: #7395ae 1px solid;
+        border: var(--secondary-color) 1px solid;
         border-radius: 5px;
         box-shadow: 3px 3px 2px lightgrey;
-        background-color: white;
+        background-color: var(--primary-color);
       }
 
       fieldset {
         margin: 10px;
-        border: #7395ae 2px solid;
+        border: var(--secondary-color) 2px solid;
         border-radius: 3px;
       }
 
@@ -47,19 +52,25 @@
       }
 
       .id {
-        font-size: 20px;
+        margin-top: -25px;
+      }
+
+      .id>* {
+        display: inline-block;
+        font-size: 14px;
       }
 
       button {
         margin: 10px;
+        margin-top: 20px;
         width: 60px;
         height: 30px;
         border-radius: 3px;
-        background-color: #7395ae;
+        box-shadow: 1px 1px 1px lightgrey;
       }
 
       .warning {
-        color: red;
+        color: var(--warning-color);
         font-size: 20px;
       }
     </style>
@@ -81,6 +92,10 @@
         </template>
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <h1>[[user.last]], [[user.first]]</h1>
+          <div class="id" id="id">
+            <h3>ID:</h3>
+            <p class="id">[[user.id]]</p>
+          </div>
         </template>
 
         <fieldset>
@@ -106,14 +121,6 @@
           <input id="department" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
         </fieldset>
 
-        <template is="dom-if" if="[[user.id]]">
-          <fieldset>
-            <div id="id">
-              <h3>ID:</h3>
-              <p class="id">[[user.id]]</p>
-            </div>
-          </fieldset>
-        </template>
         <!-- bplint-enable no-auto-binding -->
         <div class="submit-button-box">
 
