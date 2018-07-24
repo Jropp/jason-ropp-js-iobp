@@ -377,7 +377,7 @@
         let emptyFields = !this.fieldsFilled();
         let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
 
-        fa = editOpenAndNewUser || emptyFields || improperPhoneFormat;
+        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat;
 
         this.updateWarningMessages();
       }
