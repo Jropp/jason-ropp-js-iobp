@@ -24,16 +24,20 @@
         background-color: var(--tertiary-color);
       }
 
-      .display-container {
+      .grid-container {
         display: grid;
-        grid-template-columns: 50fr 50fr;
+        grid-template-rows: auto 500px;
       }
 
-      .create-user-component {
-        position: fixed;
-      }
+      .create-user-component {}
     </style>
-    <div class="display-container">
+    <div class="grid-container">
+      <div class="create-user-component">
+        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+          <button on-click="toggleMode">+ Create New User</button>
+        </template>
+        <user-component is-visible="[[expandNewUserCard]]" class="new-user-card" edit-open="[[editInProgress]]" mode="edit"></user-component>
+      </div>
       <div class="user-list-column">
         <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
           <h2>There are currently no users in the database. Please create one.</h2>
@@ -41,17 +45,6 @@
         <template is="dom-repeat" items="[[users]]" as="user">
           <user-component edit-open="[[editInProgress]]" mode="display" user-to-display="[[user]]"></user-component>
         </template>
-      </div>
-
-      <div class="new-user-column">
-        <div class="create-user-component">
-          <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-            <button on-click="toggleMode">+ Create New User</button>
-          </template>
-
-          <user-component is-visible="[[expandNewUserCard]]" class="new-user-card" edit-open="[[editInProgress]]" mode="edit"></user-component>
-
-        </div>
       </div>
     </div>
 
