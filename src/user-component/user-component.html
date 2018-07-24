@@ -17,7 +17,7 @@
 
       .default-card {
         width: 500px;
-        height: 300px;
+        height: 'auto';
         margin: 5px;
         padding: 15px;
         border: var(--secondary-color) 1px solid;
@@ -297,12 +297,10 @@
         if (this.user.id) {
           this.initDisplayCard();
         } else {
-          console.log(this.users);
           if (this.users.length) {
             this.toggleNewUserCardDisplay();
           }
         }
-
         this.updateWarningMessages();
       }
 
@@ -379,7 +377,7 @@
         let emptyFields = !this.fieldsFilled();
         let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
 
-        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat;
+        fa = editOpenAndNewUser || emptyFields || improperPhoneFormat;
 
         this.updateWarningMessages();
       }
