@@ -102,6 +102,12 @@ To view the bundled files from the server:
 
 ##### Notes
 
+### Color Scheme
+
+Primary App Color: #0070b7
+Secondary App Color: #fca902
+Tertiary App Color: #e4e7ea
+
 ### UX-Lint
 
 Banno's lint packages for linting files. The .editorconfig file is set up to match Banno's styleguide
