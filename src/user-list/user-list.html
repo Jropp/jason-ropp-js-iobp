@@ -1,7 +1,6 @@
 <!-- bplint-disable no-unused-import -->
 <link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
 <link rel="import" href="~@banno/polymer/lib/elements/dom-repeat.js">
-<link rel="import" href="~@banno/polymer/polymer-element.js">
 <!-- bplint-enable no-unused-import -->
 <link rel="import" href="../user-component/user-component.html">
 <dom-module id="user-list">
@@ -26,6 +25,15 @@
         grid-template-columns: 33fr 33fr 33fr;
       }
 
+      .create-user-row {
+        text-align: center;
+        margin-top: 18px;
+      }
+
+      .create-user-button {
+        font-size: 15px;
+      }
+
       .card-container {
         display: grid;
         grid-template-rows: auto 500px;
@@ -34,9 +42,9 @@
     <div class="columns">
       <div class="column-1"></div>
       <div class="card-container column-2">
-        <div style="text-align: center; margin-top: 18px;" class="create-user-row" >
-          <template  is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-            <button style="font-size: 15px; "on-click="toggleMode">+ Create User</button>
+        <div class="create-user-row">
+          <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+            <button class="create-user-button" on-click="toggleMode">+ Create User</button>
           </template>
           <user-component is-visible="[[expandNewUserCard]]" class="new-user-card" edit-open="[[editInProgress]]" mode="edit"></user-component>
         </div>
