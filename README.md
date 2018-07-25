@@ -14,6 +14,8 @@ Click on 'Create New User' button, enter a user. If you leave a field empty, the
 
 Cancelling should collapsed the create user card into the 'Create New User' button. Saving will display your new user in the users list.
 
+Appropriate warnings will notify you of improper format of email or phone. Improper format will also disable the save button.
+
 ### Edit/Delete User
 
 You should be able to click the edit button and edit the fields for that user and save with the updated information displayed immediately.
@@ -22,9 +24,9 @@ If you already have an edit in process, all other edit and save buttons in other
 
 If you begin to edit a card and try to save a new user or save your edit before saving the open edit, it will prompt you to save the other open edit first.
 
-If you click, delete, the user you selected to be deleted should disappear immediately, even if you have left an input field empty.
+If you click, delete, the user you selected to be deleted should disappear immediately, even if you have left an input field empty or improperly formatted things.
 
-If you leave a field empty the save button will remain disabled.
+If you leave a field empty or improperly format a field the save button will remain disabled and you will recieve a warning.
 
 If you click delete, the user you selected to be deleted should disappear immediately, even if you have left an input field empty.
 
@@ -50,31 +52,31 @@ When an edit button is clicked in a user-component, that user-component dispatch
 
 ### NPM Scripts
 
-    To serve the app (also runs ux-lint):
+#### To serve the app (also runs ux-lint):
 
         `$ yarn start` then open https://localhost:1820 in the browser.
 
         This lints, builds, and serves the project using webpack-dev-server
 
-    To see a list of available scripts [or a single script]:
+#### To see a list of available scripts [or a single script]:
 
         `$ yarn run help [filter scripts]`
 
-    To lint (UX-Lint)
+#### To lint (UX-Lint)
 
         `$ yarn lint`
 
         `$ yarn start` also fires the linter before serving the project.
 
-    To bundle the code for production. It gets built into the dist folder in the root.
+#### To bundle the code for production. It gets built into the dist folder in the root.
 
         `$ yarn build`
 
 ## dependencies
 
-### Local Storage
+### Local Storage / API
 
-The app database uses your browsers local storage. Clearing your browsers cache will delete that database of users.
+The app database API uses your browsers local storage. Clearing your browsers cache will delete that database of users.
 
 ### @Banno/Polymer
 

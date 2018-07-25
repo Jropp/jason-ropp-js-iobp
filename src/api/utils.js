@@ -36,6 +36,11 @@ class ValidateUtil {
       phoneDigits.length <= internationalDigitMax
     );
   }
+
+  static checkEmailInput(email) {
+    let emailFormat = /^\S+@\S+\.\S+$/;
+    return emailFormat.test(email);
+  }
 }
 
 module.exports = ValidateUtil;

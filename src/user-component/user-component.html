@@ -85,9 +85,13 @@
 
         <fieldset>
           <label for="email">Email:</label>
-          <input id="email" type="email" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
+          <input id="email" type="email" on-blur="formWatcher" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
             name="email" required>
           <br>
+
+          <template is="dom-if" if="[[displayEmailFormatMessage]]">
+            <p class="warning">[[emailFormatMessage]]</p>
+          </template>
 
           <label for="phone">Phone:</label>
           <input id="phone" type="tel" on-blur="formWatcher" class="phone edit" placeholder="(xxx) xxx-xxxx" autocomplete="tel" value="{{user.phone::change}}"
@@ -181,12 +185,15 @@
           editOpen: {
             type: Boolean,
             value: false,
-            observer: 'whenEditOpenChanges'
+            observer: 'formWatcher'
           },
           displayOpenEditMessage: {
             type: Boolean,
           },
           displayPhoneFormatMessage: {
+            type: Boolean,
+          },
+          displayEmailFormatMessage: {
             type: Boolean,
           },
           openEditMessage: {
@@ -196,6 +203,10 @@
           phoneFormatMessage: {
             type: String,
             value: 'Please format phone number as (xxx) xxx-xxxx'
+          },
+          emailFormatMessage: {
+            type: String,
+            value: 'Please format email input as xxxx@xxxxx.xxx'
           },
           userToDisplay: {
             type: Object,
@@ -214,6 +225,7 @@
         if (this.isMode(this.modes.DISPLAY)) {
           this.toggleEditable();
         }
+        this.warningMessage = '';
       }
 
       cancel(e) {
@@ -224,30 +236,27 @@
           composed: true,
         }));
 
-        this.resetFormState();
+        this.shadowRoot.querySelector('form').reset();
+        this.resetAllMessages();
       }
 
-      fieldsEmpty() {
+      fieldsFilled() {
         let fields = this.shadowRoot.querySelectorAll('input');
-        let fieldsEmpty = false;
+        let fieldsFilled = true;
 
         fields.forEach(field => {
           if (!field.value.length) {
-            fieldsEmpty = true;
+            fieldsFilled = false;
             return; // eslint-disable-line no-useless-return
           }
         });
 
-        return fieldsEmpty;
+        return fieldsFilled;
       }
 
       clearNewUserForm() {
         this.shadowRoot.querySelector('form').reset();
-
         this.disableSave = true;
-        for (let key of Object.keys(this.user)) {
-          this.user[key] = '';
-        }
       }
 
       delete(e) {
@@ -273,7 +282,7 @@
       }
 
       formatUserData(user) {
-        if (user.id.length) {
+        if (user.id) {
           user.phone = ValidateUtil.insertPhoneSymbols(user.phone);
           this.user = user;
         }
@@ -282,10 +291,11 @@
       formWatcher() {
 
         let editOpenAndNewUser = this.editOpen && !this.user.id;
-        let emptyFields = this.fieldsEmpty();
+        let emptyFields = !this.fieldsFilled();
         let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
+        let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
 
-        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat;
+        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
 
         this.updateWarningMessages();
       }
@@ -294,20 +304,23 @@
         if (mode === this.modes.EDIT) {
           return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
         }
-
         return '';
       }
 
       isMode(expectedMode) {
-        return (expectedMode === this.mode);
+        return expectedMode === this.mode;
       }
 
-      resetFormState(isEditedUser) {
+      resetFormState() {
         this.editInProgress(false);
+        let isNewUserCard = !this.user.id;
+        let isUserEditCard = this.user.id;
 
-        if (isEditedUser) {
+        if (isUserEditCard) {
           this.toggleMode();
-        } else {
+        }
+
+        if (isNewUserCard) {
           this.clearNewUserForm();
         }
 
@@ -315,6 +328,7 @@
       }
 
       resetAllMessages() {
+        this.displayEmailFormatMessage = false;
         this.displayPhoneFormatMessage = false;
       }
 
@@ -329,7 +343,7 @@
           database.saveUser(user);
         }
 
-        this.resetFormState(this.user.id);
+        this.resetFormState();
       }
 
       toggleMode(e) {
@@ -349,7 +363,12 @@
 
       updateWarningMessages() {
         let isNewUser = !this.user.id;
+        let emailInProgress = this.user.email;
         let phoneInProgress = this.user.phone;
+
+        if (emailInProgress) {
+          this.displayEmailFormatMessage = !ValidateUtil.checkEmailInput(this.user.email);
+        }
 
         if (phoneInProgress) {
           this.displayPhoneFormatMessage = !ValidateUtil.checkPhoneInput(this.user.phone);
