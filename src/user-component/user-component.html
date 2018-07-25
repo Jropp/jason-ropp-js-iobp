@@ -12,30 +12,23 @@
 
       .default-card {
         height: auto;
-<<<<<<< HEAD
         width: 80%;
         text-align: center;
         margin: 1em auto;    
         padding: 3em 2em 4em 2em;
         border-radius: 5px;
-        background-color: var(--primary-color);     
+        background-color: white;     
         box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
-=======
-        width: 450px;
-        margin: 5px;
-        padding: 30px 60px 40px 60px;
-        border-radius: 5px;
-        box-shadow: 3px 3px 2px lightgrey;
-        background-color: white;
-        text-align: center;
->>>>>>> 2b6ce80e8bf1e1a0c76f858803cad6d4e0502e62
       }
 
       form {
         margin: auto;
         width: 400px;
       }
-
+      
+      div#userCard.default-card.hidden {
+        padding: 0px;
+      }
       .visible {
         animation: expand .6s;
         height: auto;
@@ -66,7 +59,7 @@
         border: none;
         outline: none;
         font-size: 20px;
-        border-bottom: #0070b7 solid 1px;
+        border-bottom: grey solid 1px;
         display: inline-block;
       }
 
@@ -95,14 +88,10 @@
         height: 40px;
         width: 175px;
         margin-top: 30px;
+        
         border-radius: 3px;
-<<<<<<< HEAD
-        background-color: var(--tertiary-color);
-        box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
-=======
-        box-shadow: 1px 1px 1px lightgrey;
         background-color: #fca902;
->>>>>>> 2b6ce80e8bf1e1a0c76f858803cad6d4e0502e62
+        box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
       }
 
       .warning {
@@ -448,7 +437,8 @@
 
       toggleNewUserCardDisplay() {
 
-        // FIXME: Currently this targets form instead of the parent container. But things aren't getting through, so maybe hidden/visible needs to target the parent for the class then get the child form in the css selector
+        // FIXME: Currently this targets form instead of the parent container. But things aren't getting through,
+        //  so maybe hidden/visible needs to target the parent for the class then get the child form in the css selector
         let card = this.shadowRoot.querySelector('#userCard');
         let name = card.className;
         let regexToReplace = this.isVisible ? /\shidden/ : /\svisible/;
