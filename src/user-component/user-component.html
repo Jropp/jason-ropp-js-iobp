@@ -16,44 +16,44 @@
       }
 
       .default-card {
-        text-align: center;
-        width: 450px;
-        padding: 30px 60px 40px 60px;
         height: auto;
+        width: 450px;
         margin: 5px;
+        padding: 30px 60px 40px 60px;
         border-radius: 5px;
         box-shadow: 3px 3px 2px lightgrey;
         background-color: var(--primary-color);
+        text-align: center;
       }
 
       form {
         margin: auto;
-        width: 79%;
+        width: 400px;
       }
 
       .visible {
-        animation: expand .4s;
+        animation: expand .6s;
         height: auto;
       }
 
-      .visible>* {
-        animation: fade-in .5s;
+      .visible>form {
+        height: auto;
+        animation: fade-in .7s;
       }
 
       .hidden {
+        transition: opacity .4s;
         animation: collapse .4s;
         opacity: 0;
-        height: 0;
-        transition: opacity .4s, width .5s, height .5s;
       }
 
-      .hidden>* {
-        opacity: 0;
-        transition: width .4s, height .4s;
+      .hidden>form {
+        visibility: hidden;
+        height: 0px;
+        width: 0px;
       }
 
       input {
-        display: inline-block;
         height: 40px;
         width: 100%;
         margin-top: 10px;
@@ -61,6 +61,7 @@
         outline: none;
         font-size: 20px;
         border-bottom: var(--secondary-color) solid 1px;
+        display: inline-block;
       }
 
       input:focus {
