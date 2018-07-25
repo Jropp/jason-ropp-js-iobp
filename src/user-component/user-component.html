@@ -287,12 +287,13 @@
       }
 
       formWatcher() {
-        let editOpenInNewUser = this.editOpen && !this.user.id;
+
+        let editOpenAndNewUser = this.editOpen && !this.user.id;
         let emptyFields = !this.fieldsFilled();
         let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
         let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
 
-        this.disableSave = editOpenInNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
+        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
 
         this.updateWarningMessages();
       }
