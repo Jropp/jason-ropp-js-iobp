@@ -22,7 +22,7 @@
 
       .columns {
         display: grid;
-        grid-template-columns: 33fr 33fr 33fr;
+        grid-template-columns: repeat(3, 1fr);
       }
 
       .create-user-row {
@@ -35,8 +35,8 @@
       }
 
       .card-container {
-        display: grid;
-        grid-template-rows: auto 500px;
+        display: flex;
+        flex-direction: column;
       }
     </style>
     <div class="columns">

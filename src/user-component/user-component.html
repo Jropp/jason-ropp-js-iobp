@@ -14,21 +14,23 @@
         height: auto;
         width: 80%;
         text-align: center;
-        margin: 1em auto;    
+        margin: 1em auto;
         padding: 3em 2em 4em 2em;
         border-radius: 5px;
-        background-color: white;     
-        box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+        background-color: white;
+        transition: opacity .4s;
+        box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
 
       form {
         margin: auto;
         width: 400px;
       }
-      
+
       div#userCard.default-card.hidden {
         padding: 0px;
       }
+
       .visible {
         animation: expand .6s;
         height: auto;
@@ -42,12 +44,12 @@
       .hidden {
         transition: opacity .4s;
         animation: collapse .4s;
+        height: 0px;
         opacity: 0;
       }
 
       .hidden>form {
         visibility: hidden;
-        height: 0px;
         width: 0px;
       }
 
@@ -88,10 +90,10 @@
         height: 40px;
         width: 175px;
         margin-top: 30px;
-        
+
         border-radius: 3px;
         background-color: #fca902;
-        box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+        box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
 
       .warning {
@@ -169,8 +171,9 @@
         </template>
 
         <label for="phone">
-        <input id="phone" type="tel" on-blur="formWatcher" class="phone edit" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
-          required></label>
+          <input id="phone" type="tel" on-blur="formWatcher" class="phone edit" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
+            required>
+        </label>
         <br>
 
         <template is="dom-if" if="[[displayPhoneFormatMessage]]">
