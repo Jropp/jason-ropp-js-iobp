@@ -35,16 +35,16 @@
           <h2>There are currently no users in the database. Please create one.</h2>
         </template>
         <template is="dom-repeat" items="[[users]]" as="user">
-          <user-component edit-open="[[editInProgress]]" mode="display" user="[[user]]"></user-component>
+          <user-component edit-open="[[editInProgress]]" mode="display" user-to-display="[[user]]"></user-component>
         </template>
       </div>
 
       <div class="new-user-column">
         <div class="create-user-component">
-          <template is="dom-if" if="[[isMode(mode, modes.DISPLAY)]]">
+          <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
             <button on-click="toggleMode">+ Create New User</button>
           </template>
-          <template is="dom-if" if="[[isMode(mode, modes.CREATE_NEW)]]">
+          <template is="dom-if" if="[[isMode(modes.CREATE_NEW,mode)]]">
             <user-component edit-open="[[editInProgress]]" mode="edit"></user-component>
           </template>
         </div>
@@ -87,16 +87,16 @@
 
         this.initMode();
 
-        document.addEventListener('editInProgress', e => {
-          this.editInProgress = e.detail;
+        document.addEventListener('cancel', () => {
+          this.toggleMode();
         });
 
         document.addEventListener('databaseUpdated', e => {
-          this.updateUserList();
+          this.users = database.getUsers();
         });
 
-        document.addEventListener('cancel', () => {
-          this.toggleMode();
+        document.addEventListener('editInProgress', e => {
+          this.editInProgress = e.detail;
         });
 
       }
@@ -112,24 +112,16 @@
         this.mode = this.users.length ? this.modes.DISPLAY : this.modes.CREATE_NEW;
       }
 
-      isMode(currentMode, expectedMode) {
-        return (currentMode === expectedMode);
+      isMode(expectedMode) {
+        return expectedMode === this.mode;
       }
 
       noUsersHeaderMessage(users) {
-        return users.length === 0;
-      }
-
-      showCreateNewUserCard() {
-        this.mode = this.modes.CREATE_NEW;
+        return !users.length;
       }
 
       toggleMode() {
-        this.mode = (this.mode === this.modes.CREATE_NEW) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
-      }
-
-      updateUserList() {
-        this.users = database.getUsers();
+        this.mode = this.isMode(this.modes.CREATE_NEW) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
       }
 
     }

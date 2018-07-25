@@ -7,26 +7,25 @@ let database = (() => {
 
   function getUserById(userId) {
     let users = getUsers();
+    let match = {};
+
     users.forEach(user => {
       if (user.id === userId) {
-        return user;
+        match = user;
       }
     });
-    return {};
+    return match;
   }
 
   function editUser(user) {
     let users = getUsers();
-    let index = getIdIndex(user.id);
-    users.splice(index, 1, user);
-
+    users.splice(getIdIndex(user.id), 1, formatUserData(user));
     updateLocalStorage(users);
   }
 
   function saveUser(user) {
-    let users = getUsers();
-    user.id = createNewUserId();
-    users.splice(0, 0, user);
+    let users = getUsers() ? getUsers() : [];
+    users.splice(0, 0, formatUserData(user));
     updateLocalStorage(users);
   }
 
@@ -43,6 +42,16 @@ let database = (() => {
   function getIdIndex(id) {
     let users = getUsers();
     return users ? users.findIndex(val => val.id === id) : -1;
+  }
+
+  function formatUserData(user) {
+    user.id = user.id || createNewUserId();
+    user.phone = getDigitsFromNumber(user.phone);
+    return user;
+  }
+
+  function getDigitsFromNumber(userPhoneInput) {
+    return userPhoneInput.replace(/\D/g, "");
   }
 
   function updateLocalStorage(users) {
@@ -68,8 +77,8 @@ let database = (() => {
       id += String.fromCharCode(charCode);
     }
 
-    let doesIdExist = getIdIndex(id) !== -1;
-    return doesIdExist ? createNewUserId() : id;
+    let idAlreadyExists = getIdIndex(id) !== -1;
+    return idAlreadyExists ? createNewUserId() : id;
   }
 
   return {
