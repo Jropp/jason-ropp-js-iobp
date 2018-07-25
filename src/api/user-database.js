@@ -45,6 +45,8 @@ let database = (() => {
   }
 
   function formatUserData(user) {
+    user.first = titleCaseName(user.first);
+    user.last = titleCaseName(user.last);
     user.id = user.id || createNewUserId();
     user.phone = getDigitsFromNumber(user.phone);
     return user;
@@ -52,6 +54,11 @@ let database = (() => {
 
   function getDigitsFromNumber(userPhoneInput) {
     return userPhoneInput.replace(/\D/g, "");
+  }
+
+  function titleCaseName(name) {
+    let loweredCase = name.slice(1).toLowerCase();
+    return name.charAt(0).toUpperCase() + loweredCase;
   }
 
   function updateLocalStorage(users) {

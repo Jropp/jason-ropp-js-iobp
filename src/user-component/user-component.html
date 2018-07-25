@@ -8,15 +8,11 @@
     <style>
       :host {
         font-family: Arial, Helvetica, sans-serif;
-        --primary-color: white;
-        --secondary-color: #0070b7;
-        --tertiary-color: #fca902;
-        --light-gray: #e4e7ea;
-        --warning-color: red;
       }
 
       .default-card {
         height: auto;
+<<<<<<< HEAD
         width: 80%;
         text-align: center;
         margin: 1em auto;    
@@ -24,36 +20,45 @@
         border-radius: 5px;
         background-color: var(--primary-color);     
         box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+=======
+        width: 450px;
+        margin: 5px;
+        padding: 30px 60px 40px 60px;
+        border-radius: 5px;
+        box-shadow: 3px 3px 2px lightgrey;
+        background-color: white;
+        text-align: center;
+>>>>>>> 2b6ce80e8bf1e1a0c76f858803cad6d4e0502e62
       }
 
       form {
         margin: auto;
-        width: 79%;
+        width: 400px;
       }
 
       .visible {
-        animation: expand .4s;
+        animation: expand .6s;
         height: auto;
       }
 
-      .visible>* {
-        animation: fade-in .5s;
+      .visible>form {
+        height: auto;
+        animation: fade-in .7s;
       }
 
       .hidden {
+        transition: opacity .4s;
         animation: collapse .4s;
         opacity: 0;
-        height: 0;
-        transition: opacity .4s, width .5s, height .5s;
       }
 
-      .hidden>* {
-        opacity: 0;
-        transition: width .4s, height .4s;
+      .hidden>form {
+        visibility: hidden;
+        height: 0px;
+        width: 0px;
       }
 
       input {
-        display: inline-block;
         height: 40px;
         width: 100%;
         margin-top: 20px;
@@ -61,11 +66,12 @@
         border: none;
         outline: none;
         font-size: 20px;
-        border-bottom: var(--secondary-color) solid 1px;
+        border-bottom: #0070b7 solid 1px;
+        display: inline-block;
       }
 
       input:focus {
-        border-bottom: var(--tertiary-color) solid 2px;
+        border-bottom: #fca902 solid 2px;
       }
 
       input:read-only {
@@ -86,16 +92,21 @@
       }
 
       button {
-        margin-top: 30px;
-        width: 175px;
         height: 40px;
+        width: 175px;
+        margin-top: 30px;
         border-radius: 3px;
+<<<<<<< HEAD
         background-color: var(--tertiary-color);
         box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+=======
+        box-shadow: 1px 1px 1px lightgrey;
+        background-color: #fca902;
+>>>>>>> 2b6ce80e8bf1e1a0c76f858803cad6d4e0502e62
       }
 
       .warning {
-        color: var(--warning-color);
+        color: red;
         font-size: 10px;
       }
 
@@ -104,16 +115,20 @@
           height: 0px;
           width: 0px;
         }
+        75% {
+          height: 408px;
+          width: 450px;
+        }
         100% {
-          height: 340px;
-          width: 500px;
+          height: auto;
+          width: 450px;
         }
       }
 
       @keyframes collapse {
         0% {
-          height: 340px;
-          width: 500px;
+          height: 530px;
+          width: 450px;
         }
         100% {
           height: 0px;
@@ -357,10 +372,8 @@
       }
 
       formatUserData(user) {
-        if (user.id) {
-          user.phone = ValidateUtil.insertPhoneSymbols(user.phone);
-          this.user = user;
-        }
+        user.phone = ValidateUtil.insertPhoneSymbols(user.phone);
+        this.user = user;
       }
 
       formWatcher() {
@@ -434,7 +447,9 @@
       }
 
       toggleNewUserCardDisplay() {
-        let card = this.shadowRoot.querySelector('form');
+
+        // FIXME: Currently this targets form instead of the parent container. But things aren't getting through, so maybe hidden/visible needs to target the parent for the class then get the child form in the css selector
+        let card = this.shadowRoot.querySelector('#userCard');
         let name = card.className;
         let regexToReplace = this.isVisible ? /\shidden/ : /\svisible/;
         let newClass = this.isVisible ? ' visible' : ' hidden';
