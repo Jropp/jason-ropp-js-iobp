@@ -38,10 +38,14 @@
         display: flex;
         flex-direction: column;
       }
+
+      .show-message {
+        background-color: red;
+      }
     </style>
     <div class="columns">
       <div class="column-1">
-        <h1 id="popupBox" class="popup-messages">Generic Message</h1>
+        <h1 id="popupBox" class="message-box">Generic Message</h1>
       </div>
       <div class="card-container column-2">
         <div class="create-user-row">
@@ -136,7 +140,12 @@
       }
 
       popupMessage(action) {
-        let messageBox = this.$.popupBox.textContent = action + ' ' + 'Successful';
+        let messageBox = this.$.popupBox;
+        messageBox.textContent = action + ' ' + 'Successful';
+        messageBox.className = 'message-box show-message';
+        window.setTimeout(() => {
+          messageBox.className = 'message-box';
+        }, 3000);
       }
 
       toggleMode() {

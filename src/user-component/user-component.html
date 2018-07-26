@@ -445,7 +445,6 @@
         let newClass = this.isVisible ? ' visible' : ' hidden';
         card.className = regexToReplace.test(name) ? name.replace(regexToReplace, newClass) : card.className + newClass;
       }
-
       updateWarningMessages() {
         let isNewUser = !this.user.id;
         let emailInProgress = this.user.email;
