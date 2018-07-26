@@ -40,7 +40,9 @@
       }
     </style>
     <div class="columns">
-      <div class="column-1"></div>
+      <div class="column-1">
+        <h1 id="popupBox" class="popup-messages">Generic Message</h1>
+      </div>
       <div class="card-container column-2">
         <div class="create-user-row">
           <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
@@ -105,6 +107,7 @@
 
         document.addEventListener('databaseUpdated', e => {
           this.users = database.getUsers();
+          this.popupMessage(e.detail.message);
         });
 
         document.addEventListener('editInProgress', e => {
@@ -130,6 +133,10 @@
 
       noUsersHeaderMessage(users) {
         return !users.length;
+      }
+
+      popupMessage(action) {
+        let messageBox = this.$.popupBox.textContent = action + ' ' + 'Successful';
       }
 
       toggleMode() {
