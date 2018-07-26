@@ -423,7 +423,7 @@
           database.saveUser(user);
         }
 
-        this.resetFormState();
+        this.cancel(e);
       }
 
       toggleMode(e) {
@@ -439,9 +439,6 @@
       }
 
       toggleNewUserCardDisplay() {
-
-        // FIXME: Currently this targets form instead of the parent container. But things aren't getting through,
-        //  so maybe hidden/visible needs to target the parent for the class then get the child form in the css selector
         let card = this.shadowRoot.querySelector('#userCard');
         let name = card.className;
         let regexToReplace = this.isVisible ? /\shidden/ : /\svisible/;
