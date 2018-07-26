@@ -421,9 +421,10 @@
           database.editUser(user);
         } else {
           database.saveUser(user);
+          this.isVisible = false;
         }
 
-        this.cancel(e);
+        this.resetFormState();
       }
 
       toggleMode(e) {
