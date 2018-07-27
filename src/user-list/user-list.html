@@ -40,17 +40,34 @@
       }
 
       .message-box {
+        background-color: #4caf50;
+        color: #eef1f4;
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        font-family: Helvetica;
+        font-size: 17px;
+        height: auto;
+        width: 15%;
+        margin: 20px;
+        padding: 10px;
+        text-align: center;
         opacity: 0;
+        transform: translateY(100%);
+        transition: all 600ms cubic-bezier(0.77, 0, 0.175, 1);
       }
 
       .show-message {
-        background-color: red;
-        opacity: 1;
+        transform: none;
+        opacity: 0.9;
       }
+
+
+
     </style>
     <div class="columns">
       <div class="column-1">
-        <h1 id="popupBox" class="message-box">Save</h1>
+        <h2 id="popupBox" class="message-box">Save</h2>
       </div>
       <div class="card-container column-2">
         <div class="create-user-row">
@@ -147,8 +164,8 @@
       popupMessage(action) {
         let animationTime = 3000;
         let messageBox = this.$.popupBox;
-        messageBox.textContent = action + 'Successful';
-        messageBox.className = 'message-box show-message';
+        messageBox.textContent = action + ' Successful';
+        messageBox.className = 'message-box show-message ' + action;
         window.setTimeout(() => {
           messageBox.className = 'message-box';
         }, animationTime);
