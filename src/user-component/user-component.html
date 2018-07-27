@@ -422,8 +422,12 @@
         } else {
           database.saveUser(user);
         }
-
-        this.cancel(e);
+        if (!this.user.id) {
+          this.cancel(e);
+        } else {
+          this.toggleMode();
+          this.editInProgress(false);
+        }
       }
 
       toggleMode(e) {
