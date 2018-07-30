@@ -12,7 +12,7 @@
 
       .default-card {
         height: auto;
-        width: 80%;
+        width: 450px;
         text-align: center;
         margin: 1em auto;
         padding: 3em 2em 4em 2em;
@@ -33,7 +33,7 @@
 
       .visible {
         animation: expand .6s;
-        height: auto;
+        animation-fill-mode: forwards;
       }
 
       .visible>form {
@@ -44,7 +44,7 @@
       .hidden {
         transition: opacity .4s;
         animation: collapse .4s;
-        height: 0px;
+        animation-fill-mode: forwards;
         opacity: 0;
       }
 
@@ -90,7 +90,6 @@
         height: 40px;
         width: 175px;
         margin-top: 30px;
-
         border-radius: 3px;
         background-color: #fca902;
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
