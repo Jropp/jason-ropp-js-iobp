@@ -22,6 +22,27 @@
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
 
+      .user-card-collapsed {
+        height: 70px;
+        transition: height .3s ease-out;
+      }
+
+      .user-card-collapsed>form>* {
+        height: 0px;
+        opacity: 0;
+      }
+
+      .user-card-expanded {
+        height: 350px;
+        transition: height .2s ease-in;
+      }
+
+      .user-card-expanded>form>* {
+        height: auto;
+        opacity: 1;
+        transition: opacity 1s;
+      }
+
       form {
         margin: auto;
         width: 400px;
@@ -139,7 +160,14 @@
       }
     </style>
 
-    <div id="userCard" class="default-card">
+    <div id="userCard" on-click="toggleUserCardCollapse" class="default-card">
+      <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+        <h1>[[user.last]], [[user.first]]</h1>
+        <div class="id" id="id">
+          <h3>ID:</h3>
+          <p class="id">[[user.id]]</p>
+        </div>
+      </template>
       <form on-input="formWatcher" autocomplete="on">
         <h1>[[headerMessage(mode)]]</h1>
         <!-- bplint-disable no-auto-binding -->
@@ -151,13 +179,6 @@
           <label for="lastName"></label>
           <input id="lastName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
             required>
-        </template>
-        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-          <h1>[[user.last]], [[user.first]]</h1>
-          <div class="id" id="id">
-            <h3>ID:</h3>
-            <p class="id">[[user.id]]</p>
-          </div>
         </template>
 
         <label for="email"></label>
@@ -304,6 +325,7 @@
       initDisplayCard() {
         if (this.isMode(this.modes.DISPLAY)) {
           this.toggleEditable();
+          this.$.userCard.className = "default-card user-card-collapsed"
         }
         this.warningMessage = '';
       }
@@ -447,6 +469,15 @@
         let regexToReplace = this.isVisible ? /\shidden/ : /\svisible/;
         let newClass = this.isVisible ? ' visible' : ' hidden';
         card.className = regexToReplace.test(name) ? name.replace(regexToReplace, newClass) : card.className + newClass;
+      }
+
+      toggleUserCardCollapse() {
+        if (this.user.id) {
+          let card = this.shadowRoot.querySelector('#userCard');
+          let className = card.className;
+          let classNameEnd = className.match(/collapsed/) ? 'expanded' : 'collapsed';
+          card.className = "default-card user-card-" + classNameEnd;
+        }
       }
 
       updateWarningMessages() {
