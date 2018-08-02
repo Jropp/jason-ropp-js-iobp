@@ -56,8 +56,7 @@
       <div class="column-1"></div>
       <div class="card-container column-2">
         <div class="create-user-row">
-          <button id="newUserButton" class="create-user" on-click="toggleMode">+ Create User</button>
-          <user-component is-visible="[[expandNewUserCard]]" class="new-user-card" edit-open="[[editInProgress]]" mode="edit"></user-component>
+          <user-component class="new-user-card" edit-open="[[editInProgress]]" mode="edit"></user-component>
         </div>
         <div class="user-list-row">
           <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">

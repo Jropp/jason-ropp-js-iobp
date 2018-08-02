@@ -3,6 +3,15 @@
 <link rel="import" href="~@banno/polymer/polymer-element.js">
 <!-- bplint-enable no-unused-import -->
 
+<!-- TODO:
+
+change create user to ^ to expand card back up
+delete cancel button
+animate user expansion
+
+-->
+
+
 <dom-module id="user-component">
   <template>
     <style>
@@ -16,7 +25,7 @@
         width: 450px;
         text-align: center;
         margin: 1em auto;
-        padding: 3em 2em 4em 2em;
+        padding-bottom: 30px;
         border-radius: 5px;
         background-color: white;
         transition: opacity .4s;
@@ -44,11 +53,11 @@
         transition: opacity .8s ease-in;
       }
 
+
       .user-card-expanded>.expand-details-clickable {
         background-color: #0070b7;
         color: white;
         transition: all .5s;
-
       }
 
       form {
@@ -71,16 +80,19 @@
         animation-fill-mode: forwards;
       }
 
+      .visible>.create-user-button {
+        background-color: #0070b7;
+        color: white;
+        transition: all .5s;
+      }
+
       .visible>form {
         height: auto;
         animation: fade-in .7s;
       }
 
       .hidden {
-        /* animation: collapse .4s; */
-        animation-fill-mode: forwards;
-        opacity: 0;
-        max-height: 0;
+        max-height: 90px;
       }
 
       .hidden>form {
@@ -177,6 +189,13 @@
         }
       }
 
+      .create-user-button {
+        top: 0px;
+        width: 100%;
+        height: 90px;
+        margin: 0;
+      }
+
       .expand-details-clickable {
         background-color: #fca902;
         box-sizing: border-box;
@@ -196,7 +215,7 @@
       }
     </style>
 
-    <div id="userCard" class="default-card">
+    <div id="userCard" class="default-card hidden">
       <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
         <h1>[[user.last]], [[user.first]]</h1>
         <div class="id" id="id">
@@ -204,8 +223,12 @@
           <p class="id">[[user.id]]</p>
         </div>
       </template>
+      <template is="dom-if" if="[[isCreateMode(mode)]]">
+        <button on-click="toggleNewUserCardDisplay" class="create-user-button">
+          [[headerMessage(mode)]]
+        </button>
+      </template>
       <form on-input="formWatcher" autocomplete="on">
-        <h1>[[headerMessage(mode)]]</h1>
         <!-- bplint-disable no-auto-binding -->
         <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
           <label for="firstName"></label>
@@ -288,7 +311,8 @@
             value: () => {
               return {
                 DISPLAY: 'display',
-                EDIT: 'edit'
+                EDIT: 'edit',
+                CREATE: 'create'
               };
             }
           },
@@ -327,10 +351,6 @@
           displayEmailFormatMessage: {
             type: Boolean,
           },
-          isVisible: {
-            type: Boolean,
-            observer: 'toggleNewUserCardDisplay'
-          },
           openEditMessage: {
             type: String,
             value: 'Please save other user edits before saving this one.'
@@ -355,7 +375,7 @@
         if (this.user.id) {
           this.initDisplayCard();
         } else if (this.users.length) {
-          this.toggleNewUserCardDisplay();
+          this.$.userCard.className = 'default-card hidden';
         }
         this.updateWarningMessages();
       }
@@ -371,10 +391,7 @@
       cancel(e) {
         e.preventDefault();
 
-        this.dispatchEvent(new CustomEvent('cancel', {
-          bubbles: true,
-          composed: true,
-        }));
+        this.toggleNewUserCardDisplay();
 
         this.shadowRoot.querySelector('form').reset();
         this.resetAllMessages();
@@ -451,6 +468,10 @@
         return expectedMode === this.mode;
       }
 
+      isCreateMode() {
+        return (this.mode === this.modes.EDIT) && !this.user.id;
+      }
+
       resetFormState() {
         this.editInProgress(false);
         let isNewUserCard = !this.user.id;
@@ -504,8 +525,8 @@
 
       toggleNewUserCardDisplay() {
         let card = this.shadowRoot.querySelector('#userCard');
-        let classToAdd = this.isVisible ? 'visible' : 'hidden';
-        let classToRemove = this.isVisible ? 'hidden' : 'visible';
+        let classToAdd = card.className.match(/\s?hidden/) ? 'visible' : 'hidden';
+        let classToRemove = card.className.match(/\s?hidden/) ? 'hidden' : 'visible';
         this.toggleClass(card, classToAdd, classToRemove);
       }
 
