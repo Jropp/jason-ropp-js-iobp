@@ -3,15 +3,6 @@
 <link rel="import" href="~@banno/polymer/polymer-element.js">
 <!-- bplint-enable no-unused-import -->
 
-<!-- TODO:
-
-change create user to ^ to expand card back up
-delete cancel button
-animate user expansion
-
--->
-
-
 <dom-module id="user-component">
   <template>
     <style>
@@ -83,6 +74,7 @@ animate user expansion
       .visible>.create-user-button {
         background-color: #0070b7;
         color: white;
+        font-size: 40px;
         transition: all .5s;
       }
 
@@ -191,9 +183,11 @@ animate user expansion
 
       .create-user-button {
         top: 0px;
+        font-size: 20px;
         width: 100%;
         height: 90px;
         margin: 0;
+        transition: background-color .2s;
       }
 
       .expand-details-clickable {
@@ -225,7 +219,7 @@ animate user expansion
       </template>
       <template is="dom-if" if="[[isCreateMode(mode)]]">
         <button on-click="toggleNewUserCardDisplay" class="create-user-button">
-          [[headerMessage(mode)]]
+          [[headerMessage]]
         </button>
       </template>
       <form on-input="formWatcher" autocomplete="on">
@@ -363,6 +357,10 @@ animate user expansion
             type: String,
             value: 'Please format email input as xxxx@xxxxx.xxx'
           },
+          headerMessage: {
+            type: String,
+            value: "Create New User"
+          },
           userToDisplay: {
             type: Object,
             observer: 'formatUserData'
@@ -453,10 +451,6 @@ animate user expansion
         this.updateWarningMessages();
       }
 
-      headerMessage(mode) {
-        return this.$.userCard.className.match(/\s?visible/) ? `^` : 'Create User';
-      }
-
       isMode(expectedMode) {
         return expectedMode === this.mode;
       }
@@ -524,6 +518,11 @@ animate user expansion
         if (classToAdd === 'hidden') {
           this.cancel();
         }
+        this.setHeaderMessage();
+      }
+      setHeaderMessage() {
+        let isExpanded = /\s?visible/;
+        this.headerMessage = isExpanded.test(this.shadowRoot.querySelector('#userCard').className) ? `^` : 'Create User';
       }
 
       toggleClass(element, classToAdd, classToRemove) {
