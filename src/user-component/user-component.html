@@ -272,9 +272,9 @@ animate user expansion
               <button on-click="delete" type="submit" formnovalidate>Delete</button>
             </template>
 
-            <template is="dom-if" if="[[!user.id]]">
+            <!-- <template is="dom-if" if="[[!user.id]]">
               <button on-click="cancel" formnovalidate>Cancel</button>
-            </template>
+            </template> -->
 
             <template is="dom-if" if="[[displayOpenEditMessage]]">
               <p class="warning">[[openEditMessage]]</p>
@@ -388,11 +388,7 @@ animate user expansion
         this.warningMessage = '';
       }
 
-      cancel(e) {
-        e.preventDefault();
-
-        this.toggleNewUserCardDisplay();
-
+      cancel() {
         this.shadowRoot.querySelector('form').reset();
         this.resetAllMessages();
       }
@@ -458,10 +454,7 @@ animate user expansion
       }
 
       headerMessage(mode) {
-        if (mode === this.modes.EDIT) {
-          return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User';
-        }
-        return '';
+        return this.$.userCard.className.match(/\s?visible/) ? `^` : 'Create User';
       }
 
       isMode(expectedMode) {
@@ -528,6 +521,9 @@ animate user expansion
         let classToAdd = card.className.match(/\s?hidden/) ? 'visible' : 'hidden';
         let classToRemove = card.className.match(/\s?hidden/) ? 'hidden' : 'visible';
         this.toggleClass(card, classToAdd, classToRemove);
+        if (classToAdd === 'hidden') {
+          this.cancel();
+        }
       }
 
       toggleClass(element, classToAdd, classToRemove) {
