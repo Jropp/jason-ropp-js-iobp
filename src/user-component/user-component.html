@@ -60,8 +60,14 @@
         padding: 0px;
       }
 
+      .default-card {
+        transition: opacity .4s, max-height 0.4s linear;
+      }
+
       .visible {
-        animation: expand .6s;
+        /* animation: expand .6s; */
+        height: auto;
+        max-height: 600px;
         animation-fill-mode: forwards;
       }
 
@@ -71,10 +77,10 @@
       }
 
       .hidden {
-        transition: opacity .4s;
-        animation: collapse .4s;
+        /* animation: collapse .4s; */
         animation-fill-mode: forwards;
         opacity: 0;
+        max-height: 0;
       }
 
       .hidden>form {

@@ -30,8 +30,11 @@
         margin-top: 18px;
       }
 
-      .create-user-button {
+      /* Animate to hidden and fadeout */
+
+      .create-user {
         font-size: 15px;
+        transition: opacity .4s linear;
       }
 
       .card-container {
@@ -39,14 +42,14 @@
         flex-direction: column;
       }
 
-      .visible {
+      .create-user.visible {
         opacity: 1;
-        height: 52px;
+        visibility: visible;
       }
 
-      .hidden {
+      .create-user.hidden {
         opacity: 0;
-        height: 0px;
+        visibility: hidden;
       }
     </style>
     <div class="columns">
