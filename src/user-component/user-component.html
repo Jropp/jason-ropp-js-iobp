@@ -11,6 +11,7 @@
       }
 
       .default-card {
+        position: relative;
         height: auto;
         width: 450px;
         text-align: center;
@@ -24,7 +25,7 @@
 
       .user-card-collapsed {
         height: 70px;
-        transition: height .3s ease-out;
+        transition: height .4s ease-out;
       }
 
       .user-card-collapsed>form>* {
@@ -34,13 +35,20 @@
 
       .user-card-expanded {
         height: 350px;
-        transition: height .2s ease-in;
+        transition: height .4s ease-out;
       }
 
       .user-card-expanded>form>* {
         height: auto;
         opacity: 1;
-        transition: opacity 1s;
+        transition: opacity .8s ease-in;
+      }
+
+      .user-card-expanded>.expand-details-clickable {
+        background-color: #0070b7;
+        color: white;
+        transition: all .5s;
+
       }
 
       form {
@@ -158,9 +166,27 @@
           opacity: 1;
         }
       }
+
+      .expand-details-clickable {
+        background-color: #fca902;
+        box-sizing: border-box;
+        position: absolute;
+        height: 25px;
+        width: 100%;
+        bottom: 0px;
+        left: 0px;
+        padding: 0px;
+      }
+
+      .expand-details-clickable>p {
+        position: relative;
+        top: -7px;
+        font-size: 10px;
+        font-weight: bold;
+      }
     </style>
 
-    <div id="userCard" on-click="toggleUserCardCollapse" class="default-card">
+    <div id="userCard" class="default-card">
       <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
         <h1>[[user.last]], [[user.first]]</h1>
         <div class="id" id="id">
@@ -227,10 +253,13 @@
           <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
             <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
           </template>
-
         </div>
-
       </form>
+      <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+        <div id="detailsButton" on-click="toggleUserCardCollapse" class="expand-details-clickable">
+          <p>v</p>
+    </div>
+  </template>
     </div>
   </template>
   <script type="module">
@@ -477,7 +506,15 @@
           let className = card.className;
           let classNameEnd = className.match(/collapsed/) ? 'expanded' : 'collapsed';
           card.className = "default-card user-card-" + classNameEnd;
+          this.toggleDetailsButtonContent(classNameEnd);
+
+
         }
+        }
+
+      toggleDetailsButtonContent(state) {
+        let buttonText = (state === 'expanded') ? 'x' : 'v';
+        this.shadowRoot.querySelector("#detailsButton").innerHTML = '<p>' + buttonText + '</p>';
       }
 
       updateWarningMessages() {
