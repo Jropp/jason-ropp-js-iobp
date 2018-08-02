@@ -405,7 +405,8 @@
       editButtonClicked(e) {
         e.preventDefault();
         this.editInProgress(true);
-        this.toggleMode();
+        this.mode = this.modes.EDIT;
+        this.toggleEditable();
       }
 
       editInProgress(bool) {
