@@ -11,6 +11,7 @@
       }
 
       .default-card {
+        position: relative;
         height: auto;
         width: 450px;
         text-align: center;
@@ -20,6 +21,34 @@
         background-color: white;
         transition: opacity .4s;
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
+      }
+
+      .user-card-collapsed {
+        height: 70px;
+        transition: height .4s ease-out;
+      }
+
+      .user-card-collapsed>form>* {
+        height: 0px;
+        opacity: 0;
+      }
+
+      .user-card-expanded {
+        height: 350px;
+        transition: height .4s ease-out;
+      }
+
+      .user-card-expanded>form>* {
+        height: auto;
+        opacity: 1;
+        transition: opacity .8s ease-in;
+      }
+
+      .user-card-expanded>.expand-details-clickable {
+        background-color: #0070b7;
+        color: white;
+        transition: all .5s;
+
       }
 
       form {
@@ -67,6 +96,10 @@
 
       input:focus {
         border-bottom: #fca902 solid 2px;
+      }
+
+      button:disabled {
+        opacity: .3;
       }
 
       input:read-only {
@@ -137,9 +170,34 @@
           opacity: 1;
         }
       }
+
+      .expand-details-clickable {
+        background-color: #fca902;
+        box-sizing: border-box;
+        position: absolute;
+        height: 25px;
+        width: 100%;
+        bottom: 0px;
+        left: 0px;
+        padding: 0px;
+      }
+
+      .expand-details-clickable>p {
+        position: relative;
+        top: -7px;
+        font-size: 10px;
+        font-weight: bold;
+      }
     </style>
 
     <div id="userCard" class="default-card">
+      <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+        <h1>[[user.last]], [[user.first]]</h1>
+        <div class="id" id="id">
+          <h3>ID:</h3>
+          <p class="id">[[user.id]]</p>
+        </div>
+      </template>
       <form on-input="formWatcher" autocomplete="on">
         <h1>[[headerMessage(mode)]]</h1>
         <!-- bplint-disable no-auto-binding -->
@@ -151,13 +209,6 @@
           <label for="lastName"></label>
           <input id="lastName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
             required>
-        </template>
-        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-          <h1>[[user.last]], [[user.first]]</h1>
-          <div class="id" id="id">
-            <h3>ID:</h3>
-            <p class="id">[[user.id]]</p>
-          </div>
         </template>
 
         <label for="email"></label>
@@ -202,14 +253,16 @@
 
 
           </template>
-
           <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
             <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
           </template>
-
         </div>
-
       </form>
+      <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+        <div id="detailsButton" on-click="toggleUserCardCollapse" class="expand-details-clickable">
+          <p>v</p>
+        </div>
+      </template>
     </div>
   </template>
   <script type="module">
@@ -304,6 +357,7 @@
       initDisplayCard() {
         if (this.isMode(this.modes.DISPLAY)) {
           this.toggleEditable();
+          this.$.userCard.className = 'default-card user-card-collapsed';
         }
         this.warningMessage = '';
       }
@@ -447,6 +501,23 @@
         let regexToReplace = this.isVisible ? /\shidden/ : /\svisible/;
         let newClass = this.isVisible ? ' visible' : ' hidden';
         card.className = regexToReplace.test(name) ? name.replace(regexToReplace, newClass) : card.className + newClass;
+      }
+
+      toggleUserCardCollapse() {
+        if (this.user.id) {
+          let card = this.shadowRoot.querySelector('#userCard');
+          let className = card.className;
+          let classNameEnd = className.match(/collapsed/) ? 'expanded' : 'collapsed';
+          card.className = 'default-card user-card-' + classNameEnd;
+          this.toggleDetailsButtonContent(classNameEnd);
+
+
+        }
+      }
+
+      toggleDetailsButtonContent(state) {
+        let buttonText = (state === 'expanded') ? 'x' : 'v';
+        this.shadowRoot.querySelector('#detailsButton').innerHTML = '<p>' + buttonText + '</p>';
       }
 
       updateWarningMessages() {
