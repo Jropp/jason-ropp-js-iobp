@@ -168,7 +168,6 @@
         }
       }
 
-
       .expand-details-clickable {
         background-color: #fca902;
         box-sizing: border-box;
@@ -186,9 +185,16 @@
         font-size: 10px;
         font-weight: bold;
       }
-    </style>
 
-    <div id="userCard" class="default-card collapse-new-user">
+      .deleted {
+        opacity: 0;
+        height: 0px;
+        top: -100;
+        /* visibility: hidden; */
+        transition: all .5s;
+      }
+    </style>
+    <div id="userCard" class$="[[userCardClass]]">
       <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
         <h1>[[user.last]], [[user.first]]</h1>
         <div class="id" id="id">
@@ -340,6 +346,10 @@
           userToDisplay: {
             type: Object,
             observer: 'formatUserData'
+          },
+          userCardClass: {
+            type: String,
+            value: 'default-card collapse-new-user'
           }
         };
       }
@@ -349,7 +359,7 @@
         if (this.user.id) {
           this.initDisplayCard();
         } else if (this.users.length) {
-          this.$.userCard.className = 'default-card collapse-new-user';
+          this.userCardClass = 'default-card collapse-new-user';
         }
         this.updateWarningMessages();
       }
@@ -357,7 +367,7 @@
       initDisplayCard() {
         if (this.isMode(this.modes.DISPLAY)) {
           this.toggleEditable();
-          this.$.userCard.className = 'default-card collapse-existing-user';
+          this.userCardClass = 'default-card collapse-existing-user';
         }
         this.warningMessage = '';
       }
@@ -388,11 +398,21 @@
 
       delete(e) {
         e.preventDefault();
-        database.deleteUser(this.user);
+
+        this.animateDelete(e.target.parentElement.parentElement.parentElement);
         this.editInProgress(false);
-        this.mode = this.modes.DISPLAY;
-        this.toggleEditable();
-        this.resetAllMessages();
+
+        setTimeout(() => {
+          e.target.className = 'default-card collapse-existing-user-start';
+          database.deleteUser(this.user);
+          this.mode = this.modes.DISPLAY;
+          this.toggleEditable();
+          this.resetAllMessages();
+        }, 550);
+      }
+
+      animateDelete(deleted) {
+        deleted.className = deleted.className + ' deleted';
       }
 
       editButtonClicked(e) {
@@ -488,9 +508,9 @@
 
       toggleNewUserCardDisplay() {
         let card = this.shadowRoot.querySelector('#userCard');
-        let classToAdd = card.className.match(/\s?collapse-new-user/) ? 'expand-new-user' : 'collapse-new-user';
-        let classToRemove = card.className.match(/\s?collapse-new-user/) ? 'collapse-new-user' : 'expand-new-user';
-        this.toggleClass(card, classToAdd, classToRemove);
+        let classToAdd = this.userCardClass.match(/\s?collapse-new-user/) ? 'expand-new-user' : 'collapse-new-user';
+        let classToRemove = this.userCardClass.match(/\s?collapse-new-user/) ? 'collapse-new-user' : 'expand-new-user';
+        this.userCardClass = this.toggleClass(this.userCardClass, classToAdd, classToRemove);
         if (classToAdd === 'collapse-new-user') {
           this.cancel();
         }
@@ -501,11 +521,10 @@
         this.headerMessage = isExpanded.test(this.shadowRoot.querySelector('#userCard').className) ? `Cancel` : 'Create User';
       }
 
-      toggleClass(element, classToAdd, classToRemove) {
+      toggleClass(currentClass, classToAdd, classToRemove) {
         let regexToAdd = new RegExp('\\s?' + classToAdd);
         let regexToReplace = new RegExp('\\s?' + classToRemove);
-        let className = element.className;
-        element.className = regexToReplace.test(className) ? className.replace(regexToReplace, ' ' + classToAdd) : className + ' ' + classToAdd;
+        return regexToReplace.test(currentClass) ? currentClass.replace(regexToReplace, ' ' + classToAdd) : currentClass + ' ' + classToAdd;
       }
 
       toggleUserCardCollapse() {
@@ -513,7 +532,7 @@
           let card = this.shadowRoot.querySelector('#userCard');
           let classToAdd = card.className.match(/collapse/) ? 'expand-existing-user' : 'collapse-existing-user';
           let classToRemove = card.className.match(/collapse/) ? 'collapse-existing-user' : 'expand-existing-user';
-          this.toggleClass(card, classToAdd, classToRemove);
+          this.userCardClass = this.toggleClass(this.userCardClass, classToAdd, classToRemove);
           this.toggleDetailsButtonContent(classToAdd);
         }
       }
