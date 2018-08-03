@@ -292,6 +292,17 @@
               };
             }
           },
+          classes: {
+            type: Object,
+            value: () => {
+              return {
+                COLLAPSE_NEW: 'default-card collapse-new-user',
+                COLLAPSE_EXISTING: 'default-card collapse-existing-user',
+                EXPAND_NEW: 'default-card expand-new-user',
+                EXPAND_EXISTING: 'default-card expand-existing-user',
+              };
+            }
+          },
           users: {
             type: Object,
             value: () => database.getUsers()
@@ -507,38 +518,17 @@
       }
 
       toggleNewUserCardDisplay() {
-        let card = this.shadowRoot.querySelector('#userCard');
-        let classToAdd = this.userCardClass.match(/\s?collapse-new-user/) ? 'expand-new-user' : 'collapse-new-user';
-        let classToRemove = this.userCardClass.match(/\s?collapse-new-user/) ? 'collapse-new-user' : 'expand-new-user';
-        this.userCardClass = this.toggleClass(this.userCardClass, classToAdd, classToRemove);
-        if (classToAdd === 'collapse-new-user') {
+        this.userCardClass = this.userCardClass === this.classes.COLLAPSE_NEW ? this.classes.EXPAND_NEW : this.classes.COLLAPSE_NEW;
+
+        if (this.userCardClass === this.classes.COLLAPSE_NEW) {
           this.cancel();
         }
-        this.setHeaderMessage();
-      }
-      setHeaderMessage() {
-        let isExpanded = /\s?expand-new-user/;
-        this.headerMessage = isExpanded.test(this.shadowRoot.querySelector('#userCard').className) ? `Cancel` : 'Create User';
-      }
-
-      toggleClass(currentClass, classToAdd, classToRemove) {
-        let regexToAdd = new RegExp('\\s?' + classToAdd);
-        let regexToReplace = new RegExp('\\s?' + classToRemove);
-        return regexToReplace.test(currentClass) ? currentClass.replace(regexToReplace, ' ' + classToAdd) : currentClass + ' ' + classToAdd;
       }
 
       toggleUserCardCollapse() {
-        if (this.user.id) {
-          let card = this.shadowRoot.querySelector('#userCard');
-          let classToAdd = card.className.match(/collapse/) ? 'expand-existing-user' : 'collapse-existing-user';
-          let classToRemove = card.className.match(/collapse/) ? 'collapse-existing-user' : 'expand-existing-user';
-          this.userCardClass = this.toggleClass(this.userCardClass, classToAdd, classToRemove);
-          this.toggleDetailsButtonContent(classToAdd);
-        }
-      }
+        this.userCardClass = this.userCardClass === this.classes.COLLAPSE_EXISTING ? this.classes.EXPAND_EXISTING : this.classes.COLLAPSE_EXISTING;
 
-      toggleDetailsButtonContent(state) {
-        let buttonText = (state === 'expand-existing-user') ? 'x' : 'v';
+        let buttonText = (this.userCardClass === this.classes.EXPAND_EXISTING) ? 'x' : 'v';
         this.shadowRoot.querySelector('#detailsButton').innerHTML = '<p>' + buttonText + '</p>';
       }
 
