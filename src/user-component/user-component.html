@@ -19,7 +19,7 @@
         padding-bottom: 30px;
         border-radius: 5px;
         background-color: white;
-        transition: opacity .4s;
+        transition: opacity .6s, max-height 0.5s ease-out;
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
 
@@ -31,17 +31,18 @@
       .user-card-collapsed>form>* {
         height: 0px;
         opacity: 0;
+        visibility: hidden;
       }
 
       .user-card-expanded {
         height: 350px;
-        transition: height .4s ease-out;
+        transition: height .4s ease-in;
       }
 
       .user-card-expanded>form>* {
         height: auto;
         opacity: 1;
-        transition: opacity .8s ease-in;
+        animation: fade-in .7s;
       }
 
       .user-card-expanded>.expand-details-clickable {
@@ -52,17 +53,14 @@
 
       form {
         margin: auto;
-        width: 400px;
-      }
-
-      .default-card {
-        transition: opacity .4s, max-height 0.4s linear;
+        width: 370px;
       }
 
       .expand-create-user {
         height: auto;
         max-height: 600px;
         animation-fill-mode: forwards;
+        transition: max-height .6s ease-in;
       }
 
       .expand-create-user>.create-user-button {
