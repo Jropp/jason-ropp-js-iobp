@@ -23,65 +23,15 @@
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
 
-      .user-card-collapsed {
+      .collapse-existing-user {
         height: 70px;
+        padding: 10px 0px 30px 0px;
         transition: height .4s ease-out;
-      }
-
-      .user-card-collapsed>form>* {
-        height: 0px;
-        opacity: 0;
-        visibility: hidden;
-      }
-
-      .user-card-expanded {
-        height: 350px;
-        transition: height .4s ease-in;
-      }
-
-      .user-card-expanded>form>* {
-        height: auto;
-        opacity: 1;
-        animation: fade-in .7s;
-      }
-
-      .user-card-expanded>.expand-details-clickable {
-        background-color: #0070b7;
-        color: white;
-        transition: all .5s;
       }
 
       form {
         margin: auto;
         width: 370px;
-      }
-
-      .expand-create-user {
-        height: auto;
-        max-height: 600px;
-        animation-fill-mode: forwards;
-        transition: max-height .6s ease-in;
-      }
-
-      .expand-create-user>.create-user-button {
-        background-color: #0070b7;
-        color: white;
-        font-size: 20px;
-        transition: all .5s;
-      }
-
-      .expand-create-user>form {
-        height: auto;
-        animation: fade-in .7s;
-      }
-
-      .collapse-create-user {
-        max-height: 90px;
-      }
-
-      .collapse-create-user>form {
-        visibility: hidden;
-        width: 0px;
       }
 
       input {
@@ -135,6 +85,67 @@
         font-size: 10px;
       }
 
+
+      .expand-new-user {
+        height: auto;
+        max-height: 600px;
+        animation-fill-mode: forwards;
+        transition: max-height .6s ease-in;
+      }
+
+      .expand-new-user>.create-user-button {
+        background-color: #0070b7;
+        color: white;
+        font-size: 20px;
+        transition: all .5s;
+      }
+
+      .expand-new-user>form {
+        height: auto;
+        animation: fade-in .7s;
+      }
+
+      .collapse-new-user {
+        max-height: 90px;
+      }
+
+      .collapse-new-user>form {
+        visibility: hidden;
+        width: 0px;
+      }
+
+      .collapse-existing-user>form {
+        height: 0px;
+        visibility: hidden;
+      }
+
+      .collapse-existing-user>.id {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .expand-existing-user {
+        height: 375px;
+        padding: 10px 0px 30px 0px;
+        transition: height .4s ease-in;
+      }
+
+      .expand-existing-user>form {
+        height: auto;
+        animation: fade-in .7s;
+      }
+
+      .expand-existing-user>.id {
+        animation: fade-in .7s;
+        visibility: visible;
+      }
+
+      .expand-existing-user>.expand-details-clickable {
+        background-color: #0070b7;
+        color: white;
+        transition: all .5s;
+      }
+
       @keyframes fade-in {
         0% {
           opacity: 0;
@@ -164,7 +175,7 @@
         width: 100%;
         bottom: 0px;
         left: 0px;
-        padding: 0px;
+        margin-top: 10px;
       }
 
       .expand-details-clickable>p {
@@ -175,7 +186,7 @@
       }
     </style>
 
-    <div id="userCard" class="default-card collapse-create-user">
+    <div id="userCard" class="default-card collapse-new-user">
       <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
         <h1>[[user.last]], [[user.first]]</h1>
         <div class="id" id="id">
@@ -226,15 +237,11 @@
         <div class="submit-button-box">
 
           <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
-            <button on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
+            <button class="save-button" on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
             <template is="dom-if" if="[[user.id]]">
               <button on-click="delete" type="submit" formnovalidate>Delete</button>
             </template>
-
-            <!-- <template is="dom-if" if="[[!user.id]]">
-              <button on-click="cancel" formnovalidate>Cancel</button>
-            </template> -->
 
             <template is="dom-if" if="[[displayOpenEditMessage]]">
               <p class="warning">[[openEditMessage]]</p>
@@ -339,7 +346,7 @@
         if (this.user.id) {
           this.initDisplayCard();
         } else if (this.users.length) {
-          this.$.userCard.className = 'default-card collapse-create-user';
+          this.$.userCard.className = 'default-card collapse-new-user';
         }
         this.updateWarningMessages();
       }
@@ -347,7 +354,7 @@
       initDisplayCard() {
         if (this.isMode(this.modes.DISPLAY)) {
           this.toggleEditable();
-          this.$.userCard.className = 'default-card user-card-collapsed';
+          this.$.userCard.className = 'default-card collapse-existing-user';
         }
         this.warningMessage = '';
       }
@@ -478,16 +485,16 @@
 
       toggleNewUserCardDisplay() {
         let card = this.shadowRoot.querySelector('#userCard');
-        let classToAdd = card.className.match(/\s?collapse-create-user/) ? 'expand-create-user' : 'collapse-create-user';
-        let classToRemove = card.className.match(/\s?collapse-create-user/) ? 'collapse-create-user' : 'expand-create-user';
+        let classToAdd = card.className.match(/\s?collapse-new-user/) ? 'expand-new-user' : 'collapse-new-user';
+        let classToRemove = card.className.match(/\s?collapse-new-user/) ? 'collapse-new-user' : 'expand-new-user';
         this.toggleClass(card, classToAdd, classToRemove);
-        if (classToAdd === 'collapse-create-user') {
+        if (classToAdd === 'collapse-new-user') {
           this.cancel();
         }
         this.setHeaderMessage();
       }
       setHeaderMessage() {
-        let isExpanded = /\s?expand-create-user/;
+        let isExpanded = /\s?expand-new-user/;
         this.headerMessage = isExpanded.test(this.shadowRoot.querySelector('#userCard').className) ? `Cancel` : 'Create User';
       }
 
@@ -501,15 +508,15 @@
       toggleUserCardCollapse() {
         if (this.user.id) {
           let card = this.shadowRoot.querySelector('#userCard');
-          let classToAdd = card.className.match(/collapsed/) ? 'user-card-expanded' : 'user-card-collapsed';
-          let classToRemove = card.className.match(/collapsed/) ? 'user-card-collapsed' : 'user-card-expanded';
+          let classToAdd = card.className.match(/collapse/) ? 'expand-existing-user' : 'collapse-existing-user';
+          let classToRemove = card.className.match(/collapse/) ? 'collapse-existing-user' : 'expand-existing-user';
           this.toggleClass(card, classToAdd, classToRemove);
           this.toggleDetailsButtonContent(classToAdd);
         }
       }
 
       toggleDetailsButtonContent(state) {
-        let buttonText = (state === 'user-card-expanded') ? 'x' : 'v';
+        let buttonText = (state === 'expand-existing-user') ? 'x' : 'v';
         this.shadowRoot.querySelector('#detailsButton').innerHTML = '<p>' + buttonText + '</p>';
       }
 
