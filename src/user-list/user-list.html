@@ -112,7 +112,10 @@
         });
 
         document.addEventListener('databaseUpdated', e => {
-          this.users = database.getUsers();
+          this.users = [];
+          setTimeout(() => {
+            this.users = database.getUsers();
+          }, 1);
         });
 
         document.addEventListener('editInProgress', e => {
@@ -137,7 +140,9 @@
       }
 
       noUsersHeaderMessage(users) {
-        return !users.length;
+        setTimeout(() => {
+          return !users.length;
+        }, 10);
       }
 
       toggleMode() {

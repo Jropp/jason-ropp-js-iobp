@@ -188,17 +188,19 @@
 
       .deleted {
         height: 0px;
-        transition: height .5s;
-        animation-fill-mode: forwards;
+        opacity: 0px;
+        transition: all .4s;
       }
 
       .deleted>* {
         opacity: 0;
-        visibility: hidden;
+        height: 0px;
+        display: none;
         transition: all .3s;
       }
 
       .reset-after-delete {
+        opacity: 1;
         height: 70px;
         padding: 10px 0px 30px 0px;
       }
@@ -433,10 +435,15 @@
 
         this.userCardClass = this.classes.DELETED;
         this.editInProgress(false);
-        let deleteDelay = 500;
+        let deleteDelay = 1000;
+        let hideDelay = 200;
+        setTimeout(() => {
+          this.$.userCard.style.display = 'none';
+        }, hideDelay);
+
+
         setTimeout(() => {
           database.deleteUser(this.user);
-          this.userCardClass = this.classes.RESET_AFTER_DELETE;
           this.mode = this.modes.DISPLAY;
           this.toggleEditable();
           this.resetAllMessages();
