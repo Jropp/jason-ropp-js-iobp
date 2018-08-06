@@ -51,7 +51,7 @@
       }
 
       button:disabled {
-        opacity: .7;
+        opacity: .5;
       }
 
       input:read-only {
@@ -85,14 +85,6 @@
         font-size: 10px;
       }
 
-      .create-user-button {
-        top: 0px;
-        font-size: 20px;
-        width: 100%;
-        height: 90px;
-        margin: 0;
-        transition: background-color .3s, height .6s;
-      }
 
       .expand-new-user {
         height: auto;
@@ -103,10 +95,9 @@
 
       .expand-new-user>.create-user-button {
         background-color: #0070b7;
-        height: 40px;
         color: white;
         font-size: 20px;
-        transition: all .5s ease-out;
+        transition: all .5s;
       }
 
       .expand-new-user>form {
@@ -115,13 +106,12 @@
       }
 
       .collapse-new-user {
-        max-height: 60px;
+        max-height: 90px;
       }
 
       .collapse-new-user>form {
-        opacity: 0;
         visibility: hidden;
-        transition: opacity .3s, visibility .4s;
+        width: 0px;
       }
 
       .collapse-existing-user>form {
@@ -168,6 +158,18 @@
         }
       }
 
+<<<<<<< HEAD
+=======
+      .create-user-button {
+        top: 0px;
+        font-size: 20px;
+        width: 100%;
+        height: 90px;
+        margin: 0;
+        transition: background-color .2s;
+      }
+
+>>>>>>> parent of b73fc0e... Small style and animation tweaks
       .expand-details-clickable {
         background-color: #fca902;
         box-sizing: border-box;
@@ -288,7 +290,6 @@
           <p>v</p>
         </div>
       </template>
-
     </div>
   </template>
   <script type="module">
