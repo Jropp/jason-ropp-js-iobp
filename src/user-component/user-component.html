@@ -359,25 +359,24 @@
 
       connectedCallback() {
         super.connectedCallback();
-        if (this.user.id) {
-          this.initDisplayCard();
-        } else if (this.users.length) {
-          this.userCardClass = this.classes.COLLAPSE_NEW;
-        }
-        this.updateWarningMessages();
+        this.initCardState();
       }
 
-      initDisplayCard() {
-        if (this.isMode(this.modes.DISPLAY)) {
+      initCardState() {
+        if (this.user.id) {
           this.toggleEditable();
-          this.userCardClass = this.classes.COLLAPSE_EXISTING;
+          this.toggleUserCardCollapse();
+        } else {
+          this.resetNewUserForm();
         }
-        this.warningMessage = '';
+
+
+        this.updateWarningMessages();
       }
 
       cancel() {
         this.shadowRoot.querySelector('form').reset();
-        this.resetAllMessages();
+        this.clearInputFormatWarningMessages();
       }
 
       fieldsFilled() {
@@ -394,9 +393,10 @@
         return fieldsFilled;
       }
 
-      clearNewUserForm() {
+      resetNewUserForm() {
         this.shadowRoot.querySelector('form').reset();
-        this.disableSave = true;
+        this.updateDisableSave();
+        this.clearInputFormatWarningMessages();
       }
 
       delete(e) {
@@ -406,7 +406,7 @@
         this.mode = this.modes.DISPLAY;
         this.userCardClass = this.classes.COLLAPSE_EXISTING;
         this.toggleEditable();
-        this.resetAllMessages();
+        this.clearInputFormatWarningMessages();
       }
 
       editButtonClicked(e) {
@@ -430,14 +430,7 @@
       }
 
       formWatcher() {
-
-        let editOpenAndNewUser = this.editOpen && !this.user.id;
-        let emptyFields = !this.fieldsFilled();
-        let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
-        let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
-
-        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
-
+        this.updateDisableSave();
         this.updateWarningMessages();
       }
 
@@ -446,7 +439,8 @@
       }
 
       isCreateMode() {
-        return (this.mode === this.modes.EDIT) && !this.user.id;
+        let isNewUserCard = !this.user.id;
+        return (this.mode === this.modes.EDIT) && isNewUserCard;
       }
 
       resetFormState() {
@@ -459,13 +453,14 @@
         }
 
         if (isNewUserCard) {
-          this.clearNewUserForm();
+          this.toggleNewUserCardDisplay();
+          this.resetNewUserForm();
         }
 
-        this.resetAllMessages();
+        this.clearInputFormatWarningMessages();
       }
 
-      resetAllMessages() {
+      clearInputFormatWarningMessages() {
         this.displayEmailFormatMessage = false;
         this.displayPhoneFormatMessage = false;
       }
@@ -480,14 +475,9 @@
         } else {
           database.saveUser(user);
         }
-        if (!this.user.id) {
-          this.resetFormState();
-          this.toggleNewUserCardDisplay();
-          this.cancel(e);
-        } else {
-          this.toggleMode();
-          this.editInProgress(false);
-        }
+
+        this.resetFormState();
+        this.editInProgress(false);
       }
 
       toggleMode(e) {
@@ -509,10 +499,10 @@
         this.userCardClass = this.userCardClass === collapsed ? expanded : collapsed;
 
         if (this.userCardClass === expanded) {
-          this.cancel();
+          this.resetNewUserForm();
           this.headerMessage = 'Cancel';
         } else {
-          this.headerMessage = 'Create User';
+          this.headerMessage = 'Create New User';
         }
       }
 
@@ -524,6 +514,15 @@
 
         let buttonText = (this.userCardClass === expanded) ? 'x' : 'v';
         this.shadowRoot.querySelector('#detailsButton').innerHTML = '<p>' + buttonText + '</p>';
+      }
+
+      updateDisableSave() {
+        let editOpenAndNewUser = this.editOpen && !this.user.id;
+        let emptyFields = !this.fieldsFilled();
+        let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
+        let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
+
+        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
       }
 
       updateWarningMessages() {
