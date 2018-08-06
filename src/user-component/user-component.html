@@ -51,7 +51,7 @@
       }
 
       button:disabled {
-        opacity: .7;
+        opacity: .5;
       }
 
       input:read-only {
@@ -85,14 +85,6 @@
         font-size: 10px;
       }
 
-      .create-user-button {
-        top: 0px;
-        font-size: 20px;
-        width: 100%;
-        height: 90px;
-        margin: 0;
-        transition: background-color .3s, height .6s;
-      }
 
       .expand-new-user {
         height: auto;
@@ -103,10 +95,9 @@
 
       .expand-new-user>.create-user-button {
         background-color: #0070b7;
-        height: 40px;
         color: white;
         font-size: 20px;
-        transition: all .5s ease-out;
+        transition: all .5s;
       }
 
       .expand-new-user>form {
@@ -119,9 +110,8 @@
       }
 
       .collapse-new-user>form {
-        opacity: 0;
         visibility: hidden;
-        transition: opacity .3s, visibility .4s;
+        width: 0px;
       }
 
       .collapse-existing-user>form {
@@ -168,6 +158,15 @@
         }
       }
 
+      .create-user-button {
+        top: 0px;
+        font-size: 20px;
+        width: 100%;
+        height: 90px;
+        margin: 0;
+        transition: background-color .2s;
+      }
+
       .expand-details-clickable {
         background-color: #fca902;
         box-sizing: border-box;
@@ -184,35 +183,6 @@
         top: -7px;
         font-size: 10px;
         font-weight: bold;
-      }
-
-      .deleted {
-        height: 0px;
-        opacity: 0px;
-        transition: all .4s;
-      }
-
-      .deleted>* {
-        opacity: 0;
-        height: 0px;
-        display: none;
-        transition: all .3s;
-      }
-
-      .reset-after-delete {
-        opacity: 1;
-        height: 70px;
-        padding: 10px 0px 30px 0px;
-      }
-
-      .reset-after-delete>form {
-        height: 0px;
-        visibility: hidden;
-      }
-
-      .reset-after-delete>.id {
-        opacity: 0;
-        visibility: hidden;
       }
     </style>
     <div id="userCard" class$="[[userCardClass]]">
@@ -288,7 +258,6 @@
           <p>v</p>
         </div>
       </template>
-
     </div>
   </template>
   <script type="module">
@@ -393,7 +362,7 @@
         if (this.user.id) {
           this.initDisplayCard();
         } else if (this.users.length) {
-          this.userCardClass = 'default-card collapse-new-user';
+          this.userCardClass = this.classes.COLLAPSE_NEW;
         }
         this.updateWarningMessages();
       }
@@ -401,7 +370,7 @@
       initDisplayCard() {
         if (this.isMode(this.modes.DISPLAY)) {
           this.toggleEditable();
-          this.userCardClass = 'default-card collapse-existing-user';
+          this.userCardClass = this.classes.COLLAPSE_EXISTING;
         }
         this.warningMessage = '';
       }
@@ -432,22 +401,12 @@
 
       delete(e) {
         e.preventDefault();
-
-        this.userCardClass = this.classes.DELETED;
+        database.deleteUser(this.user);
         this.editInProgress(false);
-        let deleteDelay = 500;
-        let hideDelay = 200;
-        setTimeout(() => {
-          this.$.userCard.style.display = 'none';
-        }, hideDelay);
-
-
-        setTimeout(() => {
-          database.deleteUser(this.user);
-          this.mode = this.modes.DISPLAY;
-          this.toggleEditable();
-          this.resetAllMessages();
-        }, deleteDelay);
+        this.mode = this.modes.DISPLAY;
+        this.userCardClass = this.classes.COLLAPSE_EXISTING;
+        this.toggleEditable();
+        this.resetAllMessages();
       }
 
       editButtonClicked(e) {
@@ -522,6 +481,8 @@
           database.saveUser(user);
         }
         if (!this.user.id) {
+          this.resetFormState();
+          this.toggleNewUserCardDisplay();
           this.cancel(e);
         } else {
           this.toggleMode();

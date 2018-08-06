@@ -30,6 +30,8 @@
         margin-top: 18px;
       }
 
+      /* Animate to hidden and fadeout */
+
       .create-user {
         font-size: 15px;
         transition: opacity .4s linear;
@@ -112,10 +114,7 @@
         });
 
         document.addEventListener('databaseUpdated', e => {
-          this.users = [];
-          setTimeout(() => {
-            this.users = database.getUsers();
-          }, 1);
+          this.users = database.getUsers();
         });
 
         document.addEventListener('editInProgress', e => {
@@ -140,9 +139,7 @@
       }
 
       noUsersHeaderMessage(users) {
-        setTimeout(() => {
-          return !users.length;
-        }, 10);
+        return !users.length;
       }
 
       toggleMode() {
