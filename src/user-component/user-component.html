@@ -9,7 +9,7 @@
       :host {
         font-family: Arial, Helvetica, sans-serif;
       }
-
+    
       .default-card {
         position: relative;
         max-height: 750px;
@@ -45,6 +45,10 @@
         border-bottom: grey solid 1px;
         display: inline-block;
       }
+      input:-webkit-autofill {
+        -webkit-text-fill-color: black;
+        -webkit-box-shadow: 0 0 0px 1000px white inset;
+      }
 
       input:focus {
         border-bottom: #fca902 solid 2px;
@@ -52,6 +56,12 @@
 
       button:disabled {
         opacity: .5;
+        cursor: not-allowed;
+      }
+
+      button:hover {
+        box-shadow: 0px 3px 5px #a6a7a8;
+        transform: scale(1.01);
       }
 
       input:read-only {
@@ -75,11 +85,13 @@
         height: 40px;
         width: 175px;
         margin-top: 30px;
+        border: none;
         border-radius: 3px;
         background-color: #fca902;
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
+        
       }
-
+      
       .warning {
         color: red;
         font-size: 10px;
@@ -97,6 +109,9 @@
         color: white;
         font-size: 20px;
         transition: all .5s;
+        padding: 0px;
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
       }
 
       .expand-new-user>form {
@@ -203,7 +218,7 @@
           <label for="firstName"></label>
           <input id="firstName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
             required>
-
+            
           <label for="lastName"></label>
           <input id="lastName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
             required>
