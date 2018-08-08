@@ -7,125 +7,245 @@
   <template>
     <style>
       :host {
-        display: block;
+        font-family: Arial, Helvetica, sans-serif;
       }
 
       .default-card {
-        width: fit-content;
-        min-width: 500px;
-        min-height: 400px;
-        margin: 5px;
-        padding: 15px;
-        border: #7395ae 1px solid;
+        position: relative;
+        max-height: 750px;
+        width: 450px;
+        text-align: center;
+        margin: 1em auto;
+        padding-bottom: 30px;
         border-radius: 5px;
-        box-shadow: 3px 3px 2px lightgrey;
         background-color: white;
+        transition: opacity .6s, max-height 0.5s ease-out;
+        box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
 
-      fieldset {
-        margin: 10px;
-        border: #7395ae 2px solid;
-        border-radius: 3px;
+      .collapse-existing-user {
+        height: 70px;
+        padding: 10px 0px 30px 0px;
+        transition: height .4s ease-out;
       }
 
-      .default-card>input .first-name .last-name {
-        width: 20px;
+      form {
+        margin: auto;
+        width: 370px;
       }
 
       input {
-        margin: 5px;
+        height: 40px;
+        width: 100%;
+        margin-top: 20px;
+        padding-left: 5px;
         border: none;
-        font-size: 20px
+        outline: none;
+        font-size: 20px;
+        border-bottom: grey solid 1px;
+        display: inline-block;
       }
 
-      .edit {
-        border-bottom: lightgray solid 1px;
+      input:focus {
+        border-bottom: #fca902 solid 2px;
       }
 
-      .email {
-        width: 50%;
+      button:disabled {
+        opacity: .5;
+      }
+
+      input:read-only {
+        border: none;
       }
 
       .id {
-        font-size: 20px;
+        margin-top: -25px;
+      }
+
+      .id>* {
+        display: inline-block;
+        font-size: 14px;
+      }
+
+      .submit-button-box {
+        margin: auto;
       }
 
       button {
-        margin: 10px;
-        width: 60px;
-        height: 30px;
+        height: 40px;
+        width: 175px;
+        margin-top: 30px;
         border-radius: 3px;
-        background-color: #7395ae;
+        background-color: #fca902;
+        box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
+        cursor: pointer;
+      }
+
+      .create-user-button {
+        cursor: pointer;
       }
 
       .warning {
         color: red;
+        font-size: 10px;
+      }
+
+
+      .expand-new-user {
+        max-height: 800px;
+        animation-fill-mode: forwards;
+        transition: max-height .6s ease-in;
+      }
+
+      .expand-new-user>.create-user-button {
+        background-color: #0070b7;
+        color: white;
         font-size: 20px;
+        transition: all .5s;
+      }
+
+      .expand-new-user>form {
+        height: auto;
+        animation: fade-in .7s;
+      }
+
+      .collapse-new-user {
+        max-height: 60px;
+      }
+
+      .collapse-new-user>form {
+        visibility: hidden;
+        width: 0px;
+      }
+
+      .collapse-existing-user>form {
+        height: 0px;
+        visibility: hidden;
+      }
+
+      .collapse-existing-user>.id {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .expand-existing-user {
+        height: 375px;
+        padding: 10px 0px 30px 0px;
+        transition: height .4s ease-in;
+      }
+
+      .expand-existing-user>form {
+        height: auto;
+        animation: fade-in .7s;
+      }
+
+      .expand-existing-user>.id {
+        animation: fade-in .7s;
+        visibility: visible;
+      }
+
+      .expand-existing-user>.expand-details-clickable {
+        background-color: #0070b7;
+        color: white;
+        transition: all .5s;
+        cursor: pointer;
+      }
+
+      @keyframes fade-in {
+        0% {
+          opacity: 0;
+        }
+        50% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .create-user-button {
+        top: 0px;
+        font-size: 20px;
+        width: 100%;
+        height: 90px;
+        margin: 0;
+        transition: background-color .2s;
+      }
+
+      .expand-details-clickable {
+        background-color: #fca902;
+        box-sizing: border-box;
+        position: absolute;
+        height: 25px;
+        width: 100%;
+        bottom: 0px;
+        left: 0px;
+        margin-top: 10px;
+        cursor: pointer;
+      }
+
+      .expand-details-clickable>p {
+        position: relative;
+        top: -7px;
+        font-size: 10px;
+        font-weight: bold;
       }
     </style>
-
-    <div id="checkForEmptyFields" class="default-card">
+    <div id="userCard" class$="[[userCardClass]]">
+      <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+        <h1>[[user.last]], [[user.first]]</h1>
+        <div class="id" id="id">
+          <h3>ID:</h3>
+          <p class="id">[[user.id]]</p>
+        </div>
+      </template>
+      <template is="dom-if" if="[[isCreateMode(mode)]]">
+        <button on-click="toggleNewUserCardDisplay" class="create-user-button">
+          [[headerMessage]]
+        </button>
+      </template>
       <form on-input="formWatcher" autocomplete="on">
-        <h1>[[headerMessage(mode)]]</h1>
         <!-- bplint-disable no-auto-binding -->
         <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
-          <fieldset>
-            <label for="firstName">First:</label>
-            <input id="firstName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-              required>
-
-            <label for="lastName">Last:</label>
-            <input id="lastName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-              required>
-          </fieldset>
-        </template>
-        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-          <h1>[[user.last]], [[user.first]]</h1>
-        </template>
-
-        <fieldset>
-          <label for="email">Email:</label>
-          <input id="email" type="email" on-blur="formWatcher" class="email edit" placeholder="email" autocomplete="email" value="{{user.email::change}}"
-            name="email" required>
-          <br>
-
-          <template is="dom-if" if="[[displayEmailFormatMessage]]">
-            <p class="warning">[[emailFormatMessage]]</p>
-          </template>
-
-          <label for="phone">Phone:</label>
-          <input id="phone" type="tel" on-blur="formWatcher" class="phone edit" placeholder="(xxx) xxx-xxxx" autocomplete="tel" value="{{user.phone::change}}"
+          <label for="firstName"></label>
+          <input id="firstName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
             required>
-          <br>
 
-          <template is="dom-if" if="[[displayPhoneFormatMessage]]">
-            <p class="warning">[[phoneFormatMessage]]</p>
-          </template>
-
-          <label for="department">Department:</label>
-          <input id="department" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
-        </fieldset>
-
-        <template is="dom-if" if="[[user.id]]">
-          <fieldset>
-            <div id="id">
-              <h3>ID:</h3>
-              <p class="id">[[user.id]]</p>
-            </div>
-          </fieldset>
+          <label for="lastName"></label>
+          <input id="lastName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+            required>
         </template>
+
+        <label for="email"></label>
+        <input id="email" type="email" on-blur="formWatcher" class="email edit" placeholder="Email" autocomplete="email" value="{{user.email::change}}"
+          name="email" required>
+        <br>
+
+        <template is="dom-if" if="[[displayEmailFormatMessage]]">
+          <p class="warning">[[emailFormatMessage]]</p>
+        </template>
+
+        <label for="phone">
+          <input id="phone" type="tel" on-blur="formWatcher" class="phone edit" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
+            required>
+        </label>
+        <br>
+
+        <template is="dom-if" if="[[displayPhoneFormatMessage]]">
+          <p class="warning">[[phoneFormatMessage]]</p>
+        </template>
+
+        <label for="department"></label>
+        <input id="department" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
+
         <!-- bplint-enable no-auto-binding -->
         <div class="submit-button-box">
 
           <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
-            <button on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
+            <button class="save-button" on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
             <template is="dom-if" if="[[user.id]]">
               <button on-click="delete" type="submit" formnovalidate>Delete</button>
-            </template>
-
-            <template is="dom-if" if="[[!user.id]]">
-              <button on-click="cancel" formnovalidate>Cancel</button>
             </template>
 
             <template is="dom-if" if="[[displayOpenEditMessage]]">
@@ -134,14 +254,16 @@
 
 
           </template>
-
           <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
             <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
           </template>
-
         </div>
-
       </form>
+      <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+        <div id="detailsButton" on-click="toggleUserCardCollapse" class="expand-details-clickable">
+          <p>v</p>
+        </div>
+      </template>
     </div>
   </template>
   <script type="module">
@@ -161,9 +283,27 @@
             value: () => {
               return {
                 DISPLAY: 'display',
-                EDIT: 'edit'
+                EDIT: 'edit',
+                CREATE: 'create'
               };
             }
+          },
+          classes: {
+            type: Object,
+            value: () => {
+              return {
+                COLLAPSE_NEW: 'default-card collapse-new-user',
+                COLLAPSE_EXISTING: 'default-card collapse-existing-user',
+                EXPAND_NEW: 'default-card expand-new-user',
+                EXPAND_EXISTING: 'default-card expand-existing-user',
+                RESET_AFTER_DELETE: 'default-card reset-after-delete',
+                DELETED: 'default-card deleted'
+              };
+            }
+          },
+          users: {
+            type: Object,
+            value: () => database.getUsers()
           },
           user: {
             type: Object,
@@ -208,36 +348,41 @@
             type: String,
             value: 'Please format email input as xxxx@xxxxx.xxx'
           },
+          headerMessage: {
+            type: String,
+            value: 'Create New User'
+          },
           userToDisplay: {
             type: Object,
             observer: 'formatUserData'
+          },
+          userCardClass: {
+            type: String,
+            value: 'default-card collapse-new-user'
           }
         };
       }
 
       connectedCallback() {
         super.connectedCallback();
-        this.initDisplayCard();
+        this.initCardState();
+      }
+
+      initCardState() {
+        if (this.user.id) {
+          this.toggleEditable();
+          this.toggleUserCardCollapse();
+        } else {
+          this.resetNewUserForm();
+        }
+
+
         this.updateWarningMessages();
       }
 
-      initDisplayCard() {
-        if (this.isMode(this.modes.DISPLAY)) {
-          this.toggleEditable();
-        }
-        this.warningMessage = '';
-      }
-
-      cancel(e) {
-        e.preventDefault();
-
-        this.dispatchEvent(new CustomEvent('cancel', {
-          bubbles: true,
-          composed: true,
-        }));
-
+      cancel() {
         this.shadowRoot.querySelector('form').reset();
-        this.resetAllMessages();
+        this.clearInputFormatWarningMessages();
       }
 
       fieldsFilled() {
@@ -254,9 +399,10 @@
         return fieldsFilled;
       }
 
-      clearNewUserForm() {
+      resetNewUserForm() {
         this.shadowRoot.querySelector('form').reset();
-        this.disableSave = true;
+        this.updateDisableSave();
+        this.clearInputFormatWarningMessages();
       }
 
       delete(e) {
@@ -264,13 +410,16 @@
         database.deleteUser(this.user);
         this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
+        this.userCardClass = this.classes.COLLAPSE_EXISTING;
         this.toggleEditable();
+        this.clearInputFormatWarningMessages();
       }
 
       editButtonClicked(e) {
         e.preventDefault();
         this.editInProgress(true);
-        this.toggleMode();
+        this.mode = this.modes.EDIT;
+        this.toggleEditable();
       }
 
       editInProgress(bool) {
@@ -287,26 +436,17 @@
       }
 
       formWatcher() {
-
-        let editOpenAndNewUser = this.editOpen && !this.user.id;
-        let emptyFields = !this.fieldsFilled();
-        let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
-        let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
-
-        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
-
+        this.updateDisableSave();
         this.updateWarningMessages();
-      }
-
-      headerMessage(mode) {
-        if (mode === this.modes.EDIT) {
-          return this.user.id ? `Edit: ${this.user.first}, ${this.user.last}` : 'Create User:';
-        }
-        return '';
       }
 
       isMode(expectedMode) {
         return expectedMode === this.mode;
+      }
+
+      isCreateMode() {
+        let isNewUserCard = !this.user.id;
+        return (this.mode === this.modes.EDIT) && isNewUserCard;
       }
 
       resetFormState() {
@@ -319,13 +459,14 @@
         }
 
         if (isNewUserCard) {
-          this.clearNewUserForm();
+          this.toggleNewUserCardDisplay();
+          this.resetNewUserForm();
         }
 
-        this.resetAllMessages();
+        this.clearInputFormatWarningMessages();
       }
 
-      resetAllMessages() {
+      clearInputFormatWarningMessages() {
         this.displayEmailFormatMessage = false;
         this.displayPhoneFormatMessage = false;
       }
@@ -342,6 +483,7 @@
         }
 
         this.resetFormState();
+        this.editInProgress(false);
       }
 
       toggleMode(e) {
@@ -352,11 +494,41 @@
       toggleEditable() {
         this.shadowRoot.querySelectorAll('input')
           .forEach(input => {
-            let name = input.className;
-
-            input.className = this.isMode(this.modes.DISPLAY) ? name.replace(/\sedit/, '') : name + ' edit';
             input.readOnly = this.isMode(this.modes.DISPLAY);
           });
+      }
+
+      toggleNewUserCardDisplay() {
+        let collapsed = this.classes.COLLAPSE_NEW;
+        let expanded = this.classes.EXPAND_NEW;
+
+        this.userCardClass = this.userCardClass === collapsed ? expanded : collapsed;
+
+        if (this.userCardClass === expanded) {
+          this.resetNewUserForm();
+          this.headerMessage = 'Cancel';
+        } else {
+          this.headerMessage = 'Create New User';
+        }
+      }
+
+      toggleUserCardCollapse() {
+        let collapsed = this.classes.COLLAPSE_EXISTING;
+        let expanded = this.classes.EXPAND_EXISTING;
+
+        this.userCardClass = this.userCardClass === collapsed ? expanded : collapsed;
+
+        let buttonText = (this.userCardClass === expanded) ? 'x' : 'v';
+        this.shadowRoot.querySelector('#detailsButton').innerHTML = '<p>' + buttonText + '</p>';
+      }
+
+      updateDisableSave() {
+        let editOpenAndNewUser = this.editOpen && !this.user.id;
+        let emptyFields = !this.fieldsFilled();
+        let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
+        let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
+
+        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
       }
 
       updateWarningMessages() {

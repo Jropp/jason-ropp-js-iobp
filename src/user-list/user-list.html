@@ -1,7 +1,6 @@
 <!-- bplint-disable no-unused-import -->
 <link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
 <link rel="import" href="~@banno/polymer/lib/elements/dom-repeat.js">
-<link rel="import" href="~@banno/polymer/polymer-element.js">
 <!-- bplint-enable no-unused-import -->
 <link rel="import" href="../user-component/user-component.html">
 <dom-module id="user-list">
@@ -9,46 +8,66 @@
     <style>
       :host {
         display: block;
-        padding: 10px;
+        background-color: #e4e7ea;
       }
 
       button {
-        height: 40px;
+        height: 52px;
+        width: 32%;
         border: none;
-        background-color: #7395AE;
-        color: black;
         border-radius: 3px;
+        color: black;
+        background-color: #fca902;
       }
 
-      .display-container {
+      .columns {
         display: grid;
-        grid-template-columns: 50fr 50fr;
+        grid-template-columns: repeat(3, 1fr);
       }
 
-      .create-user-component {
-        position: fixed;
+      .user-list-row {
+        text-align: center;
+        margin-top: 18px;
+      }
+
+      /* Animate to hidden and fadeout */
+
+      .create-user {
+        font-size: 15px;
+        transition: opacity .4s linear;
+      }
+
+      .card-container {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .create-user.visible {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .create-user.hidden {
+        opacity: 0;
+        visibility: hidden;
       }
     </style>
-    <div class="display-container">
-      <div class="user-list-column">
-        <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
-          <h2>There are currently no users in the database. Please create one.</h2>
-        </template>
-        <template is="dom-repeat" items="[[users]]" as="user">
-          <user-component edit-open="[[editInProgress]]" mode="display" user-to-display="[[user]]"></user-component>
-        </template>
-      </div>
-
-      <div class="new-user-column">
-        <div class="create-user-component">
-          <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-            <button on-click="toggleMode">+ Create New User</button>
+    <div class="columns">
+      <div class="column-1"></div>
+      <div class="card-container column-2">
+        <div class="create-user-row">
+          <user-component class="new-user-card" edit-open="[[editInProgress]]" mode="edit"></user-component>
+        </div>
+        <div class="user-list-row">
+          <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
+            <h2>There are currently no users in the database. Please create one.</h2>
           </template>
-          <template is="dom-if" if="[[isMode(modes.CREATE_NEW,mode)]]">
-            <user-component edit-open="[[editInProgress]]" mode="edit"></user-component>
+          <template is="dom-repeat" items="[[users]]" as="user">
+            <user-component edit-open="[[editInProgress]]" mode="display" user-to-display="[[user]]"></user-component>
           </template>
         </div>
       </div>
+      <div class="colum-3"></div>
     </div>
 
   </template>
@@ -70,6 +89,9 @@
           },
           mode: {
             type: String,
+          },
+          expandNewUserCard: {
+            type: Boolean,
           },
           modes: {
             type: Object,
@@ -121,7 +143,9 @@
       }
 
       toggleMode() {
+        this.expandNewUserCard = !this.isMode(this.modes.CREATE_NEW);
         this.mode = this.isMode(this.modes.CREATE_NEW) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
+        this.$.newUserButton.className = this.isMode(this.modes.DISPLAY) ? 'create-user visible' : 'create-user hidden';
       }
 
     }
