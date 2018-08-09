@@ -25,13 +25,16 @@
         grid-template-columns: repeat(3, 1fr);
       }
 
-      .create-user-row {
+      .user-list-row {
         text-align: center;
         margin-top: 18px;
       }
 
-      .create-user-button {
+      /* Animate to hidden and fadeout */
+
+      .create-user {
         font-size: 15px;
+        transition: opacity .4s linear;
       }
 
       .card-container {
@@ -62,7 +65,15 @@
         opacity: 0.9;
       }
 
+      .create-user.visible {
+        opacity: 1;
+        visibility: visible;
+      }
 
+      .create-user.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
 
     </style>
     <div class="columns">
@@ -71,10 +82,7 @@
       </div>
       <div class="card-container column-2">
         <div class="create-user-row">
-          <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-            <button class="create-user-button" on-click="toggleMode">+ Create User</button>
-          </template>
-          <user-component is-visible="[[expandNewUserCard]]" class="new-user-card" edit-open="[[editInProgress]]" mode="edit"></user-component>
+          <user-component class="new-user-card" edit-open="[[editInProgress]]" mode="edit"></user-component>
         </div>
         <div class="user-list-row">
           <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
@@ -174,6 +182,7 @@
       toggleMode() {
         this.expandNewUserCard = !this.isMode(this.modes.CREATE_NEW);
         this.mode = this.isMode(this.modes.CREATE_NEW) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
+        this.$.newUserButton.className = this.isMode(this.modes.DISPLAY) ? 'create-user visible' : 'create-user hidden';
       }
 
     }
