@@ -90,6 +90,15 @@
         font-size: 10px;
       }
 
+      @keyframes expand {
+        0% {
+          height: 0px;
+          width: 0px;
+        }
+        100% {
+          height: auto;
+          width: 450px;
+        }
 
       .expand-new-user {
         max-height: 800px;
@@ -480,10 +489,12 @@
           database.editUser(user);
         } else {
           database.saveUser(user);
+          this.isVisible = false;
         }
 
         this.resetFormState();
         this.editInProgress(false);
+
       }
 
       toggleMode(e) {
@@ -530,7 +541,6 @@
 
         this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
       }
-
       updateWarningMessages() {
         let isNewUser = !this.user.id;
         let emailInProgress = this.user.email;
