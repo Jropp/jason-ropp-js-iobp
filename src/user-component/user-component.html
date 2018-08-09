@@ -89,7 +89,11 @@
         border-radius: 3px;
         background-color: #fca902;
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
-        
+        cursor: pointer;
+      }
+
+      .create-user-button {
+        cursor: pointer;
       }
       
       .warning {
@@ -97,6 +101,15 @@
         font-size: 10px;
       }
 
+      @keyframes expand {
+        0% {
+          height: 0px;
+          width: 0px;
+        }
+        100% {
+          height: auto;
+          width: 450px;
+        }
 
       .expand-new-user {
         max-height: 800px;
@@ -158,6 +171,7 @@
         background-color: #0070b7;
         color: white;
         transition: all .5s;
+        cursor: pointer;
       }
 
       @keyframes fade-in {
@@ -190,6 +204,7 @@
         bottom: 0px;
         left: 0px;
         margin-top: 10px;
+        cursor: pointer;
       }
 
       .expand-details-clickable>p {
@@ -487,10 +502,12 @@
           database.editUser(user);
         } else {
           database.saveUser(user);
+          this.isVisible = false;
         }
 
         this.resetFormState();
         this.editInProgress(false);
+
       }
 
       toggleMode(e) {
@@ -537,7 +554,6 @@
 
         this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
       }
-
       updateWarningMessages() {
         let isNewUser = !this.user.id;
         let emailInProgress = this.user.email;
