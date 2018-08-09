@@ -31,7 +31,6 @@
       }
 
       /* Animate to hidden and fadeout */
-
       .create-user {
         font-size: 15px;
         transition: opacity .4s linear;
@@ -73,8 +72,8 @@
               <p>There are currently no users in the database. Please create one.</p>
             </div>
           </template>
-          <template is="dom-repeat" items="[[users]]" as="user" >
-            <user-component edit-open="[[editInProgress]]" mode="display" user-to-display="[[user]]" ></user-component>
+          <template is="dom-repeat" items="[[users]]" as="user">
+            <user-component edit-open="[[editInProgress]]" mode="display" user-to-display="[[user]]"></user-component>
           </template>
         </div>
       </div>
