@@ -23,12 +23,6 @@
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
 
-      .collapse-existing-user {
-        height: 70px;
-        padding: 10px 0px 30px 0px;
-        transition: height .4s ease-out;
-      }
-
       form {
         margin: auto;
         width: 370px;
@@ -128,12 +122,34 @@
         width: 0px;
       }
 
+      .collapse-existing-user {
+        height: 70px;
+        padding: 10px 0px 30px 0px;
+        transition: height .4s ease-out;
+      }
+
+
       .collapse-existing-user>form {
         height: 0px;
         visibility: hidden;
       }
 
       .collapse-existing-user>.id {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .collapse-existing-user-default {
+        height: 70px;
+        padding: 10px 0px 30px 0px;
+      }
+
+      .collapse-existing-user-default>form {
+        height: 0px;
+        visibility: hidden;
+      }
+
+      .collapse-existing-user-default>.id {
         opacity: 0;
         visibility: hidden;
       }
@@ -304,6 +320,7 @@
               return {
                 COLLAPSE_NEW: 'default-card collapse-new-user',
                 COLLAPSE_EXISTING: 'default-card collapse-existing-user',
+                COLLAPSE_DEFAULT: 'default-card collapse-existing-user-default',
                 EXPAND_NEW: 'default-card expand-new-user',
                 EXPAND_EXISTING: 'default-card expand-existing-user',
                 RESET_AFTER_DELETE: 'default-card reset-after-delete',
@@ -420,7 +437,7 @@
         database.deleteUser(this.user);
         this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
-        this.userCardClass = this.classes.COLLAPSE_EXISTING;
+        this.userCardClass = this.classes.COLLAPSE_DEFAULT;
         this.toggleEditable();
         this.clearInputFormatWarningMessages();
       }
