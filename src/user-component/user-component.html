@@ -150,7 +150,12 @@
 
       .collapse-new-user>form {
         visibility: hidden;
-        width: 0px;
+      }
+
+      .collapse-new-user>form>* {
+        visibility: hidden;
+        opacity: 0;
+        transition: all .2s;
       }
 
       .collapse-existing-user>form {
