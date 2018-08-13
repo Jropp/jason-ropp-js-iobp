@@ -30,6 +30,11 @@
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
 
+      .create-user-button:hover>jha-add-person-icon {
+        fill: #0070b7;
+        transition: fill .3s;
+      }
+
       .collapse-existing-user {
         height: 70px;
         padding: 10px 0px 30px 0px;
@@ -125,9 +130,13 @@
 
       .expand-new-user>.create-user-button {
         background-color: #0070b7;
-        color: white;
         font-size: 20px;
         transition: all .5s;
+      }
+
+      .expand-new-user>.create-user-button>jha-add-person-icon {
+        fill: white;
+        transition: fill .5s;
       }
 
       .expand-new-user>form {
@@ -158,6 +167,11 @@
         height: 370px;
         padding: 10px 0px 30px 0px;
         transition: height .4s ease-in;
+      }
+
+      .expand-existing-user>form {
+        height: auto;
+        animation: fade-in .7s;
       }
 
       .expand-existing-user>form {
