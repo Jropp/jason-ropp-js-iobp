@@ -46,8 +46,8 @@
         position: fixed;
         bottom: 10px;
         left: 10px;
-        font-family: Helvetica;
-        font-size: 17px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 25px;
         height: auto;
         width: 15%;
         margin: 20px;
@@ -72,7 +72,18 @@
         opacity: 0;
         visibility: hidden;
       }
+
+      .no-users {
+        background-color: white;
+        padding: 18px;
+        font-size: 17px;
+        font-family: Arial, Helvetica, sans-serif;
+        border-radius: 3px;
+        box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
+      }
+
     </style>
+
     <div class="columns">
       <div class="column-1">
         <h2 id="popupBox" class="message-box">Save</h2>
@@ -83,7 +94,9 @@
         </div>
         <div class="user-list-row">
           <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
-            <h2>There are currently no users in the database. Please create one.</h2>
+            <div class="no-users">
+              <p>There are currently no users in the database. Please create one.</p>
+            </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
             <user-component edit-open="[[editInProgress]]" mode="display" user-to-display="[[user]]"></user-component>
