@@ -6,10 +6,12 @@
 <dom-module id="user-component">
   <template>
     <style>
+      @import "./../styles.css";
+
       :host {
         font-family: Arial, Helvetica, sans-serif;
       }
-    
+
       .default-card {
         position: relative;
         max-height: 750px;
@@ -95,7 +97,7 @@
       .create-user-button {
         cursor: pointer;
       }
-      
+
       .warning {
         color: red;
         font-size: 10px;
@@ -215,6 +217,7 @@
         font-weight: bold;
       }
     </style>
+    <div class="wombat">I'm a wombat</div>
     <div id="userCard" class$="[[userCardClass]]">
       <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
         <h1>[[user.last]], [[user.first]]</h1>
@@ -234,7 +237,7 @@
           <label for="firstName"></label>
           <input id="firstName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
             required>
-            
+
           <label for="lastName"></label>
           <input id="lastName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
             required>
@@ -544,7 +547,9 @@
         this.userCardClass = this.userCardClass === collapsed ? expanded : collapsed;
 
         let buttonText = (this.userCardClass === expanded) ? 'x' : 'v';
-        this.shadowRoot.querySelector('#detailsButton').innerHTML = '<p>' + buttonText + '</p>';
+        if (this.shadowRoot.querySelector('#detailsButton')) {
+          this.shadowRoot.querySelector('#detailsButton').innerHTML = '<p>' + buttonText + '</p>';
+        }
       }
 
       updateDisableSave() {
