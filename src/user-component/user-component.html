@@ -1,8 +1,13 @@
 <!-- bplint-disable no-unused-import -->
 <link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
 <link rel="import" href="~@banno/polymer/polymer-element.js">
-<link rel="import" href="../design/svgs/jha-phone-icon.html">
+<link rel="import" href="../design/svgs/jha-add-person-icon.html">
+<link rel="import" href="../design/svgs/jha-department-icon.html">
+<link rel="import" href="../design/svgs/jha-drop-arrow-icon.html">
+<link rel="import" href="../design/svgs/jha-up-arrow-icon.html">
 <link rel="import" href="../design/svgs/jha-email-icon.html">
+<link rel="import" href="../design/svgs/jha-person-icon.html">
+<link rel="import" href="../design/svgs/jha-phone-icon.html">
 <!-- bplint-enable no-unused-import -->
 
 <dom-module id="user-component">
@@ -214,13 +219,14 @@
       </template>
       <template is="dom-if" if="[[isCreateMode(mode)]]">
         <button on-click="toggleNewUserCardDisplay" class="create-user-button">
-          [[headerMessage]]
+          <jha-add-person-icon></jha-add-person-icon>
         </button>
       </template>
       <form on-input="formWatcher" autocomplete="on">
         <!-- bplint-disable no-auto-binding -->
         <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
           <label for="firstName"></label>
+          <jha-person-icon></jha-person-icon>
           <input id="firstName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
             required>
 
@@ -230,8 +236,8 @@
         </template>
 
         <label for="email">
-          <jha-email-icon></jha-email-icon>
         </label>
+        <jha-email-icon></jha-email-icon>
         <input id="email" type="email" on-blur="formWatcher" class="email edit" placeholder="Email" autocomplete="email" value="{{user.email::change}}"
           name="email" required>
         <br>
@@ -241,9 +247,10 @@
         </template>
 
         <label for="phone">
-          <input id="phone" type="tel" on-blur="formWatcher" class="phone edit" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
-            required>
         </label>
+        <jha-phone-icon></jha-phone-icon>
+        <input id="phone" type="tel" on-blur="formWatcher" class="phone edit" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
+          required>
         <br>
 
         <template is="dom-if" if="[[displayPhoneFormatMessage]]">
@@ -251,6 +258,7 @@
         </template>
 
         <label for="department"></label>
+        <jha-department-icon></jha-department-icon>
         <input id="department" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
 
         <!-- bplint-enable no-auto-binding -->
@@ -276,7 +284,7 @@
       </form>
       <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
         <div id="detailsButton" on-click="toggleUserCardCollapse" class="expand-details-clickable">
-          <p>v</p>
+          <jha-drop-arrow-icon></jha-drop-arrow-icon>
         </div>
       </template>
     </div>
@@ -540,10 +548,10 @@
 
       toggleUserCardButtonDisplay() {
         let button = this.shadowRoot.querySelector('#detailsButton');
-        let buttonText = (this.userCardClass === this.classes.EXPAND_EXISTING) ? 'x' : 'v';
+        let buttonIcon = (this.userCardClass === this.classes.EXPAND_EXISTING) ? '<jha-up-arrow-icon></jha-up-arrow-icon>' : '<jha-drop-arrow-icon></jha-drop-arrow-icon>';
 
         if (button) {
-          button.innerHTML = '<p>' + buttonText + '</p>';
+          button.innerHTML = buttonIcon;
         }
       }
 
