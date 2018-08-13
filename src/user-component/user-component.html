@@ -22,31 +22,18 @@
         transition: opacity .6s, max-height 0.5s ease-out;
       }
 
-      .collapse-existing-user {
-        height: 70px;
-        padding: 10px 0px 30px 0px;
-        transition: height .4s ease-out;
+      .create-user-button {
+        top: 0px;
+        font-size: 20px;
+        width: 100%;
+        height: 90px;
+        margin: 0;
+        transition: background-color .2s;
       }
 
       form {
         margin: auto;
         width: 370px;
-      }
-
-      input {
-        height: 40px;
-        width: 100%;
-        margin-top: 20px;
-        padding-left: 5px;
-        border: none;
-        outline: none;
-        font-size: 20px;
-        border-bottom: grey solid 1px;
-        display: inline-block;
-      }
-
-      input:-webkit-autofill {
-        -webkit-box-shadow: 0 0 0px 1000px white inset;
       }
 
       .id {
@@ -58,12 +45,11 @@
         font-size: 14px;
       }
 
-      .submit-button-box {
-        margin: auto;
-      }
-
-      .create-user-button {
-        cursor: pointer;
+      input {
+        width: 100%;
+        margin-top: 20px;
+        font-size: 20px;
+        display: inline-block;
       }
 
       .warning {
@@ -71,16 +57,30 @@
         font-size: 10px;
       }
 
-      @keyframes expand {
-        0% {
-          height: 0px;
-          width: 0px;
-        }
-        100% {
-          height: auto;
-          width: 450px;
-        }
+      .submit-button-box {
+        margin: auto;
       }
+
+      .expand-details-clickable {
+        background-color: #fca902;
+        box-sizing: border-box;
+        position: absolute;
+        height: 25px;
+        width: 100%;
+        bottom: 0px;
+        left: 0px;
+        margin-top: 10px;
+        cursor: pointer;
+      }
+
+      .expand-details-clickable>p {
+        position: relative;
+        top: -7px;
+        font-size: 10px;
+        font-weight: bold;
+      }
+
+      /* NEW USER TRANISTIONS */
 
       .expand-new-user {
         max-height: 800px;
@@ -112,15 +112,7 @@
         width: 0px;
       }
 
-      .collapse-existing-user>form {
-        height: 0px;
-        visibility: hidden;
-      }
-
-      .collapse-existing-user>.id {
-        opacity: 0;
-        visibility: hidden;
-      }
+      /* EXISTING USER TRANSITIONS */
 
       .expand-existing-user {
         height: 375px;
@@ -145,6 +137,22 @@
         cursor: pointer;
       }
 
+      .collapse-existing-user {
+        height: 70px;
+        padding: 10px 0px 30px 0px;
+        transition: height .4s ease-out;
+      }
+
+      .collapse-existing-user>form {
+        height: 0px;
+        visibility: hidden;
+      }
+
+      .collapse-existing-user>.id {
+        opacity: 0;
+        visibility: hidden;
+      }
+
       @keyframes fade-in {
         0% {
           opacity: 0;
@@ -155,34 +163,6 @@
         100% {
           opacity: 1;
         }
-      }
-
-      .create-user-button {
-        top: 0px;
-        font-size: 20px;
-        width: 100%;
-        height: 90px;
-        margin: 0;
-        transition: background-color .2s;
-      }
-
-      .expand-details-clickable {
-        background-color: #fca902;
-        box-sizing: border-box;
-        position: absolute;
-        height: 25px;
-        width: 100%;
-        bottom: 0px;
-        left: 0px;
-        margin-top: 10px;
-        cursor: pointer;
-      }
-
-      .expand-details-clickable>p {
-        position: relative;
-        top: -7px;
-        font-size: 10px;
-        font-weight: bold;
       }
     </style>
     <div id="userCard" class$="[[userCardClass]]">
