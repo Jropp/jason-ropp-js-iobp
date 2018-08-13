@@ -535,8 +535,16 @@
 
         this.userCardClass = this.userCardClass === collapsed ? expanded : collapsed;
 
-        let buttonText = (this.userCardClass === expanded) ? 'x' : 'v';
-        this.shadowRoot.querySelector('#detailsButton').innerHTML = '<p>' + buttonText + '</p>';
+        this.toggleUserCardButtonDisplay();
+      }
+
+      toggleUserCardButtonDisplay() {
+        let button = this.shadowRoot.querySelector('#detailsButton');
+        let buttonText = (this.userCardClass === this.classes.EXPAND_EXISTING) ? 'x' : 'v';
+
+        if (button) {
+          button.innerHTML = '<p>' + buttonText + '</p>';
+        }
       }
 
       updateDisableSave() {
@@ -547,6 +555,7 @@
 
         this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
       }
+
       updateWarningMessages() {
         let isNewUser = !this.user.id;
         let emailInProgress = this.user.email;
