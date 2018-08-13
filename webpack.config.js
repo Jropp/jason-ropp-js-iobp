@@ -21,7 +21,13 @@ module.exports = env => {
           // babel-loader. This let's us transpile JS in our `<script>` elements.
           use: [
             { loader: "babel-loader" },
-            { loader: "polymer-webpack-loader" }
+            {
+              options: {
+                // pulls out imports on user component and resolves into css dependency to send through css loader
+                processStyleLinks: true
+              },
+              loader: "polymer-webpack-loader"
+            }
           ]
         },
         {
@@ -38,7 +44,7 @@ module.exports = env => {
         },
         {
           test: /\.css$/,
-          use: [{ loader: "style-loader" }, { loader: "css-loader" }]
+          use: [{ loader: "css-loader" }]
         }
       ]
     },
