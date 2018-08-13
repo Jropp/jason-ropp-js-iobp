@@ -14,15 +14,12 @@
 
       .default-card {
         position: relative;
-        max-height: 750px;
-        width: 450px;
         text-align: center;
         margin: 1em auto;
         padding-bottom: 30px;
-        border-radius: 5px;
-        background-color: white;
+        width: 450px;
+        max-height: 750px;
         transition: opacity .6s, max-height 0.5s ease-out;
-        box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
 
       .collapse-existing-user {
@@ -48,6 +45,10 @@
         display: inline-block;
       }
 
+      input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0px 1000px white inset;
+      }
+
       .id {
         margin-top: -25px;
       }
@@ -59,17 +60,6 @@
 
       .submit-button-box {
         margin: auto;
-      }
-
-      button {
-        height: 40px;
-        width: 175px;
-        margin-top: 30px;
-        border: none;
-        border-radius: 3px;
-        background-color: #fca902;
-        box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
-        cursor: pointer;
       }
 
       .create-user-button {
@@ -195,7 +185,6 @@
         font-weight: bold;
       }
     </style>
-
     <div id="userCard" class$="[[userCardClass]]">
       <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
         <h1>[[user.last]], [[user.first]]</h1>
