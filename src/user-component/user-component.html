@@ -2,12 +2,13 @@
 <link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
 <link rel="import" href="~@banno/polymer/polymer-element.js">
 <link rel="import" href="../design/svgs/jha-add-person-icon.html">
+<link rel="import" href="../design/svgs/jha-cancel-icon.html">
 <link rel="import" href="../design/svgs/jha-department-icon.html">
 <link rel="import" href="../design/svgs/jha-drop-arrow-icon.html">
-<link rel="import" href="../design/svgs/jha-up-arrow-icon.html">
 <link rel="import" href="../design/svgs/jha-email-icon.html">
 <link rel="import" href="../design/svgs/jha-person-icon.html">
 <link rel="import" href="../design/svgs/jha-phone-icon.html">
+<link rel="import" href="../design/svgs/jha-up-arrow-icon.html">
 <!-- bplint-enable no-unused-import -->
 
 <dom-module id="user-component">
@@ -144,6 +145,12 @@
         animation: fade-in .7s;
       }
 
+      #addUserButton>jha-cancel-icon {
+        width: 70px;
+        height: 49px;
+        fill: white;
+      }
+
       .collapse-new-user {
         max-height: 60px;
       }
@@ -266,7 +273,7 @@
         </div>
       </template>
       <template is="dom-if" if="[[isCreateMode(mode)]]">
-        <button on-click="toggleNewUserCardDisplay" class="create-user-button">
+        <button id="addUserButton" on-click="toggleNewUserCardDisplay" class="create-user-button">
           <jha-add-person-icon></jha-add-person-icon>
         </button>
       </template>
@@ -578,12 +585,16 @@
 
         this.userCardClass = this.userCardClass === collapsed ? expanded : collapsed;
 
-        if (this.userCardClass === expanded) {
-          this.resetNewUserForm();
-          this.headerMessage = 'Cancel';
-        } else {
-          this.headerMessage = 'Create New User';
-        }
+        this.toggleNewUserCardButtonIcon();
+      }
+
+      toggleNewUserCardButtonIcon() {
+        let button = this.shadowRoot.querySelector('#addUserButton');
+        let expanded = this.classes.EXPAND_NEW;
+
+        let buttonIcon = (this.userCardClass === expanded) ? '<jha-cancel-icon></jha-cancel-icon>' : '<jha-add-person-icon></jha-add-person-icon>';
+
+        button.innerHTML = buttonIcon;
       }
 
       toggleUserCardCollapse() {
@@ -592,10 +603,10 @@
 
         this.userCardClass = this.userCardClass === collapsed ? expanded : collapsed;
 
-        this.toggleUserCardButtonDisplay();
+        this.toggleUserCardButtonIcon();
       }
 
-      toggleUserCardButtonDisplay() {
+      toggleUserCardButtonIcon() {
         let button = this.shadowRoot.querySelector('#detailsButton');
         let buttonIcon = (this.userCardClass === this.classes.EXPAND_EXISTING) ? '<jha-up-arrow-icon></jha-up-arrow-icon>' : '<jha-drop-arrow-icon></jha-drop-arrow-icon>';
 
