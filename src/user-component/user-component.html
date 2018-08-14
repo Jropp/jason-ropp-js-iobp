@@ -25,7 +25,6 @@
         text-align: center;
         margin: 1em auto;
         padding-bottom: 30px;
-        width: 450px;
         max-height: 750px;
         transition: opacity .6s, max-height 0.5s ease-out;
       }
@@ -43,21 +42,15 @@
         fill: #0070b7;
       }
 
-
       form {
         margin: auto;
         width: 370px;
       }
 
-      input {
-        height: 40px;
+      form>input {
         width: 80%;
         margin-top: 20px;
-        padding-left: 5px;
-        border: none;
-        outline: none;
         font-size: 20px;
-        border-bottom: grey solid 1px;
         display: inline-block;
       }
 
@@ -68,28 +61,6 @@
 
       .last-name {
         width: 38%;
-      }
-
-      input:-webkit-autofill {
-        -webkit-box-shadow: 0 0 0px 1000px white inset;
-      }
-
-      input:focus {
-        border-bottom: #fca902 solid 2px;
-      }
-
-      button:disabled {
-        opacity: .5;
-        cursor: not-allowed;
-      }
-
-      button:hover {
-        box-shadow: 0px 3px 5px #a6a7a8;
-        transform: scale(1.01);
-      }
-
-      input:read-only {
-        border: none;
       }
 
       .id {
@@ -104,6 +75,7 @@
       .warning {
         color: red;
         font-size: 10px;
+        font-weight: bold;
       }
 
       .submit-button-box {
@@ -120,12 +92,6 @@
         left: 0px;
         margin-top: 10px;
         cursor: pointer;
-      }
-
-      .warning {
-        color: red;
-        font-size: 10px;
-        font-weight: bold;
       }
 
       /* NEW USER TRANISTIONS */
@@ -169,13 +135,14 @@
         visibility: hidden;
       }
 
-      /* EXISTING USER TRANSITIONS */
 
       .collapse-new-user>form>* {
         visibility: hidden;
         opacity: 0;
         transition: all .2s;
       }
+
+      /* EXISTING USER TRANSITIONS */
 
       .collapse-existing-user {
         height: 70px;
@@ -231,22 +198,6 @@
         cursor: pointer;
       }
 
-      .collapse-existing-user {
-        height: 70px;
-        padding: 10px 0px 30px 0px;
-        transition: height .4s ease-out;
-      }
-
-      .collapse-existing-user>form {
-        height: 0px;
-        visibility: hidden;
-      }
-
-      .collapse-existing-user>.id {
-        opacity: 0;
-        visibility: hidden;
-      }
-
       @keyframes fade-in {
         0% {
           opacity: 0;
@@ -264,13 +215,13 @@
         transition: fill .3s;
       }
 
-      .expand-existing-user>jha-drop-arrow-icon {
-        fill: white;
-      }
-
       .expand-details-clickable>jha-up-arrow-icon {
         fill: white;
         transition: fill .3s;
+      }
+
+      .expand-existing-user>jha-drop-arrow-icon {
+        fill: white;
       }
 
       .expand-details-clickable:hover>jha-up-arrow-icon {
