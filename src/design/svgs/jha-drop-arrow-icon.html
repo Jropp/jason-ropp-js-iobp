@@ -1,0 +1,32 @@
+<dom-module id="jha-drop-arrow-icon">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+        width: 30px;
+        height: 21px;
+      }
+
+      svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+    </style>
+    <svg width="24" height="24" viewBox="0 0 24 24">
+      <title>Expand User Details Arrow Icon</title>
+      <path d="M7 10l5 5 5-5z" />
+    </svg>
+  </template>
+  <script type="module">
+
+    import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line
+
+    class JhaDropArrowIcon extends PolymerElement {
+      static get is() {
+        return 'jha-drop-arrow-icon';
+      }
+    };
+    customElements.define(JhaDropArrowIcon.is, JhaDropArrowIcon);
+  </script>
+</dom-module>

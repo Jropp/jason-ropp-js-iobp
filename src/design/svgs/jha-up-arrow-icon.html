@@ -1,0 +1,32 @@
+<dom-module id="jha-up-arrow-icon">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+        width: 40px;
+        height: 28px;
+      }
+
+      svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+    </style>
+    <svg width="24" height="24" viewBox="0 0 24 24">
+      <title>Collapse User Details Arrow Icon</title>
+      <path d="M7 14l5-5 5 5z" />
+    </svg>
+  </template>
+  <script type="module">
+
+    import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line
+
+    class JhaUpArrowIcon extends PolymerElement {
+      static get is() {
+        return 'jha-up-arrow-icon';
+      }
+    };
+    customElements.define(JhaUpArrowIcon.is, JhaUpArrowIcon);
+  </script>
+</dom-module>

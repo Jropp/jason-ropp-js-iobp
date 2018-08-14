@@ -1,6 +1,14 @@
 <!-- bplint-disable no-unused-import -->
 <link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
 <link rel="import" href="~@banno/polymer/polymer-element.js">
+<link rel="import" href="../design/svgs/jha-add-person-icon.html">
+<link rel="import" href="../design/svgs/jha-cancel-icon.html">
+<link rel="import" href="../design/svgs/jha-department-icon.html">
+<link rel="import" href="../design/svgs/jha-drop-arrow-icon.html">
+<link rel="import" href="../design/svgs/jha-email-icon.html">
+<link rel="import" href="../design/svgs/jha-person-icon.html">
+<link rel="import" href="../design/svgs/jha-phone-icon.html">
+<link rel="import" href="../design/svgs/jha-up-arrow-icon.html">
 <!-- bplint-enable no-unused-import -->
 
 <dom-module id="user-component">
@@ -9,7 +17,7 @@
       :host {
         font-family: Arial, Helvetica, sans-serif;
       }
-    
+
       .default-card {
         position: relative;
         max-height: 750px;
@@ -23,6 +31,19 @@
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
 
+<<<<<<< HEAD
+      .create-user-button:hover>jha-add-person-icon {
+        fill: #0070b7;
+      }
+
+      .collapse-existing-user {
+        height: 70px;
+        padding: 10px 0px 30px 0px;
+        transition: height .4s ease-out;
+      }
+
+=======
+>>>>>>> master
       form {
         margin: auto;
         width: 370px;
@@ -30,7 +51,7 @@
 
       input {
         height: 40px;
-        width: 100%;
+        width: 80%;
         margin-top: 20px;
         padding-left: 5px;
         border: none;
@@ -38,6 +59,15 @@
         font-size: 20px;
         border-bottom: grey solid 1px;
         display: inline-block;
+      }
+
+      .first-name {
+        width: 38%;
+        margin-right: 4%;
+      }
+
+      .last-name {
+        width: 38%;
       }
 
       input:-webkit-autofill {
@@ -89,7 +119,7 @@
       .create-user-button {
         cursor: pointer;
       }
-      
+
       .warning {
         color: red;
         font-size: 10px;
@@ -114,7 +144,6 @@
 
       .expand-new-user>.create-user-button {
         background-color: #0070b7;
-        color: white;
         font-size: 20px;
         transition: all .5s;
         padding: 0px;
@@ -122,9 +151,20 @@
         border-bottom-right-radius: 0px;
       }
 
+      .expand-new-user>.create-user-button>jha-add-person-icon {
+        fill: white;
+        transition: fill .5s;
+      }
+
       .expand-new-user>form {
         height: auto;
         animation: fade-in .7s;
+      }
+
+      #addUserButton>jha-cancel-icon {
+        width: 70px;
+        height: 49px;
+        fill: white;
       }
 
       .collapse-new-user {
@@ -133,7 +173,12 @@
 
       .collapse-new-user>form {
         visibility: hidden;
-        width: 0px;
+      }
+
+      .collapse-new-user>form>* {
+        visibility: hidden;
+        opacity: 0;
+        transition: all .2s;
       }
 
       .collapse-existing-user {
@@ -169,9 +214,14 @@
       }
 
       .expand-existing-user {
-        height: 375px;
+        height: 370px;
         padding: 10px 0px 30px 0px;
         transition: height .4s ease-in;
+      }
+
+      .expand-existing-user>form {
+        height: auto;
+        animation: fade-in .7s;
       }
 
       .expand-existing-user>form {
@@ -186,7 +236,6 @@
 
       .expand-existing-user>.expand-details-clickable {
         background-color: #0070b7;
-        color: white;
         transition: all .5s;
         cursor: pointer;
       }
@@ -205,7 +254,6 @@
 
       .create-user-button {
         top: 0px;
-        font-size: 20px;
         width: 100%;
         height: 90px;
         margin: 0;
@@ -230,7 +278,30 @@
         font-size: 10px;
         font-weight: bold;
       }
+
+      .expand-details-clickable:hover>jha-drop-arrow-icon {
+        fill: white;
+        transition: fill .3s;
+      }
+
+      .expand-existing-user>jha-drop-arrow-icon {
+        fill: white;
+      }
+
+      .expand-details-clickable>jha-up-arrow-icon {
+        fill: white;
+        transition: fill .3s;
+      }
+
+      .expand-details-clickable:hover>jha-up-arrow-icon {
+        fill: #fca902;
+      }
+
+      .collapse-existing-user>jha-up-arrow-icon {
+        fill: black;
+      }
     </style>
+
     <div id="userCard" class$="[[userCardClass]]">
       <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
         <h1>[[user.last]], [[user.first]]</h1>
@@ -240,23 +311,27 @@
         </div>
       </template>
       <template is="dom-if" if="[[isCreateMode(mode)]]">
-        <button on-click="toggleNewUserCardDisplay" class="create-user-button">
-          [[headerMessage]]
+        <button id="addUserButton" on-click="toggleNewUserCardDisplay" class="create-user-button">
+          <jha-add-person-icon></jha-add-person-icon>
         </button>
       </template>
       <form on-input="formWatcher" autocomplete="on">
         <!-- bplint-disable no-auto-binding -->
         <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
           <label for="firstName"></label>
+          <jha-person-icon></jha-person-icon>
           <input id="firstName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
             required>
-            
+
           <label for="lastName"></label>
           <input id="lastName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
             required>
+          <br>
         </template>
 
-        <label for="email"></label>
+        <label for="email">
+        </label>
+        <jha-email-icon></jha-email-icon>
         <input id="email" type="email" on-blur="formWatcher" class="email edit" placeholder="Email" autocomplete="email" value="{{user.email::change}}"
           name="email" required>
         <br>
@@ -266,9 +341,10 @@
         </template>
 
         <label for="phone">
-          <input id="phone" type="tel" on-blur="formWatcher" class="phone edit" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
-            required>
         </label>
+        <jha-phone-icon></jha-phone-icon>
+        <input id="phone" type="tel" on-blur="formWatcher" class="phone edit" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
+          required>
         <br>
 
         <template is="dom-if" if="[[displayPhoneFormatMessage]]">
@@ -276,6 +352,7 @@
         </template>
 
         <label for="department"></label>
+        <jha-department-icon></jha-department-icon>
         <input id="department" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
 
         <!-- bplint-enable no-auto-binding -->
@@ -301,7 +378,7 @@
       </form>
       <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
         <div id="detailsButton" on-click="toggleUserCardCollapse" class="expand-details-clickable">
-          <p>v</p>
+          <jha-drop-arrow-icon></jha-drop-arrow-icon>
         </div>
       </template>
     </div>
@@ -546,12 +623,18 @@
 
         this.userCardClass = this.userCardClass === collapsed ? expanded : collapsed;
 
-        if (this.userCardClass === expanded) {
-          this.resetNewUserForm();
-          this.headerMessage = 'Cancel';
-        } else {
-          this.headerMessage = 'Create New User';
-        }
+        this.toggleNewUserCardButtonIcon();
+      }
+
+      toggleNewUserCardButtonIcon() {
+        let button = this.shadowRoot.querySelector('#addUserButton');
+        let expanded = this.classes.EXPAND_NEW;
+
+        let cancelIcon = '<jha-cancel-icon></jha-cancel-icon>';
+        let addPersonIcon = '<jha-add-person-icon></jha-add-person-icon>';
+
+        let buttonIcon = (this.userCardClass === expanded) ? cancelIcon : addPersonIcon;
+        button.innerHTML = buttonIcon;
       }
 
       toggleUserCardCollapse() {
@@ -560,8 +643,19 @@
 
         this.userCardClass = this.userCardClass === collapsed ? expanded : collapsed;
 
-        let buttonText = (this.userCardClass === expanded) ? 'x' : 'v';
-        this.shadowRoot.querySelector('#detailsButton').innerHTML = '<p>' + buttonText + '</p>';
+        this.toggleUserCardButtonIcon();
+      }
+
+      toggleUserCardButtonIcon() {
+        let button = this.shadowRoot.querySelector('#detailsButton');
+        let upArrowIcon = '<jha-up-arrow-icon></jha-up-arrow-icon>';
+        let dropArrowIcon = '<jha-drop-arrow-icon></jha-drop-arrow-icon>';
+
+        let buttonIcon = (this.userCardClass === this.classes.EXPAND_EXISTING) ? upArrowIcon : dropArrowIcon;
+
+        if (button) {
+          button.innerHTML = buttonIcon;
+        }
       }
 
       updateDisableSave() {
@@ -572,6 +666,7 @@
 
         this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
       }
+
       updateWarningMessages() {
         let isNewUser = !this.user.id;
         let emailInProgress = this.user.email;
