@@ -426,7 +426,6 @@
         if (this.user.id) {
           this.toggleEditable();
           this.userCardClass = this.classes.COLLAPSE_EXISTING;
-          // this.toggleUserCardCollapse();
         } else {
           this.resetNewUserForm();
         }
@@ -576,35 +575,25 @@
       }
 
       toggleUserCardCollapse() {
-        let collapsed = this.classes.COLLAPSE_EXISTING;
-        let expanded = this.classes.EXPAND_EXISTING;
-        let afterDelete = this.userCardClass === this.classes.COLLAPSE_DEFAULT;
+        let collapsedClass = this.classes.COLLAPSE_EXISTING;
+        let expandedClass = this.classes.EXPAND_EXISTING;
+        let classAfterDelete = this.classes.COLLAPSE_DEFAULT;
+        let userCardClass = this.userCardClass;
+        let isCollapsed = (userCardClass === classAfterDelete || userCardClass === collapsedClass);
 
-        if (afterDelete) {
-          this.userCardClass = expanded;
-        } else {
-          this.userCardClass = this.userCardClass === collapsed ? expanded : collapsed;
-        }
+        this.userCardClass = isCollapsed ? expandedClass : collapsedClass;
 
         this.toggleUserCardButtonIcon();
       }
 
       toggleUserCardButtonIcon() {
         let button = this.shadowRoot.querySelector('#detailsButton');
-        let buttonIcon;
         let upArrowIcon = '<jha-up-arrow-icon></jha-up-arrow-icon>';
         let dropArrowIcon = '<jha-drop-arrow-icon></jha-drop-arrow-icon>';
-        let afterDelete = this.userCardClass === this.classes.COLLAPSE_DEFAULT;
+        let cardClass = this.userCardClass;
+        let collapsed = (cardClass === this.classes.COLLAPSE_DEFAULT || cardClass === this.classes.COLLAPSE_EXISTING);
 
-        if (afterDelete) {
-          buttonIcon = dropArrowIcon;
-        } else {
-          buttonIcon = (this.userCardClass === this.classes.EXPAND_EXISTING) ? upArrowIcon : dropArrowIcon;
-        }
-
-        if (button) {
-          button.innerHTML = buttonIcon;
-        }
+        button.innerHTML = collapsed ? dropArrowIcon : upArrowIcon;
       }
 
       updateDisableSave() {
