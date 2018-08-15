@@ -12,7 +12,9 @@
 <!-- bplint-enable no-unused-import -->
 
 <dom-module id="user-component">
+  <link rel="stylesheet" href="./user-component.css">
   <template>
+
     <style>
       :host {
         font-family: Arial, Helvetica, sans-serif;
@@ -20,25 +22,30 @@
 
       .default-card {
         position: relative;
-        max-height: 750px;
-        width: 450px;
         text-align: center;
         margin: 1em auto;
         padding-bottom: 30px;
-        border-radius: 5px;
-        background-color: white;
+        max-height: 750px;
         transition: opacity .6s, max-height 0.5s ease-out;
-        box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
+      }
+
+
+      .create-user-button {
+        top: 0px;
+        font-size: 20px;
+        width: 100%;
+        height: 90px;
+        margin: 0;
+        transition: background-color .2s;
+      }
+      
+      .create-user-button:hover>jha-add-person-icon {
+        fill: #0070b7;
+
       }
 
       .create-user-button:hover>jha-add-person-icon {
         fill: #0070b7;
-      }
-
-      .collapse-existing-user {
-        height: 70px;
-        padding: 10px 0px 30px 0px;
-        transition: height .4s ease-out;
       }
 
       form {
@@ -46,15 +53,10 @@
         width: 370px;
       }
 
-      input {
-        height: 40px;
+      form>input {
         width: 80%;
         margin-top: 20px;
-        padding-left: 5px;
-        border: none;
-        outline: none;
         font-size: 20px;
-        border-bottom: grey solid 1px;
         display: inline-block;
       }
 
@@ -67,28 +69,6 @@
         width: 38%;
       }
 
-      input:-webkit-autofill {
-        -webkit-box-shadow: 0 0 0px 1000px white inset;
-      }
-
-      input:focus {
-        border-bottom: #fca902 solid 2px;
-      }
-
-      button:disabled {
-        opacity: .5;
-        cursor: not-allowed;
-      }
-
-      button:hover {
-        box-shadow: 0px 3px 5px #a6a7a8;
-        transform: scale(1.01);
-      }
-
-      input:read-only {
-        border: none;
-      }
-
       .id {
         margin-top: -25px;
       }
@@ -98,40 +78,29 @@
         font-size: 14px;
       }
 
+      .warning {
+        color: red;
+        font-size: 10px;
+        font-weight: bold;
+      }
+
       .submit-button-box {
         margin: auto;
       }
 
-      button {
-        height: 40px;
-        width: 175px;
-        margin-top: 30px;
-        border: none;
-        border-radius: 3px;
+      .expand-details-clickable {
         background-color: #fca902;
-        box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
+        box-sizing: border-box;
+        position: absolute;
+        height: 25px;
+        width: 100%;
+        bottom: 0px;
+        left: 0px;
+        margin-top: 10px;
         cursor: pointer;
       }
 
-      .create-user-button {
-        cursor: pointer;
-      }
-
-      .warning {
-        color: red;
-        font-size: 10px;
-      }
-
-      @keyframes expand {
-        0% {
-          height: 0px;
-          width: 0px;
-        }
-        100% {
-          height: auto;
-          width: 450px;
-        }
-      }
+      /* NEW USER TRANISTIONS */
 
       .expand-new-user {
         max-height: 800px;
@@ -172,11 +141,14 @@
         visibility: hidden;
       }
 
+
       .collapse-new-user>form>* {
         visibility: hidden;
         opacity: 0;
         transition: all .2s;
       }
+
+      /* EXISTING USER TRANSITIONS */
 
       .collapse-existing-user {
         height: 70px;
@@ -221,11 +193,6 @@
         animation: fade-in .7s;
       }
 
-      .expand-existing-user>form {
-        height: auto;
-        animation: fade-in .7s;
-      }
-
       .expand-existing-user>.id {
         animation: fade-in .7s;
         visibility: visible;
@@ -249,45 +216,18 @@
         }
       }
 
-      .create-user-button {
-        top: 0px;
-        width: 100%;
-        height: 90px;
-        margin: 0;
-        transition: background-color .2s;
-      }
-
-      .expand-details-clickable {
-        background-color: #fca902;
-        box-sizing: border-box;
-        position: absolute;
-        height: 25px;
-        width: 100%;
-        bottom: 0px;
-        left: 0px;
-        margin-top: 10px;
-        cursor: pointer;
-      }
-
-      .expand-details-clickable>p {
-        position: relative;
-        top: -7px;
-        font-size: 10px;
-        font-weight: bold;
-      }
-
       .expand-details-clickable:hover>jha-drop-arrow-icon {
+        fill: white;
+        transition: fill .3s;
+      }
+
+      .expand-details-clickable>jha-up-arrow-icon {
         fill: white;
         transition: fill .3s;
       }
 
       .expand-existing-user>jha-drop-arrow-icon {
         fill: white;
-      }
-
-      .expand-details-clickable>jha-up-arrow-icon {
-        fill: white;
-        transition: fill .3s;
       }
 
       .expand-details-clickable:hover>jha-up-arrow-icon {

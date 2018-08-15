@@ -11,15 +11,6 @@
         background-color: #e4e7ea;
       }
 
-      button {
-        height: 52px;
-        width: 32%;
-        border: none;
-        border-radius: 3px;
-        color: black;
-        background-color: #fca902;
-      }
-
       .columns {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -63,16 +54,6 @@
         opacity: 0.9;
       }
 
-      .create-user.visible {
-        opacity: 1;
-        visibility: visible;
-      }
-
-      .create-user.hidden {
-        opacity: 0;
-        visibility: hidden;
-      }
-
       .no-users {
         background-color: white;
         padding: 18px;
@@ -81,7 +62,6 @@
         border-radius: 3px;
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
-
     </style>
 
     <div class="columns">
@@ -123,27 +103,10 @@
             type: Array,
             value: () => database.getUsers()
           },
-          mode: {
-            type: String,
-          },
-          expandNewUserCard: {
-            type: Boolean,
-          },
-          modes: {
-            type: Object,
-            value: () => {
-              return {
-                CREATE_NEW: 'create',
-                DISPLAY: 'display'
-              };
-            }
-          },
         };
       }
       connectedCallback() {
         super.connectedCallback();
-
-        this.initMode();
 
         document.addEventListener('cancel', () => {
           this.toggleMode();
@@ -167,14 +130,6 @@
         document.removeEventListener('cancel');
       }
 
-      initMode() {
-        this.mode = this.users.length ? this.modes.DISPLAY : this.modes.CREATE_NEW;
-      }
-
-      isMode(expectedMode) {
-        return expectedMode === this.mode;
-      }
-
       noUsersHeaderMessage(users) {
         return !users.length;
       }
@@ -187,12 +142,6 @@
         window.setTimeout(() => {
           messageBox.className = 'message-box';
         }, animationTime);
-      }
-
-      toggleMode() {
-        this.expandNewUserCard = !this.isMode(this.modes.CREATE_NEW);
-        this.mode = this.isMode(this.modes.CREATE_NEW) ? this.modes.DISPLAY : this.modes.CREATE_NEW;
-        this.$.newUserButton.className = this.isMode(this.modes.DISPLAY) ? 'create-user visible' : 'create-user hidden';
       }
 
     }
