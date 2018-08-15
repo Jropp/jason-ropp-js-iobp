@@ -121,22 +121,7 @@
           users: {
             type: Array,
             value: () => database.getUsers()
-          },
-          mode: {
-            type: String,
-          },
-          expandNewUserCard: {
-            type: Boolean,
-          },
-          modes: {
-            type: Object,
-            value: () => {
-              return {
-                CREATE_NEW: 'create',
-                DISPLAY: 'display'
-              };
-            }
-          },
+          }
         };
       }
       connectedCallback() {
