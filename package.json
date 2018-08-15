@@ -31,8 +31,10 @@
     "babel-loader": "^7.1.1",
     "babel-preset-env": "^1.6.0",
     "copy-webpack-plugin": "^4.0.1",
+    "css-loader": "^1.0.0",
     "html-webpack-plugin": "^2.30.1",
     "polymer-webpack-loader": "^2.0.0",
+    "style-loader": "^0.22.1",
     "ux-lint": "^1.8.0",
     "webpack": "^3.0.0",
     "webpack-dev-server": "^2.5.0"
