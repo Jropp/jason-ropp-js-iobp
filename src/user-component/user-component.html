@@ -29,7 +29,6 @@
         transition: opacity .6s, max-height 0.5s ease-out;
       }
 
-
       .create-user-button {
         top: 0px;
         font-size: 20px;
@@ -465,6 +464,7 @@
         this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
         this.userCardClass = this.classes.COLLAPSE_DEFAULT;
+        this.toggleUserCardButtonIcon();
         this.toggleEditable();
         this.clearInputFormatWarningMessages();
       }
