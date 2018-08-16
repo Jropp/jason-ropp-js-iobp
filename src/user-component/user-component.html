@@ -37,7 +37,7 @@
         margin: 0;
         transition: background-color .2s;
       }
-      
+
       .create-user-button:hover>jha-add-person-icon {
         fill: #0070b7;
 
@@ -66,6 +66,10 @@
 
       .last-name {
         width: 38%;
+      }
+
+      .edit-user-header {
+        margin-bottom: 0px;
       }
 
       .id {
@@ -245,6 +249,9 @@
           <h3>ID:</h3>
           <p class="id">[[user.id]]</p>
         </div>
+      </template>
+      <template is="dom-if" if="[[isEditExisting(mode)]]">
+        <h1 class="edit-user-header">Edit: [[user.last]], [[user.first]]</h1>
       </template>
       <template is="dom-if" if="[[isCreateMode(mode)]]">
         <button id="addUserButton" on-click="toggleNewUserCardDisplay" class="create-user-button">
@@ -503,6 +510,11 @@
         return (this.mode === this.modes.EDIT) && isNewUserCard;
       }
 
+      isEditExisting(currentMode) {
+        let isExistingUser = this.user.id;
+        let existingUserEdit = (currentMode === this.modes.EDIT) && isExistingUser;
+        return existingUserEdit;
+      }
       resetFormState() {
         this.editInProgress(false);
         let isNewUserCard = !this.user.id;
