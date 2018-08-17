@@ -1,6 +1,7 @@
 <!-- bplint-disable no-unused-import -->
 <link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
 <link rel="import" href="~@banno/polymer/lib/elements/dom-repeat.js">
+<link rel="import" href="~@banno/jha-design-components/buttons/jha-button.html">
 <!-- bplint-enable no-unused-import -->
 <link rel="import" href="../user-component/user-component.html">
 <dom-module id="user-list">
@@ -62,8 +63,15 @@
         border-radius: 3px;
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
+
+      jha-button {
+        background-color: red;
+        width: 500px;
+        height: 100px;
+      }
     </style>
 
+    <jha-button>Heyya</jha-button>
     <div class="columns">
       <div class="column-1">
         <h2 id="popupBox" class="message-box">Save</h2>
