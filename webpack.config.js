@@ -42,7 +42,7 @@ module.exports = env => {
               loader: "babel-loader"
             },
             {
-              loader: "./build-tools/jha-design-components-js-loader"
+              loader: "./build-tools/jha-design-components-loader"
             }
           ]
           // Optionally exclude node_modules from transpilation except for polymer-webpack-loader:
