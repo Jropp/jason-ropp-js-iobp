@@ -52,20 +52,28 @@
         width: 370px;
       }
 
-      form>input {
+      input:not(.name) {
         width: 80%;
         margin-top: 20px;
         font-size: 20px;
         display: inline-block;
       }
 
-      .first-name {
+      .first-name,
+      .last-name {
         width: 38%;
+        margin-top: 20px;
+        font-size: 20px;
+        display: inline-block;
         margin-right: 4%;
       }
 
-      .last-name {
-        width: 38%;
+      .first-name {
+        margin-right: 4%;
+      }
+
+      .edit-user-header {
+        margin-bottom: 0px;
       }
 
       .id {
@@ -246,6 +254,9 @@
           <p class="id">[[user.id]]</p>
         </div>
       </template>
+      <template is="dom-if" if="[[isEditExisting(mode)]]">
+        <h1 class="edit-user-header">Edit: [[user.last]], [[user.first]]</h1>
+      </template>
       <template is="dom-if" if="[[isCreateMode(mode)]]">
         <button id="addUserButton" on-click="toggleNewUserCardDisplay" class="create-user-button">
           <jha-add-person-icon></jha-add-person-icon>
@@ -256,11 +267,11 @@
         <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
           <label for="firstName"></label>
           <jha-person-icon></jha-person-icon>
-          <input id="firstName" type="text" class="first-name edit" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+          <input id="firstName" type="text" class="first-name name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
             required>
 
           <label for="lastName"></label>
-          <input id="lastName" type="text" class="last-name edit" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+          <input id="lastName" type="text" class="last-name name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
             required>
           <br>
         </template>
@@ -268,7 +279,7 @@
         <label for="email">
         </label>
         <jha-email-icon></jha-email-icon>
-        <input id="email" type="email" on-blur="formWatcher" class="email edit" placeholder="Email" autocomplete="email" value="{{user.email::change}}"
+        <input id="email" type="email" on-blur="formWatcher" class="email" placeholder="Email" autocomplete="email" value="{{user.email::change}}"
           name="email" required>
         <br>
 
@@ -279,7 +290,7 @@
         <label for="phone">
         </label>
         <jha-phone-icon></jha-phone-icon>
-        <input id="phone" type="tel" on-blur="formWatcher" class="phone edit" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
+        <input id="phone" type="tel" on-blur="formWatcher" class="phone" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
           required>
         <br>
 
@@ -289,7 +300,7 @@
 
         <label for="department"></label>
         <jha-department-icon></jha-department-icon>
-        <input id="department" class="department edit" placeholder="Department" value="{{user.department::change}}" required/>
+        <input id="department" class="department" placeholder="Department" value="{{user.department::change}}" required/>
 
         <!-- bplint-enable no-auto-binding -->
         <div class="submit-button-box">
@@ -503,6 +514,11 @@
         return (this.mode === this.modes.EDIT) && isNewUserCard;
       }
 
+      isEditExisting(currentMode) {
+        let isExistingUser = this.user.id;
+        let existingUserEdit = (currentMode === this.modes.EDIT) && isExistingUser;
+        return existingUserEdit;
+      }
       resetFormState() {
         this.editInProgress(false);
         let isNewUserCard = !this.user.id;
