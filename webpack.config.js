@@ -1,3 +1,4 @@
+const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const path = require("path");
@@ -27,18 +28,23 @@ module.exports = env => {
                 processStyleLinks: true
               },
               loader: "polymer-webpack-loader"
+            },
+            {
+              loader: "./build-tools/jha-design-components-loader"
             }
           ]
         },
         {
-          test: /polymer\.html$/,
-          include: [path.resolve(__dirname, "./node_modules/@banno/polymer")],
-          use: ["./tools/stuff-loader"]
-        },
-        {
           // If you see a file that ends in .js, just send it to the babel-loader.
           test: /\.js$/,
-          use: "babel-loader"
+          use: [
+            {
+              loader: "babel-loader"
+            },
+            {
+              loader: "./build-tools/jha-design-components-loader"
+            }
+          ]
           // Optionally exclude node_modules from transpilation except for polymer-webpack-loader:
           // exclude: /node_modules\/(?!polymer-webpack-loader\/).*/
         },
@@ -54,6 +60,11 @@ module.exports = env => {
       port: 1820
     },
     plugins: [
+      new webpack.NormalModuleReplacementPlugin(
+        /\/node_modules\/@banno\/polymer\/polymer\.html$/,
+        "@banno/polymer/polymer-element.js"
+      ),
+
       // This plugin will generate an index.html file for us that can be used
       // by the Webpack dev server. We can give it a template file (written in EJS)
       // and it will handle injecting our bundle for us.
