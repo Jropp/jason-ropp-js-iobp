@@ -85,12 +85,6 @@
         font-size: 14px;
       }
 
-      .warning {
-        color: red;
-        font-size: 10px;
-        font-weight: bold;
-      }
-
       .submit-button-box {
         margin: auto;
       }
@@ -403,19 +397,15 @@
           },
           openEditMessage: {
             type: String,
-            value: 'Please save other user edits before saving this one.'
+            value: 'You are safe to save this once the other open edits are closed.'
           },
           phoneFormatMessage: {
             type: String,
-            value: 'Please format phone number as (xxx) xxx-xxxx'
+            value: 'Would you mind formatting your number as (xxx) xxx-xxxx?'
           },
           emailFormatMessage: {
             type: String,
-            value: 'Please format email input as xxxx@xxxxx.xxx'
-          },
-          headerMessage: {
-            type: String,
-            value: 'Create New User'
+            value: 'Your email seems a little off. Would you mind formatting it as xxxx@xxxxx.xxx?'
           },
           userToDisplay: {
             type: Object,
