@@ -529,6 +529,8 @@
       clearInputFormatWarningMessages() {
         this.displayEmailFormatMessage = false;
         this.displayPhoneFormatMessage = false;
+
+        this.resizeCardForWarningMessages(false);
       }
 
       save(e) {
@@ -627,6 +629,27 @@
         if (isNewUser) {
           this.displayOpenEditMessage = this.editOpen;
         }
+
+        if (this.editOpen) {
+          let emailError = this.displayEmailFormatMessage;
+          let phoneError = this.displayPhoneFormatMessage;
+
+          if (emailError || phoneError) {
+            this.resizeCardForWarningMessages(true);
+          }
+
+        }
+
+      }
+
+      resizeCardForWarningMessages(expandForMessages) {
+        if (expandForMessages) {
+          this.$.userCard.style.height = 'auto';
+        } else {
+          let removeWarningMessageCardResize = ''
+          this.$.userCard.style = removeWarningMessageCardResize;
+        }
+
       }
 
       whenEditOpenChanges() {
