@@ -573,6 +573,7 @@
         this.userCardClass = this.userCardClass === collapsed ? expanded : collapsed;
 
         this.toggleNewUserCardButtonIcon();
+        this.cancel();
       }
 
       toggleNewUserCardButtonIcon() {
@@ -641,7 +642,6 @@
           if (emailError || phoneError) {
             this.resizeCardForWarningMessages(true);
           }
-
         }
 
       }
@@ -653,7 +653,6 @@
           let removeWarningMessageCardResize = '';
           this.$.userCard.style = removeWarningMessageCardResize;
         }
-
       }
 
       whenEditOpenChanges() {
