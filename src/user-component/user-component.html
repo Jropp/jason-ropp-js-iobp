@@ -255,7 +255,7 @@
         </div>
       </template>
       <template is="dom-if" if="[[isEditExisting(mode)]]">
-        <h1 class="edit-user-header">Edit: [[user.last]], [[user.first]]</h1>
+        <h1 class="edit-user-header">[[setEditUserHeader(user)]]</h1>
       </template>
       <template is="dom-if" if="[[isCreateMode(mode)]]">
         <button id="addUserButton" on-click="toggleNewUserCardDisplay" class="create-user-button">
@@ -556,6 +556,10 @@
         this.resetFormState();
         this.editInProgress(false);
 
+      }
+
+      setEditUserHeader() {
+        return `Edit: ${this.user.last}, ${this.user.first}`;
       }
 
       toggleMode(e) {
