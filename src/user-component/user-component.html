@@ -363,8 +363,6 @@
                 COLLAPSE_DEFAULT: 'default-card collapse-existing-user-default',
                 EXPAND_NEW: 'default-card expand-new-user',
                 EXPAND_EXISTING: 'default-card expand-existing-user',
-                RESET_AFTER_DELETE: 'default-card reset-after-delete',
-                DELETED: 'default-card deleted'
               };
             }
           },
@@ -415,6 +413,7 @@
             type: String,
             value: 'Your email seems a little off. Would you mind formatting it as xxxx@xxxxx.xxx?'
           },
+          // passed in from parent of user-component
           userToDisplay: {
             type: Object,
             observer: 'formatUserData'
