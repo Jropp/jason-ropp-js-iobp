@@ -40,11 +40,6 @@
 
       .create-user-button:hover>jha-add-person-icon {
         fill: #0070b7;
-
-      }
-
-      .create-user-button:hover>jha-add-person-icon {
-        fill: #0070b7;
       }
 
       form {
@@ -159,28 +154,12 @@
         transition: height .4s ease-out;
       }
 
-
       .collapse-existing-user>.card_content {
         height: 0px;
         visibility: hidden;
       }
 
       .collapse-existing-user>.card_header>.id {
-        opacity: 0;
-        visibility: hidden;
-      }
-
-      .collapse-existing-user-default {
-        height: 70px;
-        padding: 10px 0px 30px 0px;
-      }
-
-      .collapse-existing-user-default>.card_content>form {
-        height: 0px;
-        visibility: hidden;
-      }
-
-      .collapse-existing-user-default>.card_header>.id {
         opacity: 0;
         visibility: hidden;
       }
@@ -205,6 +184,23 @@
         background-color: #0070b7;
         transition: all .5s;
         cursor: pointer;
+      }
+
+      /* Existing User Reset After User Is Deleted because of Dom-Repeat Class Recycling. */
+
+      .collapse-existing-user-default {
+        height: 70px;
+        padding: 10px 0px 30px 0px;
+      }
+
+      .collapse-existing-user-default>.card_content>form {
+        height: 0px;
+        visibility: hidden;
+      }
+
+      .collapse-existing-user-default>.card_header>.id {
+        opacity: 0;
+        visibility: hidden;
       }
 
       @keyframes fade-in {
@@ -314,7 +310,6 @@
               <template is="dom-if" if="[[displayOpenEditMessage]]">
                 <p class="warning">[[openEditMessage]]</p>
               </template>
-
 
             </template>
             <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
