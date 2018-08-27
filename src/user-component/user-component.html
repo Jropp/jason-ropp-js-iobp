@@ -617,27 +617,15 @@
         let emailInProgress = this.user.email;
         let phoneInProgress = this.user.phone;
 
-        if (emailInProgress) {
-          this.displayEmailFormatMessage = !ValidateUtil.checkEmailInput(this.user.email);
+        this.displayEmailFormatMessage = emailInProgress && !ValidateUtil.checkEmailInput(this.user.email);
+        this.displayPhoneFormatMessage = phoneInProgress && !ValidateUtil.checkPhoneInput(this.user.phone);
+        this.displayOpenEditMessage = isNewUserCard && this.editOpen;
+
+        let errorMessageDisplayed = this.displayEmailFormatMessage || this.displayPhoneFormatMessage || this.displayOpenEditMessage;
+
+        if (errorMessageDisplayed) {
+          this.resizeCardForWarningMessages(true);
         }
-
-        if (phoneInProgress) {
-          this.displayPhoneFormatMessage = !ValidateUtil.checkPhoneInput(this.user.phone);
-        }
-
-        if (isNewUserCard) {
-          this.displayOpenEditMessage = this.editOpen;
-        }
-
-        if (this.editOpen) {
-          let emailError = this.displayEmailFormatMessage;
-          let phoneError = this.displayPhoneFormatMessage;
-
-          if (emailError || phoneError) {
-            this.resizeCardForWarningMessages(true);
-          }
-        }
-
       }
 
       resizeCardForWarningMessages(expandForMessages) {
