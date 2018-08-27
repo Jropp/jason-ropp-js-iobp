@@ -282,7 +282,7 @@
             name="email" required>
           <br>
 
-          <template is="dom-if" if="[[displayEmailFormatMessage]]">
+          <template is="dom-if" if="[[displayEmailWarning]]">
             <p class="warning">[[emailFormatMessage]]</p>
           </template>
 
@@ -293,7 +293,7 @@
             required>
           <br>
 
-          <template is="dom-if" if="[[displayPhoneFormatMessage]]">
+          <template is="dom-if" if="[[displayPhoneWarning]]">
             <p class="warning">[[phoneFormatMessage]]</p>
           </template>
 
@@ -391,10 +391,10 @@
           displayOpenEditMessage: {
             type: Boolean,
           },
-          displayPhoneFormatMessage: {
+          displayPhoneWarning: {
             type: Boolean,
           },
-          displayEmailFormatMessage: {
+          displayEmailWarning: {
             type: Boolean,
           },
           openEditMessage: {
@@ -515,8 +515,8 @@
       }
 
       clearInputFormatWarningMessages() {
-        this.displayEmailFormatMessage = false;
-        this.displayPhoneFormatMessage = false;
+        this.displayEmailWarning = false;
+        this.displayPhoneWarning = false;
         this.resizeCardForWarningMessages(false);
       }
 
@@ -614,11 +614,11 @@
         let emailInProgress = this.user.email;
         let phoneInProgress = this.user.phone;
 
-        this.displayEmailFormatMessage = emailInProgress && !ValidateUtil.checkEmailInput(this.user.email);
-        this.displayPhoneFormatMessage = phoneInProgress && !ValidateUtil.checkPhoneInput(this.user.phone);
+        this.displayEmailWarning = emailInProgress && !ValidateUtil.checkEmailInput(this.user.email);
+        this.displayPhoneWarning = phoneInProgress && !ValidateUtil.checkPhoneInput(this.user.phone);
         this.displayOpenEditMessage = isNewUserCard && this.editOpen;
 
-        let errorMessageDisplayed = this.displayEmailFormatMessage || this.displayPhoneFormatMessage || this.displayOpenEditMessage;
+        let errorMessageDisplayed = this.displayEmailWarning || this.displayPhoneWarning || this.displayOpenEditMessage;
 
         if (errorMessageDisplayed) {
           this.resizeCardForWarningMessages(true);
