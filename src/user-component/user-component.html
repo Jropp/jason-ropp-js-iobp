@@ -427,16 +427,15 @@
       }
 
       initCardState() {
-        if (this.user.id) {
+        let isExistingUser = Boolean(this.user.id);
+
+        if (isExistingUser) {
           this.mode = this.modes.DISPLAY;
           this.toggleEditableInputs();
           this.userCardClass = this.classes.COLLAPSE_EXISTING;
         } else {
           this.mode = this.modes.CREATE_NEW;
-          this.resetNewUserForm();
         }
-
-        this.updateWarningMessages();
       }
 
       cancel() {
