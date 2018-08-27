@@ -244,17 +244,17 @@
 
     <div id="userCard" class$="[[userCardClass]]">
       <header class="card_header">
-        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+        <template is="dom-if" if="[[isMode(modes.READ_ONLY, mode)]]">
           <h1>[[user.last]], [[user.first]]</h1>
           <div class="id" id="id">
             <h3>ID:</h3>
             <p class="id">[[user.id]]</p>
           </div>
         </template>
-        <template is="dom-if" if="[[isEditExisting(mode)]]">
+        <template is="dom-if" if="[[isMode(modes.EDIT_EXISTING, mode)]]">
           <h1 class="edit-user-header">[[setEditUserHeader(user)]]</h1>
         </template>
-        <template is="dom-if" if="[[isCreateMode(mode)]]">
+        <template is="dom-if" if="[[isMode(modes.CREATE_NEW, mode)]]">
           <button id="addUserButton" on-click="toggleNewUserCardDisplay" class="create-user-button">
             <jha-add-person-icon></jha-add-person-icon>
           </button>
@@ -263,7 +263,7 @@
       <div class="card_content">
         <form on-input="formWatcher" autocomplete="on">
           <!-- bplint-disable no-auto-binding -->
-          <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
+          <template is="dom-if" if="[[!isMode(modes.READ_ONLY, mode)]]">
             <label for="firstName"></label>
             <jha-person-icon></jha-person-icon>
             <input id="firstName" type="text" class="first-name name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
@@ -304,7 +304,7 @@
           <!-- bplint-enable no-auto-binding -->
           <div class="submit-button-box">
 
-            <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
+            <template is="dom-if" if="[[!isMode(modes.READ_ONLY, mode)]]">
               <button class="save-button" on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
               <template is="dom-if" if="[[user.id]]">
@@ -317,14 +317,14 @@
 
 
             </template>
-            <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+            <template is="dom-if" if="[[isMode(modes.READ_ONLY, mode)]]">
               <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
             </template>
           </div>
         </form>
       </div>
       <footer class="card_footer">
-        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+        <template is="dom-if" if="[[isMode(modes.READ_ONLY, mode)]]">
           <div id="detailsButton" on-click="toggleUserCardCollapse" class="expand-details-clickable">
             <jha-drop-arrow-icon></jha-drop-arrow-icon>
           </div>
