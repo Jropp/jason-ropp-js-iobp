@@ -566,13 +566,12 @@
       toggleNewUserCardDisplay() {
         let collapsed = this.classes.COLLAPSE_NEW;
         let expanded = this.classes.EXPAND_NEW;
-        let isCollapsed = this.userCardClass === collapsed;
 
-        this.userCardClass = isCollapsed ? expanded : collapsed;
+        this.userCardClass = this.isClass(collapsed) ? expanded : collapsed;
 
         this.toggleNewUserCardButtonIcon();
 
-        if (isCollapsed) {
+        if (this.isClass(collapsed)) {
           this.resetNewUserForm();
         }
       }
@@ -584,18 +583,18 @@
         let cancelIcon = '<jha-cancel-icon></jha-cancel-icon>';
         let addPersonIcon = '<jha-add-person-icon></jha-add-person-icon>';
 
-        let buttonIcon = (this.userCardClass === expanded) ? cancelIcon : addPersonIcon;
+        let buttonIcon = this.isClass(expanded) ? cancelIcon : addPersonIcon;
         button.innerHTML = buttonIcon;
       }
 
       toggleUserCardCollapse() {
-        let collapsedClass = this.classes.COLLAPSE_EXISTING;
-        let expandedClass = this.classes.EXPAND_EXISTING;
-        let classAfterDelete = this.classes.COLLAPSE_DEFAULT;
-        let userCardClass = this.userCardClass;
-        let isCollapsed = (userCardClass === classAfterDelete || userCardClass === collapsedClass);
+        let collapsed = this.classes.COLLAPSE_EXISTING;
+        let expanded = this.classes.EXPAND_EXISTING;
+        let resetAfterDelete = this.classes.COLLAPSE_DEFAULT;
 
-        this.userCardClass = isCollapsed ? expandedClass : collapsedClass;
+        let isCollapsed = this.isClass(resetAfterDelete) || this.isClass(collapsed);
+
+        this.userCardClass = isCollapsed ? expanded : collapsed;
       }
 
       updateDisableSave() {
