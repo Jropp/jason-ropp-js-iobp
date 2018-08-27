@@ -563,11 +563,15 @@
       toggleNewUserCardDisplay() {
         let collapsed = this.classes.COLLAPSE_NEW;
         let expanded = this.classes.EXPAND_NEW;
+        let isCollapsed = this.userCardClass === collapsed;
 
-        this.userCardClass = this.userCardClass === collapsed ? expanded : collapsed;
+        this.userCardClass = isCollapsed ? expanded : collapsed;
 
         this.toggleNewUserCardButtonIcon();
-        this.cancel();
+
+        if (isCollapsed) {
+          this.resetNewUserForm();
+        }
       }
 
       toggleNewUserCardButtonIcon() {
