@@ -537,7 +537,6 @@
 
         if (this.isMode(this.modes.CREATE_NEW)) {
           database.saveUser(user);
-          this.isVisible = false;
         } else {
           database.editUser(user);
         }
