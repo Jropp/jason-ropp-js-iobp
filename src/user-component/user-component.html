@@ -531,11 +531,11 @@
 
         let user = Object.assign({}, this.user);
 
-        if (user.id) {
-          database.editUser(user);
-        } else {
+        if (this.isMode(this.modes.CREATE_NEW)) {
           database.saveUser(user);
           this.isVisible = false;
+        } else {
+          database.editUser(user);
         }
 
         this.resetFormState();
@@ -603,7 +603,7 @@
       }
 
       updateDisableSave() {
-        let editOpenAndNewUser = this.editOpen && !this.user.id;
+        let editOpenAndNewUser = this.editOpen && (this.mode === this.modes.CREATE_NEW);
         let emptyFields = !this.fieldsFilled();
         let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
         let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
