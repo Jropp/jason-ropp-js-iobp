@@ -432,8 +432,7 @@
 
       initCardState() {
         if (this.user.id) {
-          this.mode = this.modes.READ_ONLY;
-          this.toggleEditable();
+          this.toggleEditableInputs();
           this.userCardClass = this.classes.COLLAPSE_EXISTING;
         } else {
           this.mode = this.modes.CREATE_NEW;
@@ -473,7 +472,7 @@
         this.mode = this.modes.READ_ONLY;
         this.userCardClass = this.classes.COLLAPSE_DEFAULT;
         this.toggleUserCardButtonIcon();
-        this.toggleEditable();
+        this.toggleEditableInputs();
         this.clearInputFormatWarningMessages();
       }
 
@@ -481,7 +480,7 @@
         e.preventDefault();
         this.editInProgress(true);
         this.mode = this.modes.EDIT_EXISTING;
-        this.toggleEditable();
+        this.toggleEditableInputs();
       }
 
       editInProgress(bool) {
@@ -547,9 +546,10 @@
       }
 
       toggleEditDisplayMode(e) {
+        this.toggleEditableInputs();
       }
 
-      toggleEditable() {
+      toggleEditableInputs() {
         this.shadowRoot.querySelectorAll('input')
           .forEach(input => {
             input.readOnly = this.isMode(this.modes.READ_ONLY);
