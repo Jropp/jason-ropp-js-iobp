@@ -307,7 +307,7 @@
             <template is="dom-if" if="[[!isMode(modes.READ_ONLY, mode)]]">
               <button class="save-button" on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
-              <template is="dom-if" if="[[user.id]]">
+              <template is="dom-if" if="[[isMode(modes.EDIT_EXISTING, mode)]]">
                 <button on-click="delete" type="submit" formnovalidate>Delete</button>
               </template>
 
@@ -613,7 +613,7 @@
       }
 
       updateWarningMessages() {
-        let isNewUser = !this.user.id;
+        let isNewUserCard = this.isMode(this.modes.CREATE_NEW);
         let emailInProgress = this.user.email;
         let phoneInProgress = this.user.phone;
 
@@ -625,7 +625,7 @@
           this.displayPhoneFormatMessage = !ValidateUtil.checkPhoneInput(this.user.phone);
         }
 
-        if (isNewUser) {
+        if (isNewUserCard) {
           this.displayOpenEditMessage = this.editOpen;
         }
 
