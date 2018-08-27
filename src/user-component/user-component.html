@@ -348,9 +348,9 @@
             type: Object,
             value: () => {
               return {
-                DISPLAY: 'display',
-                EDIT: 'edit',
-                CREATE: 'create'
+                READ_ONLY: 'display',
+                EDIT_EXISTING: 'edit',
+                CREATE_NEW: 'create'
               };
             }
           },
@@ -435,6 +435,7 @@
           this.toggleEditable();
           this.userCardClass = this.classes.COLLAPSE_EXISTING;
         } else {
+          this.mode = this.modes.CREATE_NEW;
           this.resetNewUserForm();
         }
 
@@ -470,7 +471,7 @@
         e.preventDefault();
         database.deleteUser(this.user);
         this.editInProgress(false);
-        this.mode = this.modes.DISPLAY;
+        this.mode = this.modes.READ_ONLY;
         this.userCardClass = this.classes.COLLAPSE_DEFAULT;
         this.toggleUserCardButtonIcon();
         this.toggleEditable();
@@ -480,7 +481,7 @@
       editButtonClicked(e) {
         e.preventDefault();
         this.editInProgress(true);
-        this.mode = this.modes.EDIT;
+        this.mode = this.modes.EDIT_EXISTING;
         this.toggleEditable();
       }
 
@@ -506,26 +507,12 @@
         return expectedMode === this.mode;
       }
 
-      isCreateMode() {
-        let isNewUserCard = !this.user.id;
-        return (this.mode === this.modes.EDIT) && isNewUserCard;
-      }
-
-      isEditExisting(currentMode) {
-        let isExistingUser = this.user.id;
-        let existingUserEdit = (currentMode === this.modes.EDIT) && isExistingUser;
-        return existingUserEdit;
-      }
       resetFormState() {
         this.editInProgress(false);
-        let isNewUserCard = !this.user.id;
-        let isUserEditCard = this.user.id;
 
-        if (isUserEditCard) {
+        if (this.isMode(this.modes.EDIT_EXISTING)) {
           this.toggleMode();
-        }
-
-        if (isNewUserCard) {
+        } else {
           this.toggleNewUserCardDisplay();
           this.resetNewUserForm();
         }
@@ -536,7 +523,6 @@
       clearInputFormatWarningMessages() {
         this.displayEmailFormatMessage = false;
         this.displayPhoneFormatMessage = false;
-
         this.resizeCardForWarningMessages(false);
       }
 
@@ -562,14 +548,14 @@
       }
 
       toggleMode(e) {
-        this.mode = this.isMode(this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
+        this.mode = this.isMode(this.modes.EDIT_EXISTING) ? this.modes.READ_ONLY : this.modes.EDIT_EXISTING;
         this.toggleEditable();
       }
 
       toggleEditable() {
         this.shadowRoot.querySelectorAll('input')
           .forEach(input => {
-            input.readOnly = this.isMode(this.modes.DISPLAY);
+            input.readOnly = this.isMode(this.modes.READ_ONLY);
           });
       }
 
