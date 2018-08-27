@@ -510,7 +510,7 @@
         this.editInProgress(false);
 
         if (this.isMode(this.modes.EDIT_EXISTING)) {
-          this.toggleEditDisplay();
+          this.toggleEditDisplayMode();
         } else {
           this.toggleNewUserCardDisplay();
           this.resetNewUserForm();
@@ -546,7 +546,7 @@
         return `Edit: ${this.user.last}, ${this.user.first}`;
       }
 
-      toggleEditDisplay(e) {
+      toggleEditDisplayMode(e) {
         this.mode = this.isMode(this.modes.EDIT_EXISTING) ? this.modes.DISPLAY : this.modes.EDIT_EXISTING;
         this.toggleEditableInputs();
       }
