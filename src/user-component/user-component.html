@@ -432,6 +432,7 @@
 
       initCardState() {
         if (this.user.id) {
+          this.mode = this.modes.READ_ONLY;
           this.toggleEditable();
           this.userCardClass = this.classes.COLLAPSE_EXISTING;
         } else {
