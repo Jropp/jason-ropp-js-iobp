@@ -326,7 +326,13 @@
       <footer class="card_footer">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <div id="detailsButton" on-click="toggleUserCardCollapse" class="expand-details-clickable">
-            <jha-drop-arrow-icon></jha-drop-arrow-icon>
+            <template is="dom-if" if="[[isClass(classes.EXPAND_EXISTING, userCardClass)]]">
+              <jha-up-arrow-icon></jha-up-arrow-icon>
+            </template>
+            <template is="dom-if" if="[[isClass(classes.COLLAPSE_EXISTING, userCardClass)]]">
+              <jha-drop-arrow-icon></jha-drop-arrow-icon>
+            </template>
+
           </div>
         </template>
       </footer>
@@ -501,6 +507,10 @@
         return expectedMode === this.mode;
       }
 
+      isClass(expectedClass) {
+        return expectedClass === this.userCardClass;
+      }
+
       resetFormState() {
         this.editInProgress(false);
 
@@ -586,18 +596,6 @@
         let isCollapsed = (userCardClass === classAfterDelete || userCardClass === collapsedClass);
 
         this.userCardClass = isCollapsed ? expandedClass : collapsedClass;
-
-        this.toggleUserCardButtonIcon();
-      }
-
-      toggleUserCardButtonIcon() {
-        let button = this.shadowRoot.querySelector('#detailsButton');
-        let upArrowIcon = '<jha-up-arrow-icon></jha-up-arrow-icon>';
-        let dropArrowIcon = '<jha-drop-arrow-icon></jha-drop-arrow-icon>';
-        let cardClass = this.userCardClass;
-        let collapsed = (cardClass === this.classes.COLLAPSE_DEFAULT || cardClass === this.classes.COLLAPSE_EXISTING);
-
-        button.innerHTML = collapsed ? dropArrowIcon : upArrowIcon;
       }
 
       updateDisableSave() {
