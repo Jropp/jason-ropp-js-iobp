@@ -26,7 +26,7 @@
         margin: 1em auto;
         padding-bottom: 30px;
         max-height: 750px;
-        transition: opacity .6s, max-height 0.5s ease-out;
+        transition: max-height 0.5s ease-out;
       }
 
       .create-user-button {
@@ -47,13 +47,6 @@
         width: 370px;
       }
 
-      input:not(.name) {
-        width: 80%;
-        margin-top: 20px;
-        font-size: 20px;
-        display: inline-block;
-      }
-
       .first-name,
       .last-name {
         width: 38%;
@@ -67,6 +60,13 @@
         position: relative;
         left: 11px;
         margin-right: 4%;
+      }
+
+      input:not(.name) {
+        width: 80%;
+        margin-top: 20px;
+        font-size: 20px;
+        display: inline-block;
       }
 
       .edit-user-header {
@@ -480,7 +480,7 @@
         this.userCardClass = this.classes.COLLAPSE_DEFAULT;
         this.toggleUserCardButtonIcon();
         this.toggleEditableInputs();
-        this.clearInputFormatWarningMessages();
+        this.clearFormatWarningMessages();
       }
 
       cancel() {
@@ -488,20 +488,20 @@
       }
 
       formWatcher() {
-        this.updateDisableSave();
-        this.updateWarningMessages();
+        this.updateDisableSaveButton();
+        this.updateWarningMessageDisplay();
       }
 
-      updateDisableSave() {
+      updateDisableSaveButton() {
         let editOpenAndNewUser = this.editOpen && this.isMode(this.modes.CREATE_NEW);
-        let emptyFields = !this.fieldsFilled();
+        let emptyFields = !this.areFieldsFilled();
         let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
         let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
 
         this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
       }
 
-      updateWarningMessages() {
+      updateWarningMessageDisplay() {
         let isNewUserCard = this.isMode(this.modes.CREATE_NEW);
         let emailInProgress = this.user.email;
         let phoneInProgress = this.user.phone;
@@ -517,13 +517,13 @@
         }
       }
 
-      clearInputFormatWarningMessages() {
+      clearFormatWarningMessages() {
         this.displayEmailWarning = false;
         this.displayPhoneWarning = false;
         this.resizeCardForWarningMessages(false);
       }
 
-      fieldsFilled() {
+      areFieldsFilled() {
         let fields = this.shadowRoot.querySelectorAll('input');
         let fieldsFilled = true;
 
@@ -596,14 +596,14 @@
           this.toggleEditDisplayMode();
           this.toggleEditableInputs();
         } else {
-          this.toggleNewUserCardDisplay();
+          this.showHideNewUserForm();
           this.resetNewUserForm();
         }
 
-        this.clearInputFormatWarningMessages();
+        this.clearFormatWarningMessages();
       }
 
-      toggleNewUserCardDisplay() {
+      showHideNewUserForm() {
         let collapsed = this.classes.COLLAPSE_NEW;
         let expanded = this.classes.EXPAND_NEW;
 
@@ -627,7 +627,7 @@
 
       resetNewUserForm() {
         this.shadowRoot.querySelector('form').reset();
-        this.clearInputFormatWarningMessages();
+        this.clearFormatWarningMessages();
       }
 
       resizeCardForWarningMessages(expandForMessages) {
@@ -645,7 +645,6 @@
       isClass(expectedClass) {
         return expectedClass === this.userCardClass;
       }
-
 
     }
 
