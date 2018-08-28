@@ -476,7 +476,7 @@
 
       updateDisableSave() {
         let editOpenAndNewUser = this.editOpen && this.isMode(this.modes.CREATE_NEW);
-        let emptyFields = !this.fieldsFilled();
+        let emptyFields = !this.areFieldsFilled();
         let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
         let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
 
@@ -505,7 +505,7 @@
         this.resizeCardForWarningMessages(false);
       }
 
-      fieldsFilled() {
+      areFieldsFilled() {
         let fields = this.shadowRoot.querySelectorAll('input');
         let fieldsFilled = true;
 
