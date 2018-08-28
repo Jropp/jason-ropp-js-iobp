@@ -425,7 +425,7 @@
           // passed in from parent of user-component
           userToDisplay: {
             type: Object,
-            observer: 'formatUserData'
+            observer: 'formatIncomingUserData'
           },
           userCardClass: {
             type: String,
@@ -451,6 +451,38 @@
         }
       }
 
+      formatIncomingUserData(user) {
+        user.phone = ValidateUtil.insertPhoneSymbols(user.phone);
+        this.user = user;
+      }
+
+      save(e) {
+        e.preventDefault();
+
+        let user = Object.assign({}, this.user);
+
+        if (this.isMode(this.modes.CREATE_NEW)) {
+          database.saveUser(user);
+        } else {
+          database.editUser(user);
+        }
+
+        this.resetFormState();
+        this.editInProgress(false);
+
+      }
+
+      delete(e) {
+        e.preventDefault();
+        database.deleteUser(this.user);
+        this.editInProgress(false);
+        this.mode = this.modes.DISPLAY;
+        this.userCardClass = this.classes.COLLAPSE_DEFAULT;
+        this.toggleUserCardButtonIcon();
+        this.toggleEditableInputs();
+        this.clearInputFormatWarningMessages();
+      }
+
       cancel() {
         this.resetNewUserForm();
       }
@@ -474,17 +506,6 @@
         this.clearInputFormatWarningMessages();
       }
 
-      delete(e) {
-        e.preventDefault();
-        database.deleteUser(this.user);
-        this.editInProgress(false);
-        this.mode = this.modes.DISPLAY;
-        this.userCardClass = this.classes.COLLAPSE_DEFAULT;
-        this.toggleUserCardButtonIcon();
-        this.toggleEditableInputs();
-        this.clearInputFormatWarningMessages();
-      }
-
       editButtonClicked(e) {
         e.preventDefault();
         this.editInProgress(true);
@@ -498,11 +519,6 @@
           composed: true,
           detail: bool
         }));
-      }
-
-      formatUserData(user) {
-        user.phone = ValidateUtil.insertPhoneSymbols(user.phone);
-        this.user = user;
       }
 
       formWatcher() {
@@ -523,6 +539,7 @@
 
         if (this.isMode(this.modes.EDIT_EXISTING)) {
           this.toggleEditDisplayMode();
+          this.toggleEditableInputs();
         } else {
           this.toggleNewUserCardDisplay();
           this.resetNewUserForm();
@@ -537,29 +554,12 @@
         this.resizeCardForWarningMessages(false);
       }
 
-      save(e) {
-        e.preventDefault();
-
-        let user = Object.assign({}, this.user);
-
-        if (this.isMode(this.modes.CREATE_NEW)) {
-          database.saveUser(user);
-        } else {
-          database.editUser(user);
-        }
-
-        this.resetFormState();
-        this.editInProgress(false);
-
-      }
-
       setEditUserHeader() {
         return `Edit: ${this.user.last}, ${this.user.first}`;
       }
 
       toggleEditDisplayMode(e) {
         this.mode = this.isMode(this.modes.EDIT_EXISTING) ? this.modes.DISPLAY : this.modes.EDIT_EXISTING;
-        this.toggleEditableInputs();
       }
 
       toggleEditableInputs() {
@@ -602,7 +602,7 @@
       }
 
       updateDisableSave() {
-        let editOpenAndNewUser = this.editOpen && (this.mode === this.modes.CREATE_NEW);
+        let editOpenAndNewUser = this.editOpen && this.isMode(this.modes.CREATE_NEW);
         let emptyFields = !this.fieldsFilled();
         let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
         let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
@@ -630,8 +630,7 @@
         if (expandForMessages) {
           this.$.userCard.style.height = 'auto';
         } else {
-          let removeWarningMessageCardResize = '';
-          this.$.userCard.style = removeWarningMessageCardResize;
+          this.$.userCard.style = '';
         }
       }
     }
