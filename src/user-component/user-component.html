@@ -495,7 +495,7 @@
       }
 
       formatUserData(user) {
-        user.phone = ValidateUtil.insertPhoneSymbols(user.phone);
+        user.phone = ValidateUtil.formatPhoneNumber(user.phone);
         this.user = user;
       }
 
