@@ -73,11 +73,11 @@
         margin-bottom: 0px;
       }
 
-      .id {
+      .user-id {
         margin-top: -25px;
       }
 
-      .id>* {
+      .user-id>* {
         display: inline-block;
         font-size: 14px;
       }
@@ -159,7 +159,7 @@
         visibility: hidden;
       }
 
-      .collapse-existing-user>.card_header>.id {
+      .collapse-existing-user>.card_header>.user-id {
         opacity: 0;
         visibility: hidden;
       }
@@ -175,7 +175,7 @@
         animation: fade-in .7s;
       }
 
-      .expand-existing-user>.card_header>.id {
+      .expand-existing-user>.card_header>.user-id {
         animation: fade-in .2s;
         visibility: visible;
       }
@@ -198,7 +198,7 @@
         visibility: hidden;
       }
 
-      .collapse-existing-user-default>.card_header>.id {
+      .collapse-existing-user-default>.card_header>.user-id {
         opacity: 0;
         visibility: hidden;
       }
@@ -242,16 +242,16 @@
       <header class="card_header">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <h1>[[user.last]], [[user.first]]</h1>
-          <div class="id" id="id">
+          <div class="user-id" id="id">
             <h3>ID:</h3>
-            <span class="id">[[user.id]]</span>
+            <span>[[user.id]]</span>
           </div>
         </template>
         <template is="dom-if" if="[[isMode(modes.EDIT_EXISTING, mode)]]">
           <h1 class="edit-user-header">[[setEditUserHeader(user)]]</h1>
         </template>
         <template is="dom-if" if="[[isMode(modes.CREATE_NEW, mode)]]">
-          <button id="addUserButton" on-click="showHideNewUserForm" class="create-user-button">
+          <button id="addUserButton" on-click="toggleNewUserFormDisplay" class="create-user-button">
             <jha-add-person-icon></jha-add-person-icon>
           </button>
         </template>
@@ -578,14 +578,14 @@
           this.toggleEditDisplayMode();
           this.toggleEditableInputs();
         } else {
-          this.showHideNewUserForm();
+          this.toggleNewUserFormDisplay();
           this.resetNewUserForm();
         }
 
         this.clearFormatWarningMessages();
       }
 
-      showHideNewUserForm() {
+      toggleNewUserFormDisplay() {
         let collapsed = this.classes.COLLAPSE_NEW;
         let expanded = this.classes.EXPAND_NEW;
 
