@@ -257,7 +257,7 @@
         </template>
       </header>
       <div class="card_content">
-        <form on-input="formWatcher" autocomplete="on">
+        <form on-input="onInputChanged" autocomplete="on">
           <!-- bplint-disable no-auto-binding -->
           <template is="dom-if" if="[[!isMode(modes.DISPLAY, mode)]]">
             <label for="firstName"></label>
@@ -274,7 +274,7 @@
           <label for="email">
           </label>
           <jha-email-icon></jha-email-icon>
-          <input id="email" type="email" on-blur="formWatcher" class="email" placeholder="Email" autocomplete="email" value="{{user.email::change}}"
+            <input id="email" type="email" on-blur="onInputChanged" class="email" placeholder="Email" autocomplete="email" value="{{user.email::change}}"
             name="email" required>
           <br>
 
@@ -285,7 +285,7 @@
           <label for="phone">
           </label>
           <jha-phone-icon></jha-phone-icon>
-          <input id="phone" type="tel" on-blur="formWatcher" class="phone" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
+            <input id="phone" type="tel" on-blur="onInputChanged" class="phone" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
             required>
           <br>
 
@@ -469,7 +469,7 @@
         this.resetNewUserForm();
       }
 
-      formWatcher() {
+      onInputChanged() {
         this.updateDisableSaveButton();
         this.updateWarningMessageDisplay();
       }
