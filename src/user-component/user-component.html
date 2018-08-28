@@ -255,7 +255,7 @@
           <h1 class="edit-user-header">[[setEditUserHeader(user)]]</h1>
         </template>
         <template is="dom-if" if="[[isMode(modes.CREATE_NEW, mode)]]">
-          <button id="addUserButton" on-click="toggleNewUserCardDisplay" class="create-user-button">
+          <button id="addUserButton" on-click="showHideNewUserForm" class="create-user-button">
 
             <template is="dom-if" if="[[isClass(classes.COLLAPSE_NEW, userCardClass)]]">
               <jha-add-person-icon></jha-add-person-icon>
@@ -263,7 +263,6 @@
             <template is="dom-if" if="[[isClass(classes.EXPAND_NEW, userCardClass)]]">
               <jha-cancel-icon></jha-cancel-icon>
             </template>
-
 
           </button>
         </template>
