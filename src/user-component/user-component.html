@@ -407,7 +407,7 @@
           // passed in from parent of user-component
           userToDisplay: {
             type: Object,
-            observer: 'formatUserData'
+            observer: 'formatIncomingUserData'
           },
           userCardClass: {
             type: String,
@@ -431,6 +431,11 @@
         } else {
           this.mode = this.modes.CREATE_NEW;
         }
+      }
+
+      formatIncomingUserData(user) {
+        user.phone = ValidateUtil.insertPhoneSymbols(user.phone);
+        this.user = user;
       }
 
       save(e) {
@@ -496,11 +501,6 @@
           composed: true,
           detail: bool
         }));
-      }
-
-      formatUserData(user) {
-        user.phone = ValidateUtil.insertPhoneSymbols(user.phone);
-        this.user = user;
       }
 
       formWatcher() {
