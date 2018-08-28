@@ -125,7 +125,7 @@
         animation: fade-in .7s;
       }
 
-      .add-user-button>jha-cancel-icon {
+      .create-user-button>jha-cancel-icon {
         width: 70px;
         height: 49px;
         fill: white;
@@ -251,7 +251,7 @@
           <h1 class="edit-user-header">[[setEditUserHeader(user)]]</h1>
         </template>
         <template is="dom-if" if="[[isMode(modes.CREATE_NEW, mode)]]">
-          <button id="addUserButton" on-click="toggleNewUserFormDisplay" class="create-user-button">
+          <button id="createUserButton" on-click="toggleNewUserFormDisplay" class="create-user-button">
             <jha-add-person-icon></jha-add-person-icon>
           </button>
         </template>
@@ -607,7 +607,7 @@
       }
 
       toggleNewUserIcon() {
-        let button = this.shadowRoot.querySelector('#addUserButton');
+        let button = this.shadowRoot.querySelector('#createUserButton');
         let expanded = this.classes.EXPAND_NEW;
 
         let cancelIcon = '<jha-cancel-icon></jha-cancel-icon>';
