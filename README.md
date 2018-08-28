@@ -36,11 +36,35 @@ To create a new user, click the 'Create User' button and fill out the form. User
 
 #### Modes
 
-User component has two mode settings:
+User component has three mode settings:
 
-`<user-component mode=['edit', 'display']><user-component>`
+1. Display: If you pass a `user` object with an `id` property in to the `user-to-display` attribute, then the card will default to a collapsed display mode that only shows the first and last name and the expand for details button.
 
-Changing that mode in the code will cause the state of the card to be that mode on load. If no user is passed into the component it will serve as a 'create new user' card.
+```html
+ <user-component user-to-display="[[userToDisplay]]"></user-component>
+```
+
+```js
+  static get properties() {
+    return {
+
+      // Format of the user object to be passed in
+      userToDisplay: {
+        type: Object,
+        value: {
+          first: "Jane",
+          last: "Doe",
+          id: "827104937",
+          email: "something@gmail.com",
+          phone: "(345) 435-9875"
+        }
+      }
+    }
+  }
+```
+
+2. Edit: Edit is availably in an existing user display card when you click edit.
+3. Create New: If there is not a `user` object passed in with an `id` property, then the card will init as a create new user button that expands into the create new user form when you click it.
 
 #### Disable Functionality
 

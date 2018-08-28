@@ -70,7 +70,7 @@
       </div>
       <div class="card-container column-2">
         <div class="create-user-row">
-          <user-component class="new-user-card" edit-open="[[editInProgress]]" mode="edit"></user-component>
+          <user-component class="new-user-card" edit-open="[[editInProgress]]"></user-component>
         </div>
         <div class="user-list-row">
           <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
@@ -79,7 +79,7 @@
             </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
-            <user-component edit-open="[[editInProgress]]" mode="display" user-to-display="[[user]]"></user-component>
+            <user-component edit-open="[[editInProgress]]" user-to-display="[[user]]"></user-component>
           </template>
         </div>
       </div>

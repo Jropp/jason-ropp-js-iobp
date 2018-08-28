@@ -244,17 +244,17 @@
 
     <div id="userCard" class$="[[userCardClass]]">
       <header class="card_header">
-        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+        <template is="dom-if" if="[[isMode(modes.READ_ONLY, mode)]]">
           <h1>[[user.last]], [[user.first]]</h1>
           <div class="id" id="id">
             <h3>ID:</h3>
             <p class="id">[[user.id]]</p>
           </div>
         </template>
-        <template is="dom-if" if="[[isEditExisting(mode)]]">
+        <template is="dom-if" if="[[isMode(modes.EDIT_EXISTING, mode)]]">
           <h1 class="edit-user-header">[[setEditUserHeader(user)]]</h1>
         </template>
-        <template is="dom-if" if="[[isCreateMode(mode)]]">
+        <template is="dom-if" if="[[isMode(modes.CREATE_NEW, mode)]]">
           <button id="addUserButton" on-click="toggleNewUserCardDisplay" class="create-user-button">
             <jha-add-person-icon></jha-add-person-icon>
           </button>
@@ -263,7 +263,7 @@
       <div class="card_content">
         <form on-input="formWatcher" autocomplete="on">
           <!-- bplint-disable no-auto-binding -->
-          <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
+          <template is="dom-if" if="[[!isMode(modes.READ_ONLY, mode)]]">
             <label for="firstName"></label>
             <jha-person-icon></jha-person-icon>
             <input id="firstName" type="text" class="first-name name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
@@ -304,10 +304,10 @@
           <!-- bplint-enable no-auto-binding -->
           <div class="submit-button-box">
 
-            <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
+            <template is="dom-if" if="[[!isMode(modes.READ_ONLY, mode)]]">
               <button class="save-button" on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
-              <template is="dom-if" if="[[user.id]]">
+              <template is="dom-if" if="[[isMode(modes.EDIT_EXISTING, mode)]]">
                 <button on-click="delete" type="submit" formnovalidate>Delete</button>
               </template>
 
@@ -317,14 +317,14 @@
 
 
             </template>
-            <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+            <template is="dom-if" if="[[isMode(modes.READ_ONLY, mode)]]">
               <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
             </template>
           </div>
         </form>
       </div>
       <footer class="card_footer">
-        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+        <template is="dom-if" if="[[isMode(modes.READ_ONLY, mode)]]">
           <div id="detailsButton" on-click="toggleUserCardCollapse" class="expand-details-clickable">
             <jha-drop-arrow-icon></jha-drop-arrow-icon>
           </div>
@@ -348,9 +348,9 @@
             type: Object,
             value: () => {
               return {
-                DISPLAY: 'display',
-                EDIT: 'edit',
-                CREATE: 'create'
+                READ_ONLY: 'display',
+                EDIT_EXISTING: 'edit',
+                CREATE_NEW: 'create'
               };
             }
           },
@@ -432,9 +432,11 @@
 
       initCardState() {
         if (this.user.id) {
+          this.mode = this.modes.READ_ONLY;
           this.toggleEditable();
           this.userCardClass = this.classes.COLLAPSE_EXISTING;
         } else {
+          this.mode = this.modes.CREATE_NEW;
           this.resetNewUserForm();
         }
 
@@ -470,7 +472,7 @@
         e.preventDefault();
         database.deleteUser(this.user);
         this.editInProgress(false);
-        this.mode = this.modes.DISPLAY;
+        this.mode = this.modes.READ_ONLY;
         this.userCardClass = this.classes.COLLAPSE_DEFAULT;
         this.toggleUserCardButtonIcon();
         this.toggleEditable();
@@ -480,7 +482,7 @@
       editButtonClicked(e) {
         e.preventDefault();
         this.editInProgress(true);
-        this.mode = this.modes.EDIT;
+        this.mode = this.modes.EDIT_EXISTING;
         this.toggleEditable();
       }
 
@@ -506,26 +508,12 @@
         return expectedMode === this.mode;
       }
 
-      isCreateMode() {
-        let isNewUserCard = !this.user.id;
-        return (this.mode === this.modes.EDIT) && isNewUserCard;
-      }
-
-      isEditExisting(currentMode) {
-        let isExistingUser = this.user.id;
-        let existingUserEdit = (currentMode === this.modes.EDIT) && isExistingUser;
-        return existingUserEdit;
-      }
       resetFormState() {
         this.editInProgress(false);
-        let isNewUserCard = !this.user.id;
-        let isUserEditCard = this.user.id;
 
-        if (isUserEditCard) {
+        if (this.isMode(this.modes.EDIT_EXISTING)) {
           this.toggleMode();
-        }
-
-        if (isNewUserCard) {
+        } else {
           this.toggleNewUserCardDisplay();
           this.resetNewUserForm();
         }
@@ -536,7 +524,6 @@
       clearInputFormatWarningMessages() {
         this.displayEmailFormatMessage = false;
         this.displayPhoneFormatMessage = false;
-
         this.resizeCardForWarningMessages(false);
       }
 
@@ -545,11 +532,11 @@
 
         let user = Object.assign({}, this.user);
 
-        if (user.id) {
-          database.editUser(user);
-        } else {
+        if (this.isMode(this.modes.CREATE_NEW)) {
           database.saveUser(user);
           this.isVisible = false;
+        } else {
+          database.editUser(user);
         }
 
         this.resetFormState();
@@ -562,14 +549,14 @@
       }
 
       toggleMode(e) {
-        this.mode = this.isMode(this.modes.EDIT) ? this.modes.DISPLAY : this.modes.EDIT;
+        this.mode = this.isMode(this.modes.EDIT_EXISTING) ? this.modes.READ_ONLY : this.modes.EDIT_EXISTING;
         this.toggleEditable();
       }
 
       toggleEditable() {
         this.shadowRoot.querySelectorAll('input')
           .forEach(input => {
-            input.readOnly = this.isMode(this.modes.DISPLAY);
+            input.readOnly = this.isMode(this.modes.READ_ONLY);
           });
       }
 
@@ -617,7 +604,7 @@
       }
 
       updateDisableSave() {
-        let editOpenAndNewUser = this.editOpen && !this.user.id;
+        let editOpenAndNewUser = this.editOpen && (this.mode === this.modes.CREATE_NEW);
         let emptyFields = !this.fieldsFilled();
         let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
         let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
@@ -626,7 +613,7 @@
       }
 
       updateWarningMessages() {
-        let isNewUser = !this.user.id;
+        let isNewUserCard = this.isMode(this.modes.CREATE_NEW);
         let emailInProgress = this.user.email;
         let phoneInProgress = this.user.phone;
 
@@ -638,7 +625,7 @@
           this.displayPhoneFormatMessage = !ValidateUtil.checkPhoneInput(this.user.phone);
         }
 
-        if (isNewUser) {
+        if (isNewUserCard) {
           this.displayOpenEditMessage = this.editOpen;
         }
 
