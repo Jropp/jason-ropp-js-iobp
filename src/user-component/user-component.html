@@ -598,7 +598,7 @@
       }
 
       updateDisableSave() {
-        let editOpenAndNewUser = this.editOpen && (this.mode === this.modes.CREATE_NEW);
+        let editOpenAndNewUser = this.editOpen && this.isMode(this.modes.CREATE_NEW);
         let emptyFields = !this.fieldsFilled();
         let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
         let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
@@ -626,8 +626,7 @@
         if (expandForMessages) {
           this.$.userCard.style.height = 'auto';
         } else {
-          let removeWarningMessageCardResize = '';
-          this.$.userCard.style = removeWarningMessageCardResize;
+          this.$.userCard.style = '';
         }
       }
     }
