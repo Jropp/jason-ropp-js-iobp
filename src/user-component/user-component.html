@@ -244,7 +244,7 @@
           <h1>[[user.last]], [[user.first]]</h1>
           <div class="id" id="id">
             <h3>ID:</h3>
-            <p class="id">[[user.id]]</p>
+            <span class="id">[[user.id]]</span>
           </div>
         </template>
         <template is="dom-if" if="[[isMode(modes.EDIT_EXISTING, mode)]]">
@@ -279,7 +279,7 @@
           <br>
 
           <template is="dom-if" if="[[displayEmailWarning]]">
-            <p class="warning">[[emailFormatMessage]]</p>
+            <span class="warning">[[emailFormatMessage]]</span>
           </template>
 
           <label for="phone">
@@ -290,7 +290,7 @@
           <br>
 
           <template is="dom-if" if="[[displayPhoneWarning]]">
-            <p class="warning">[[phoneFormatMessage]]</p>
+            <span class="warning">[[phoneFormatMessage]]</span>
           </template>
 
           <label for="department"></label>
@@ -308,7 +308,7 @@
               </template>
 
               <template is="dom-if" if="[[displayOpenEditMessage]]">
-                <p class="warning">[[openEditMessage]]</p>
+                <span class="warning">[[openEditMessage]]</span>
               </template>
 
             </template>
