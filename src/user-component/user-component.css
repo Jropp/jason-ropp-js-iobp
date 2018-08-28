@@ -50,7 +50,9 @@ input:-webkit-autofill {
 }
 
 .warning {
+  margin-top: 3px;
   color: #f44336;
   font-size: 14px;
   font-weight: bold;
+  display: block;
 }
