@@ -521,6 +521,7 @@
 
         if (this.isMode(this.modes.EDIT_EXISTING)) {
           this.toggleEditDisplayMode();
+          this.toggleEditableInputs();
         } else {
           this.toggleNewUserCardDisplay();
           this.resetNewUserForm();
@@ -541,7 +542,6 @@
 
       toggleEditDisplayMode(e) {
         this.mode = this.isMode(this.modes.EDIT_EXISTING) ? this.modes.DISPLAY : this.modes.EDIT_EXISTING;
-        this.toggleEditableInputs();
       }
 
       toggleEditableInputs() {
