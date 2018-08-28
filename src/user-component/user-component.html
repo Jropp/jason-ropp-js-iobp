@@ -26,7 +26,7 @@
         margin: 1em auto;
         padding-bottom: 30px;
         max-height: 750px;
-        transition: opacity .6s, max-height 0.5s ease-out;
+        transition: max-height 0.5s ease-out;
       }
 
       .create-user-button {
@@ -47,13 +47,6 @@
         width: 370px;
       }
 
-      input:not(.name) {
-        width: 80%;
-        margin-top: 20px;
-        font-size: 20px;
-        display: inline-block;
-      }
-
       .first-name,
       .last-name {
         width: 38%;
@@ -67,6 +60,13 @@
         position: relative;
         left: 11px;
         margin-right: 4%;
+      }
+
+      input:not(.name) {
+        width: 80%;
+        margin-top: 20px;
+        font-size: 20px;
+        display: inline-block;
       }
 
       .edit-user-header {
@@ -125,7 +125,7 @@
         animation: fade-in .7s;
       }
 
-      #addUserButton>jha-cancel-icon {
+      .add-user-button>jha-cancel-icon {
         width: 70px;
         height: 49px;
         fill: white;
