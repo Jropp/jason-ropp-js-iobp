@@ -384,7 +384,7 @@
           editOpen: {
             type: Boolean,
             value: false,
-            observer: 'formWatcher'
+            observer: 'onEditOpenChanged'
           },
           displayOpenEditMessage: {
             type: Boolean,
@@ -473,6 +473,11 @@
       }
 
       onInputChanged() {
+        this.updateDisableSaveButton();
+        this.updateWarningMessageDisplay();
+      }
+
+      onEditOpenChanged() {
         this.updateDisableSaveButton();
         this.updateWarningMessageDisplay();
       }
