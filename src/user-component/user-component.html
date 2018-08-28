@@ -69,6 +69,8 @@
       }
 
       .first-name {
+        position: relative;
+        left: 11px;
         margin-right: 4%;
       }
 
@@ -109,7 +111,7 @@
         transition: max-height .6s ease-in;
       }
 
-      .expand-new-user>.create-user-button {
+      .expand-new-user>.card_header>.create-user-button {
         background-color: #0070b7;
         font-size: 20px;
         transition: all .5s;
@@ -123,7 +125,7 @@
         transition: fill .5s;
       }
 
-      .expand-new-user>form {
+      .expand-new-user>.card_content {
         height: auto;
         animation: fade-in .7s;
       }
@@ -138,12 +140,12 @@
         max-height: 60px;
       }
 
-      .collapse-new-user>form {
+      .collapse-new-user>.card_content {
         visibility: hidden;
       }
 
 
-      .collapse-new-user>form>* {
+      .collapse-new-user.card_content>form>* {
         visibility: hidden;
         opacity: 0;
         transition: all .2s;
@@ -158,12 +160,12 @@
       }
 
 
-      .collapse-existing-user>form {
+      .collapse-existing-user>.card_content {
         height: 0px;
         visibility: hidden;
       }
 
-      .collapse-existing-user>.id {
+      .collapse-existing-user>.card_header>.id {
         opacity: 0;
         visibility: hidden;
       }
@@ -173,12 +175,12 @@
         padding: 10px 0px 30px 0px;
       }
 
-      .collapse-existing-user-default>form {
+      .collapse-existing-user-default>.card_content>form {
         height: 0px;
         visibility: hidden;
       }
 
-      .collapse-existing-user-default>.id {
+      .collapse-existing-user-default>.card_header>.id {
         opacity: 0;
         visibility: hidden;
       }
@@ -189,17 +191,17 @@
         transition: height .4s ease-in;
       }
 
-      .expand-existing-user>form {
+      .expand-existing-user>.card_content {
         height: auto;
         animation: fade-in .7s;
       }
 
-      .expand-existing-user>.id {
-        animation: fade-in .7s;
+      .expand-existing-user>.card_header>.id {
+        animation: fade-in .2s;
         visibility: visible;
       }
 
-      .expand-existing-user>.expand-details-clickable {
+      .expand-existing-user>.card_footer>.expand-details-clickable {
         background-color: #0070b7;
         transition: all .5s;
         cursor: pointer;
@@ -241,87 +243,93 @@
     </style>
 
     <div id="userCard" class$="[[userCardClass]]">
-      <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-        <h1>[[user.last]], [[user.first]]</h1>
-        <div class="id" id="id">
-          <h3>ID:</h3>
-          <p class="id">[[user.id]]</p>
-        </div>
-      </template>
-      <template is="dom-if" if="[[isEditExisting(mode)]]">
-        <h1 class="edit-user-header">[[setEditUserHeader(user)]]</h1>
-      </template>
-      <template is="dom-if" if="[[isCreateMode(mode)]]">
-        <button id="addUserButton" on-click="toggleNewUserCardDisplay" class="create-user-button">
-          <jha-add-person-icon></jha-add-person-icon>
-        </button>
-      </template>
-      <form on-input="formWatcher" autocomplete="on">
-        <!-- bplint-disable no-auto-binding -->
-        <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
-          <label for="firstName"></label>
-          <jha-person-icon></jha-person-icon>
-          <input id="firstName" type="text" class="first-name name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-            required>
+      <header class="card_header">
+        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+          <h1>[[user.last]], [[user.first]]</h1>
+          <div class="id" id="id">
+            <h3>ID:</h3>
+            <p class="id">[[user.id]]</p>
+          </div>
+        </template>
+        <template is="dom-if" if="[[isEditExisting(mode)]]">
+          <h1 class="edit-user-header">[[setEditUserHeader(user)]]</h1>
+        </template>
+        <template is="dom-if" if="[[isCreateMode(mode)]]">
+          <button id="addUserButton" on-click="toggleNewUserCardDisplay" class="create-user-button">
+            <jha-add-person-icon></jha-add-person-icon>
+          </button>
+        </template>
+      </header>
+      <div class="card_content">
+        <form on-input="formWatcher" autocomplete="on">
+          <!-- bplint-disable no-auto-binding -->
+          <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
+            <label for="firstName"></label>
+            <jha-person-icon></jha-person-icon>
+            <input id="firstName" type="text" class="first-name name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+              required>
 
-          <label for="lastName"></label>
-          <input id="lastName" type="text" class="last-name name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+            <label for="lastName"></label>
+            <input id="lastName" type="text" class="last-name name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+              required>
+            <br>
+          </template>
+
+          <label for="email">
+          </label>
+          <jha-email-icon></jha-email-icon>
+          <input id="email" type="email" on-blur="formWatcher" class="email" placeholder="Email" autocomplete="email" value="{{user.email::change}}"
+            name="email" required>
+          <br>
+
+          <template is="dom-if" if="[[displayEmailFormatMessage]]">
+            <p class="warning">[[emailFormatMessage]]</p>
+          </template>
+
+          <label for="phone">
+          </label>
+          <jha-phone-icon></jha-phone-icon>
+          <input id="phone" type="tel" on-blur="formWatcher" class="phone" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
             required>
           <br>
-        </template>
 
-        <label for="email">
-        </label>
-        <jha-email-icon></jha-email-icon>
-        <input id="email" type="email" on-blur="formWatcher" class="email" placeholder="Email" autocomplete="email" value="{{user.email::change}}"
-          name="email" required>
-        <br>
-
-        <template is="dom-if" if="[[displayEmailFormatMessage]]">
-          <p class="warning">[[emailFormatMessage]]</p>
-        </template>
-
-        <label for="phone">
-        </label>
-        <jha-phone-icon></jha-phone-icon>
-        <input id="phone" type="tel" on-blur="formWatcher" class="phone" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
-          required>
-        <br>
-
-        <template is="dom-if" if="[[displayPhoneFormatMessage]]">
-          <p class="warning">[[phoneFormatMessage]]</p>
-        </template>
-
-        <label for="department"></label>
-        <jha-department-icon></jha-department-icon>
-        <input id="department" class="department" placeholder="Department" value="{{user.department::change}}" required/>
-
-        <!-- bplint-enable no-auto-binding -->
-        <div class="submit-button-box">
-
-          <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
-            <button class="save-button" on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
-
-            <template is="dom-if" if="[[user.id]]">
-              <button on-click="delete" type="submit" formnovalidate>Delete</button>
-            </template>
-
-            <template is="dom-if" if="[[displayOpenEditMessage]]">
-              <p class="warning">[[openEditMessage]]</p>
-            </template>
-
-
+          <template is="dom-if" if="[[displayPhoneFormatMessage]]">
+            <p class="warning">[[phoneFormatMessage]]</p>
           </template>
-          <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-            <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
-          </template>
-        </div>
-      </form>
-      <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-        <div id="detailsButton" on-click="toggleUserCardCollapse" class="expand-details-clickable">
-          <jha-drop-arrow-icon></jha-drop-arrow-icon>
-        </div>
-      </template>
+
+          <label for="department"></label>
+          <jha-department-icon></jha-department-icon>
+          <input id="department" class="department" placeholder="Department" value="{{user.department::change}}" required/>
+
+          <!-- bplint-enable no-auto-binding -->
+          <div class="submit-button-box">
+
+            <template is="dom-if" if="[[isMode(modes.EDIT, mode)]]">
+              <button class="save-button" on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
+
+              <template is="dom-if" if="[[user.id]]">
+                <button on-click="delete" type="submit" formnovalidate>Delete</button>
+              </template>
+
+              <template is="dom-if" if="[[displayOpenEditMessage]]">
+                <p class="warning">[[openEditMessage]]</p>
+              </template>
+
+
+            </template>
+            <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+              <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
+            </template>
+          </div>
+        </form>
+      </div>
+      <footer class="card_footer">
+        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+          <div id="detailsButton" on-click="toggleUserCardCollapse" class="expand-details-clickable">
+            <jha-drop-arrow-icon></jha-drop-arrow-icon>
+          </div>
+        </template>
+      </footer>
     </div>
   </template>
   <script type="module">
@@ -355,8 +363,6 @@
                 COLLAPSE_DEFAULT: 'default-card collapse-existing-user-default',
                 EXPAND_NEW: 'default-card expand-new-user',
                 EXPAND_EXISTING: 'default-card expand-existing-user',
-                RESET_AFTER_DELETE: 'default-card reset-after-delete',
-                DELETED: 'default-card deleted'
               };
             }
           },
@@ -407,6 +413,7 @@
             type: String,
             value: 'Your email seems a little off. Would you mind formatting it as xxxx@xxxxx.xxx?'
           },
+          // passed in from parent of user-component
           userToDisplay: {
             type: Object,
             observer: 'formatUserData'

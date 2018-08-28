@@ -10,27 +10,27 @@ To create a new user, click the 'Create User' button and fill out the form. User
 
 ### Create User
 
-Click on 'Create New User' button, enter a user. If you leave a field empty, the save button will remain disabled.
+- Clicking the add new user icon expands the create new user card.
 
-Cancelling should collapsed the create user card into the 'Create New User' button. Saving will display your new user in the users list.
+- Cancelling or saving a user collapses the add new user card.
 
-Appropriate warnings will notify you of improper format of email or phone. Improper format will also disable the save button.
+- Appropriate warnings will notify the end-user of improper format of email or phone.
+
+- Improper format will also disable the save button.
 
 ### Edit/Delete User
 
-You should be able to click the edit button and edit the fields for that user and save with the updated information displayed immediately.
+- Clicking the edit button allows you to edit the fields for that user. Updated information will be displayed immediately on save.
 
-If you already have an edit in process, all other edit and save buttons in other cards will be disabled.
+- If you already have an edit in process, all other edit and save buttons in other cards will be disabled.
 
-If you begin to edit a card and try to save a new user or save your edit before saving the open edit, it will prompt you to save the other open edit first.
+- Editing an existing user disables the option to save other existing users or a new user.
 
-If you click, delete, the user you selected to be deleted should disappear immediately, even if you have left an input field empty or improperly formatted things.
+- Deleted users disappear immediately.
 
-If you leave a field empty or improperly format a field the save button will remain disabled and you will recieve a warning.
+- The save button remains disabled while any fields are empty or formatted improperly.
 
-If you click delete, the user you selected to be deleted should disappear immediately, even if you have left an input field empty.
-
-If there are no users, there should be a message prompt to create a new user.
+- If there are no users, there should be a message prompt to create a new user.
 
 ### Changing User Component In Code
 
@@ -40,9 +40,7 @@ User component has two mode settings:
 
 `<user-component mode=['edit', 'display']><user-component>`
 
-Changing that mode in the code will cause the state of the card to be that mode on load.
-
-If no user is passed into the component it will serve as a 'create new user' card.
+Changing that mode in the code will cause the state of the card to be that mode on load. If no user is passed into the component it will serve as a 'create new user' card.
 
 #### Disable Functionality
 
