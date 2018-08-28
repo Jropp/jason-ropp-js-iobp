@@ -251,7 +251,7 @@
           <h1 class="edit-user-header">[[setEditUserHeader(user)]]</h1>
         </template>
         <template is="dom-if" if="[[isMode(modes.CREATE_NEW, mode)]]">
-          <button id="addUserButton" on-click="toggleNewUserCardDisplay" class="create-user-button">
+          <button id="addUserButton" on-click="showHideNewUserForm" class="create-user-button">
             <jha-add-person-icon></jha-add-person-icon>
           </button>
         </template>
@@ -578,14 +578,14 @@
           this.toggleEditDisplayMode();
           this.toggleEditableInputs();
         } else {
-          this.toggleNewUserCardDisplay();
+          this.showHideNewUserForm();
           this.resetNewUserForm();
         }
 
         this.clearInputFormatWarningMessages();
       }
 
-      toggleNewUserCardDisplay() {
+      showHideNewUserForm() {
         let collapsed = this.classes.COLLAPSE_NEW;
         let expanded = this.classes.EXPAND_NEW;
 
@@ -629,7 +629,6 @@
       isClass(expectedClass) {
         return expectedClass === this.userCardClass;
       }
-
 
     }
 
