@@ -433,6 +433,33 @@
         }
       }
 
+      save(e) {
+        e.preventDefault();
+
+        let user = Object.assign({}, this.user);
+
+        if (this.isMode(this.modes.CREATE_NEW)) {
+          database.saveUser(user);
+        } else {
+          database.editUser(user);
+        }
+
+        this.resetFormState();
+        this.editInProgress(false);
+
+      }
+
+      delete(e) {
+        e.preventDefault();
+        database.deleteUser(this.user);
+        this.editInProgress(false);
+        this.mode = this.modes.DISPLAY;
+        this.userCardClass = this.classes.COLLAPSE_DEFAULT;
+        this.toggleUserCardButtonIcon();
+        this.toggleEditableInputs();
+        this.clearInputFormatWarningMessages();
+      }
+
       cancel() {
         this.resetNewUserForm();
       }
@@ -453,17 +480,6 @@
 
       resetNewUserForm() {
         this.shadowRoot.querySelector('form').reset();
-        this.clearInputFormatWarningMessages();
-      }
-
-      delete(e) {
-        e.preventDefault();
-        database.deleteUser(this.user);
-        this.editInProgress(false);
-        this.mode = this.modes.DISPLAY;
-        this.userCardClass = this.classes.COLLAPSE_DEFAULT;
-        this.toggleUserCardButtonIcon();
-        this.toggleEditableInputs();
         this.clearInputFormatWarningMessages();
       }
 
@@ -517,22 +533,6 @@
         this.displayEmailWarning = false;
         this.displayPhoneWarning = false;
         this.resizeCardForWarningMessages(false);
-      }
-
-      save(e) {
-        e.preventDefault();
-
-        let user = Object.assign({}, this.user);
-
-        if (this.isMode(this.modes.CREATE_NEW)) {
-          database.saveUser(user);
-        } else {
-          database.editUser(user);
-        }
-
-        this.resetFormState();
-        this.editInProgress(false);
-
       }
 
       setEditUserHeader() {
