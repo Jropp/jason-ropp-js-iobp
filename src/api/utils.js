@@ -1,15 +1,23 @@
 class ValidateUtil {
   static formatPhoneNumber(phoneNumber) {
-    let numberArray = phoneNumber.split("").reverse();
+    let domesticPhoneLength = 10;
+    let isInternationalNumber = phoneNumber.length > domesticPhoneLength;
+    let reversedPhoneArray = phoneNumber.split("").reverse();
 
-    let domestic = this.insertDomesticSymbols(numberArray);
-    let international = this.insertInternationalSymbols(domestic);
-    let formattedForDisplay = international.reverse().join("");
+    let domFormatted = this.insertDomesticSymbols(reversedPhoneArray);
+    let displayFormat;
 
-    return formattedForDisplay;
+    if (isInternationalNumber) {
+      let intFormatted = this.insertInternationalSymbols(domFormatted);
+      displayFormat = intFormatted.reverse().join("");
+    } else {
+      displayFormat = domFormatted.reverse().join("");
+    }
+
+    return displayFormat;
   }
 
-  static insertDomesticSymbols(phoneArray) {
+  static insertDomesticSymbols(reversedPhoneArray) {
     let domesticSymbols = [
       { name: "dash", loc: 4, text: "-" },
       { name: "spaceLoc", loc: 8, text: " " },
@@ -18,23 +26,23 @@ class ValidateUtil {
     ];
 
     domesticSymbols.forEach(symbol => {
-      phoneArray.splice(symbol.loc, 0, symbol.text);
+      reversedPhoneArray.splice(symbol.loc, 0, symbol.text);
     });
 
-    return phoneArray;
+    return reversedPhoneArray;
   }
 
-  static insertInternationalSymbols(numberArray) {
-    let domesticNumberLength = 14;
-    let isInternationalNumber = numberArray.length > domesticNumberLength;
-    let internationalSpaceLoc = 14;
-    let internationalNumPre = "+";
+  static insertInternationalSymbols(reversedPhoneArray) {
+    let internationalSymbols = [
+      { name: "intPre", loc: reversedPhoneArray.length, text: "+" },
+      { name: "intSpace", loc: 14, text: " " }
+    ];
 
-    if (isInternationalNumber) {
-      numberArray.splice(internationalSpaceLoc, 0, " ");
-      numberArray.push(internationalNumPre);
-    }
-    return numberArray;
+    internationalSymbols.forEach(symbol => {
+      reversedPhoneArray.splice(symbol.loc, 0, symbol.text);
+    });
+
+    return reversedPhoneArray;
   }
 
   static checkPhoneInput(phone) {
