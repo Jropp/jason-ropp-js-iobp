@@ -22,11 +22,6 @@
         margin-top: 18px;
       }
 
-      .create-user {
-        font-size: 15px;
-        transition: opacity .4s linear;
-      }
-
       .card-container {
         display: flex;
         flex-direction: column;
@@ -102,7 +97,7 @@
           users: {
             type: Array,
             value: () => database.getUsers()
-          },
+          }
         };
       }
       connectedCallback() {
@@ -143,7 +138,6 @@
           messageBox.className = 'message-box';
         }, animationTime);
       }
-
     }
 
     customElements.define(UserListElement.is, UserListElement);
