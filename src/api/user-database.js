@@ -55,8 +55,9 @@ let database = (() => {
   }
 
   function titleCaseName(name) {
+    let firstLetter = name.charAt(0).toUpperCase();
     let loweredCase = name.slice(1).toLowerCase();
-    return name.charAt(0).toUpperCase() + loweredCase;
+    return `${firstLetter}${loweredCase}`;
   }
 
   function updateLocalStorage(users, action) {
