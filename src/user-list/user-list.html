@@ -83,9 +83,10 @@
 
   </template>
   <script type="module">
-    import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
 
-    import { database } from './../api/user-database.js';
+    import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
+    import Database from './../api/user-database.js';
+
     class UserListElement extends PolymerElement {
       static get is() { return 'user-list'; }
       static get properties() {
@@ -96,7 +97,7 @@
           },
           users: {
             type: Array,
-            value: () => database.getUsers()
+            value: () => Database.getUsers()
           }
         };
       }
@@ -108,7 +109,7 @@
         });
 
         document.addEventListener('databaseUpdated', e => {
-          this.users = database.getUsers();
+          this.users = Database.getUsers();
           this.popupMessage(e.detail.message);
         });
 
