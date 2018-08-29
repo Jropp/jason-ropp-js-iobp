@@ -49,11 +49,11 @@ class ValidateUtil {
     let phoneDigits = phone.replace(/\D/g, "");
     let internationalDigitMax = 13;
     let domesticDigitLength = 10;
-
-    return (
+    let validNumberLength =
       phoneDigits.length >= domesticDigitLength &&
-      phoneDigits.length <= internationalDigitMax
-    );
+      phoneDigits.length <= internationalDigitMax;
+
+    return validNumberLength;
   }
 
   static checkEmailInput(email) {
