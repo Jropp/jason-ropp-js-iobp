@@ -349,7 +349,7 @@
   </template>
   <script type="module">
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
-    import { database } from './../api/user-database.js';
+    import Database from './../api/user-database.js';
     import ValidateUtil from './../api/utils.js';
     class UserComponentElement extends PolymerElement {
       static get is() { return 'user-component'; }
@@ -464,9 +464,9 @@
         let user = Object.assign({}, this.user);
 
         if (this.isMode(this.modes.CREATE_NEW)) {
-          database.saveUser(user);
+          Database.saveUser(user);
         } else {
-          database.editUser(user);
+          Database.editUser(user);
         }
 
         this.resetFormState();
@@ -476,7 +476,7 @@
 
       delete(e) {
         e.preventDefault();
-        database.deleteUser(this.user);
+        Database.deleteUser(this.user);
         this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
         this.userCardClass = this.classes.COLLAPSE_DEFAULT;
