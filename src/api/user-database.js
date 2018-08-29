@@ -42,7 +42,7 @@ let database = (() => {
     updateLocalStorage(users, popupMessage);
   }
 
-  function deleteUsers() {
+  function deleteAllUsers() {
     localStorage.setItem("onboardProjectUsers", JSON.stringify([]));
   }
 
@@ -105,6 +105,6 @@ let database = (() => {
     saveUser: saveUser,
     editUser: editUser,
     deleteUser: deleteUser,
-    deleteUsers: deleteUsers
+    deleteAllUsers: deleteAllUsers
   };
 })();
