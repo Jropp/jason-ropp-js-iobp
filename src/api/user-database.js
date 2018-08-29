@@ -46,11 +46,11 @@ let database = (() => {
     user.first = titleCaseName(user.first);
     user.last = titleCaseName(user.last);
     user.id = user.id || createNewUserId();
-    user.phone = getDigitsFromNumber(user.phone);
+    user.phone = getOnlyPhoneDigits(user.phone);
     return user;
   }
 
-  function getDigitsFromNumber(userPhoneInput) {
+  function getOnlyPhoneDigits(userPhoneInput) {
     return userPhoneInput.replace(/\D/g, "");
   }
 
