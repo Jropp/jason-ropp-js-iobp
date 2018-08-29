@@ -72,7 +72,7 @@ let database = (() => {
 
   function updateLocalStorage(users, popupMessage) {
     localStorage.setItem("onboardProjectUsers", JSON.stringify(users));
-    
+
     document.dispatchEvent(
       new CustomEvent("databaseUpdated", {
         bubbles: true,
@@ -83,10 +83,10 @@ let database = (() => {
   }
 
   function createNewUserId() {
+    const asciiCharsLowest = 33;
+    const asciiCharsHighest = 123;
+    const idLength = 9;
     let id = "";
-    let asciiCharsLowest = 33;
-    let asciiCharsHighest = 123;
-    let idLength = 9;
 
     for (let i = 0; i < idLength; i++) {
       let charCode =
