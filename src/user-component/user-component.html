@@ -26,7 +26,7 @@
         margin: 1em auto;
         padding-bottom: 30px;
         max-height: 750px;
-        transition: opacity .6s, max-height 0.5s ease-out;
+        transition: max-height 0.5s ease-out;
       }
 
       .create-user-button {
@@ -40,23 +40,11 @@
 
       .create-user-button:hover>jha-add-person-icon {
         fill: #0070b7;
-
-      }
-
-      .create-user-button:hover>jha-add-person-icon {
-        fill: #0070b7;
       }
 
       form {
         margin: auto;
         width: 370px;
-      }
-
-      input:not(.name) {
-        width: 80%;
-        margin-top: 20px;
-        font-size: 20px;
-        display: inline-block;
       }
 
       .first-name,
@@ -74,15 +62,22 @@
         margin-right: 4%;
       }
 
+      input:not(.name) {
+        width: 80%;
+        margin-top: 20px;
+        font-size: 20px;
+        display: inline-block;
+      }
+
       .edit-user-header {
         margin-bottom: 0px;
       }
 
-      .id {
+      .user-id {
         margin-top: -25px;
       }
 
-      .id>* {
+      .user-id>* {
         display: inline-block;
         font-size: 14px;
       }
@@ -130,7 +125,7 @@
         animation: fade-in .7s;
       }
 
-      #addUserButton>jha-cancel-icon {
+      .create-user-button>jha-cancel-icon {
         width: 70px;
         height: 49px;
         fill: white;
@@ -159,28 +154,12 @@
         transition: height .4s ease-out;
       }
 
-
       .collapse-existing-user>.card_content {
         height: 0px;
         visibility: hidden;
       }
 
-      .collapse-existing-user>.card_header>.id {
-        opacity: 0;
-        visibility: hidden;
-      }
-
-      .collapse-existing-user-default {
-        height: 70px;
-        padding: 10px 0px 30px 0px;
-      }
-
-      .collapse-existing-user-default>.card_content>form {
-        height: 0px;
-        visibility: hidden;
-      }
-
-      .collapse-existing-user-default>.card_header>.id {
+      .collapse-existing-user>.card_header>.user-id {
         opacity: 0;
         visibility: hidden;
       }
@@ -196,7 +175,7 @@
         animation: fade-in .7s;
       }
 
-      .expand-existing-user>.card_header>.id {
+      .expand-existing-user>.card_header>.user-id {
         animation: fade-in .2s;
         visibility: visible;
       }
@@ -205,6 +184,23 @@
         background-color: #0070b7;
         transition: all .5s;
         cursor: pointer;
+      }
+
+      /* Existing User Reset After User Is Deleted because of Dom-Repeat Class Recycling. */
+
+      .collapse-existing-user-default {
+        height: 70px;
+        padding: 10px 0px 30px 0px;
+      }
+
+      .collapse-existing-user-default>.card_content>form {
+        height: 0px;
+        visibility: hidden;
+      }
+
+      .collapse-existing-user-default>.card_header>.user-id {
+        opacity: 0;
+        visibility: hidden;
       }
 
       @keyframes fade-in {
@@ -244,87 +240,89 @@
 
     <div id="userCard" class$="[[userCardClass]]">
       <header class="card_header">
-        <template is="dom-if" if="[[isMode(modes.READ_ONLY, mode)]]">
+        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <h1>[[user.last]], [[user.first]]</h1>
-          <div class="id" id="id">
+          <div class="user-id" id="id">
             <h3>ID:</h3>
-            <p class="id">[[user.id]]</p>
+            <span>[[user.id]]</span>
           </div>
         </template>
         <template is="dom-if" if="[[isMode(modes.EDIT_EXISTING, mode)]]">
           <h1 class="edit-user-header">[[setEditUserHeader(user)]]</h1>
         </template>
         <template is="dom-if" if="[[isMode(modes.CREATE_NEW, mode)]]">
-          <button id="addUserButton" on-click="toggleNewUserCardDisplay" class="create-user-button">
+          <button id="createUserButton" on-click="toggleNewUserFormDisplay" class="create-user-button">
             <jha-add-person-icon></jha-add-person-icon>
           </button>
         </template>
       </header>
       <div class="card_content">
-        <form on-input="formWatcher" autocomplete="on">
+        <form on-input="onInputChanged" autocomplete="on">
           <!-- bplint-disable no-auto-binding -->
-          <template is="dom-if" if="[[!isMode(modes.READ_ONLY, mode)]]">
-            <label for="firstName"></label>
-            <jha-person-icon></jha-person-icon>
-            <input id="firstName" type="text" class="first-name name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-              required>
+          <template is="dom-if" if="[[!isMode(modes.DISPLAY, mode)]]">
+            <label for="firstName">
+              <jha-person-icon></jha-person-icon>
+              <input id="firstName" type="text" class="first-name name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
+                required>
+            </label>
 
-            <label for="lastName"></label>
-            <input id="lastName" type="text" class="last-name name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-              required>
+            <label for="lastName">
+              <input id="lastName" type="text" class="last-name name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
+                required>
+            </label>
             <br>
           </template>
 
           <label for="email">
+            <jha-email-icon></jha-email-icon>
+            <input id="email" type="email" on-blur="onInputChanged" class="email" placeholder="Email" autocomplete="email" value="{{user.email::change}}"
+              name="email" required>
           </label>
-          <jha-email-icon></jha-email-icon>
-          <input id="email" type="email" on-blur="formWatcher" class="email" placeholder="Email" autocomplete="email" value="{{user.email::change}}"
-            name="email" required>
           <br>
 
-          <template is="dom-if" if="[[displayEmailFormatMessage]]">
-            <p class="warning">[[emailFormatMessage]]</p>
+          <template is="dom-if" if="[[displayEmailWarning]]">
+            <span class="warning">[[emailFormatMessage]]</span>
           </template>
 
           <label for="phone">
+            <jha-phone-icon></jha-phone-icon>
+            <input id="phone" type="tel" on-blur="onInputChanged" class="phone" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
+              required>
           </label>
-          <jha-phone-icon></jha-phone-icon>
-          <input id="phone" type="tel" on-blur="formWatcher" class="phone" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
-            required>
           <br>
 
-          <template is="dom-if" if="[[displayPhoneFormatMessage]]">
-            <p class="warning">[[phoneFormatMessage]]</p>
+          <template is="dom-if" if="[[displayPhoneWarning]]">
+            <span class="warning">[[phoneFormatMessage]]</span>
           </template>
 
-          <label for="department"></label>
-          <jha-department-icon></jha-department-icon>
-          <input id="department" class="department" placeholder="Department" value="{{user.department::change}}" required/>
+          <label for="department">
+            <jha-department-icon></jha-department-icon>
+            <input id="department" class="department" placeholder="Department" value="{{user.department::change}}" required/>
+          </label>
 
           <!-- bplint-enable no-auto-binding -->
           <div class="submit-button-box">
 
-            <template is="dom-if" if="[[!isMode(modes.READ_ONLY, mode)]]">
+            <template is="dom-if" if="[[!isMode(modes.DISPLAY, mode)]]">
               <button class="save-button" on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
               <template is="dom-if" if="[[isMode(modes.EDIT_EXISTING, mode)]]">
                 <button on-click="delete" type="submit" formnovalidate>Delete</button>
               </template>
-
+              <br>
               <template is="dom-if" if="[[displayOpenEditMessage]]">
-                <p class="warning">[[openEditMessage]]</p>
+                <span class="warning">[[openEditMessage]]</span>
               </template>
 
-
             </template>
-            <template is="dom-if" if="[[isMode(modes.READ_ONLY, mode)]]">
+            <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
               <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
             </template>
           </div>
         </form>
       </div>
       <footer class="card_footer">
-        <template is="dom-if" if="[[isMode(modes.READ_ONLY, mode)]]">
+        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <div id="detailsButton" on-click="toggleUserCardCollapse" class="expand-details-clickable">
             <jha-drop-arrow-icon></jha-drop-arrow-icon>
           </div>
@@ -348,7 +346,7 @@
             type: Object,
             value: () => {
               return {
-                READ_ONLY: 'display',
+                DISPLAY: 'display',
                 EDIT_EXISTING: 'edit',
                 CREATE_NEW: 'create'
               };
@@ -365,10 +363,6 @@
                 EXPAND_EXISTING: 'default-card expand-existing-user',
               };
             }
-          },
-          users: {
-            type: Object,
-            value: () => database.getUsers()
           },
           user: {
             type: Object,
@@ -390,15 +384,15 @@
           editOpen: {
             type: Boolean,
             value: false,
-            observer: 'formWatcher'
+            observer: 'onEditOpenChanged'
           },
           displayOpenEditMessage: {
             type: Boolean,
           },
-          displayPhoneFormatMessage: {
+          displayPhoneWarning: {
             type: Boolean,
           },
-          displayEmailFormatMessage: {
+          displayEmailWarning: {
             type: Boolean,
           },
           openEditMessage: {
@@ -416,7 +410,7 @@
           // passed in from parent of user-component
           userToDisplay: {
             type: Object,
-            observer: 'formatUserData'
+            observer: 'formatIncomingUserData'
           },
           userCardClass: {
             type: String,
@@ -431,24 +425,95 @@
       }
 
       initCardState() {
-        if (this.user.id) {
-          this.mode = this.modes.READ_ONLY;
-          this.toggleEditable();
+        let isExistingUser = Boolean(this.user.id);
+
+        if (isExistingUser) {
+          this.mode = this.modes.DISPLAY;
+          this.toggleEditableInputs();
           this.userCardClass = this.classes.COLLAPSE_EXISTING;
         } else {
           this.mode = this.modes.CREATE_NEW;
-          this.resetNewUserForm();
+        }
+      }
+
+      formatIncomingUserData(user) {
+        user.phone = ValidateUtil.insertPhoneSymbols(user.phone);
+        this.user = user;
+      }
+
+      save(e) {
+        e.preventDefault();
+
+        let user = Object.assign({}, this.user);
+
+        if (this.isMode(this.modes.CREATE_NEW)) {
+          database.saveUser(user);
+        } else {
+          database.editUser(user);
         }
 
-        this.updateWarningMessages();
+        this.resetFormState();
+        this.editInProgress(false);
+
+      }
+
+      delete(e) {
+        e.preventDefault();
+        database.deleteUser(this.user);
+        this.editInProgress(false);
+        this.mode = this.modes.DISPLAY;
+        this.userCardClass = this.classes.COLLAPSE_DEFAULT;
+        this.toggleUserCardButtonIcon();
+        this.toggleEditableInputs();
+        this.clearFormatWarningMessages();
       }
 
       cancel() {
-        this.shadowRoot.querySelector('form').reset();
-        this.clearInputFormatWarningMessages();
+        this.resetNewUserForm();
       }
 
-      fieldsFilled() {
+      onInputChanged() {
+        this.updateDisableSaveButton();
+        this.updateWarningMessageDisplay();
+      }
+
+      onEditOpenChanged() {
+        this.updateDisableSaveButton();
+        this.updateWarningMessageDisplay();
+      }
+
+      updateDisableSaveButton() {
+        let editOpenAndNewUser = this.editOpen && this.isMode(this.modes.CREATE_NEW);
+        let emptyFields = !this.areFieldsFilled();
+        let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
+        let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
+
+        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
+      }
+
+      updateWarningMessageDisplay() {
+        let isNewUserCard = this.isMode(this.modes.CREATE_NEW);
+        let emailInProgress = this.user.email;
+        let phoneInProgress = this.user.phone;
+
+        this.displayEmailWarning = emailInProgress && !ValidateUtil.checkEmailInput(this.user.email);
+        this.displayPhoneWarning = phoneInProgress && !ValidateUtil.checkPhoneInput(this.user.phone);
+        this.displayOpenEditMessage = isNewUserCard && this.editOpen;
+
+        let errorMessageDisplayed = this.displayEmailWarning || this.displayPhoneWarning || this.displayOpenEditMessage;
+
+        if (errorMessageDisplayed) {
+          this.resizeCardForWarningMessages(true);
+        }
+      }
+
+      clearFormatWarningMessages() {
+        this.displayEmailWarning = false;
+        this.displayPhoneWarning = false;
+        this.resizeCardForWarningMessages(false);
+      }
+
+      areFieldsFilled() {
         let fields = this.shadowRoot.querySelectorAll('input');
         let fieldsFilled = true;
 
@@ -462,28 +527,37 @@
         return fieldsFilled;
       }
 
-      resetNewUserForm() {
-        this.shadowRoot.querySelector('form').reset();
-        this.updateDisableSave();
-        this.clearInputFormatWarningMessages();
+      toggleUserCardCollapse() {
+        let collapsed = this.classes.COLLAPSE_EXISTING;
+        let expanded = this.classes.EXPAND_EXISTING;
+        let resetAfterDelete = this.classes.COLLAPSE_DEFAULT;
+
+        let isCollapsed = (this.isClass(resetAfterDelete) || this.isClass(collapsed));
+
+        this.userCardClass = isCollapsed ? expanded : collapsed;
+
+        this.toggleUserCardButtonIcon();
       }
 
-      delete(e) {
-        e.preventDefault();
-        database.deleteUser(this.user);
-        this.editInProgress(false);
-        this.mode = this.modes.READ_ONLY;
-        this.userCardClass = this.classes.COLLAPSE_DEFAULT;
-        this.toggleUserCardButtonIcon();
-        this.toggleEditable();
-        this.clearInputFormatWarningMessages();
+      toggleUserCardButtonIcon() {
+        let button = this.shadowRoot.querySelector('#detailsButton');
+        let upArrowIcon = '<jha-up-arrow-icon></jha-up-arrow-icon>';
+        let dropArrowIcon = '<jha-drop-arrow-icon></jha-drop-arrow-icon>';
+
+        let isCollapsed = (this.isClass(this.classes.COLLAPSE_DEFAULT) || this.isClass(this.classes.COLLAPSE_EXISTING));
+
+        button.innerHTML = isCollapsed ? dropArrowIcon : upArrowIcon;
       }
 
       editButtonClicked(e) {
         e.preventDefault();
         this.editInProgress(true);
         this.mode = this.modes.EDIT_EXISTING;
-        this.toggleEditable();
+        this.toggleEditableInputs();
+      }
+
+      setEditUserHeader() {
+        return `Edit: ${this.user.last}, ${this.user.first}`;
       }
 
       editInProgress(bool) {
@@ -494,164 +568,76 @@
         }));
       }
 
-      formatUserData(user) {
-        user.phone = ValidateUtil.insertPhoneSymbols(user.phone);
-        this.user = user;
+      toggleEditDisplayMode(e) {
+        this.mode = this.isMode(this.modes.EDIT_EXISTING) ? this.modes.DISPLAY : this.modes.EDIT_EXISTING;
       }
 
-      formWatcher() {
-        this.updateDisableSave();
-        this.updateWarningMessages();
-      }
-
-      isMode(expectedMode) {
-        return expectedMode === this.mode;
+      toggleEditableInputs() {
+        this.shadowRoot.querySelectorAll('input')
+          .forEach(input => {
+            input.readOnly = this.isMode(this.modes.DISPLAY);
+          });
       }
 
       resetFormState() {
         this.editInProgress(false);
 
         if (this.isMode(this.modes.EDIT_EXISTING)) {
-          this.toggleMode();
+          this.toggleEditDisplayMode();
+          this.toggleEditableInputs();
         } else {
-          this.toggleNewUserCardDisplay();
+          this.toggleNewUserFormDisplay();
           this.resetNewUserForm();
         }
 
-        this.clearInputFormatWarningMessages();
+        this.clearFormatWarningMessages();
       }
 
-      clearInputFormatWarningMessages() {
-        this.displayEmailFormatMessage = false;
-        this.displayPhoneFormatMessage = false;
-        this.resizeCardForWarningMessages(false);
-      }
-
-      save(e) {
-        e.preventDefault();
-
-        let user = Object.assign({}, this.user);
-
-        if (this.isMode(this.modes.CREATE_NEW)) {
-          database.saveUser(user);
-          this.isVisible = false;
-        } else {
-          database.editUser(user);
-        }
-
-        this.resetFormState();
-        this.editInProgress(false);
-
-      }
-
-      setEditUserHeader() {
-        return `Edit: ${this.user.last}, ${this.user.first}`;
-      }
-
-      toggleMode(e) {
-        this.mode = this.isMode(this.modes.EDIT_EXISTING) ? this.modes.READ_ONLY : this.modes.EDIT_EXISTING;
-        this.toggleEditable();
-      }
-
-      toggleEditable() {
-        this.shadowRoot.querySelectorAll('input')
-          .forEach(input => {
-            input.readOnly = this.isMode(this.modes.READ_ONLY);
-          });
-      }
-
-      toggleNewUserCardDisplay() {
+      toggleNewUserFormDisplay() {
         let collapsed = this.classes.COLLAPSE_NEW;
         let expanded = this.classes.EXPAND_NEW;
 
-        this.userCardClass = this.userCardClass === collapsed ? expanded : collapsed;
+        this.userCardClass = this.isClass(collapsed) ? expanded : collapsed;
 
-        this.toggleNewUserCardButtonIcon();
-        this.cancel();
+        this.toggleNewUserIcon();
+
+        if (this.isClass(collapsed)) {
+          this.resetNewUserForm();
+        }
       }
 
-      toggleNewUserCardButtonIcon() {
-        let button = this.shadowRoot.querySelector('#addUserButton');
+      toggleNewUserIcon() {
+        let button = this.shadowRoot.querySelector('#createUserButton');
         let expanded = this.classes.EXPAND_NEW;
 
         let cancelIcon = '<jha-cancel-icon></jha-cancel-icon>';
         let addPersonIcon = '<jha-add-person-icon></jha-add-person-icon>';
 
-        let buttonIcon = (this.userCardClass === expanded) ? cancelIcon : addPersonIcon;
+        let buttonIcon = this.isClass(expanded) ? cancelIcon : addPersonIcon;
         button.innerHTML = buttonIcon;
       }
 
-      toggleUserCardCollapse() {
-        let collapsedClass = this.classes.COLLAPSE_EXISTING;
-        let expandedClass = this.classes.EXPAND_EXISTING;
-        let classAfterDelete = this.classes.COLLAPSE_DEFAULT;
-        let userCardClass = this.userCardClass;
-        let isCollapsed = (userCardClass === classAfterDelete || userCardClass === collapsedClass);
-
-        this.userCardClass = isCollapsed ? expandedClass : collapsedClass;
-
-        this.toggleUserCardButtonIcon();
-      }
-
-      toggleUserCardButtonIcon() {
-        let button = this.shadowRoot.querySelector('#detailsButton');
-        let upArrowIcon = '<jha-up-arrow-icon></jha-up-arrow-icon>';
-        let dropArrowIcon = '<jha-drop-arrow-icon></jha-drop-arrow-icon>';
-        let cardClass = this.userCardClass;
-        let collapsed = (cardClass === this.classes.COLLAPSE_DEFAULT || cardClass === this.classes.COLLAPSE_EXISTING);
-
-        button.innerHTML = collapsed ? dropArrowIcon : upArrowIcon;
-      }
-
-      updateDisableSave() {
-        let editOpenAndNewUser = this.editOpen && (this.mode === this.modes.CREATE_NEW);
-        let emptyFields = !this.fieldsFilled();
-        let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
-        let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
-
-        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
-      }
-
-      updateWarningMessages() {
-        let isNewUserCard = this.isMode(this.modes.CREATE_NEW);
-        let emailInProgress = this.user.email;
-        let phoneInProgress = this.user.phone;
-
-        if (emailInProgress) {
-          this.displayEmailFormatMessage = !ValidateUtil.checkEmailInput(this.user.email);
-        }
-
-        if (phoneInProgress) {
-          this.displayPhoneFormatMessage = !ValidateUtil.checkPhoneInput(this.user.phone);
-        }
-
-        if (isNewUserCard) {
-          this.displayOpenEditMessage = this.editOpen;
-        }
-
-        if (this.editOpen) {
-          let emailError = this.displayEmailFormatMessage;
-          let phoneError = this.displayPhoneFormatMessage;
-
-          if (emailError || phoneError) {
-            this.resizeCardForWarningMessages(true);
-          }
-        }
-
+      resetNewUserForm() {
+        this.shadowRoot.querySelector('form').reset();
+        this.clearFormatWarningMessages();
       }
 
       resizeCardForWarningMessages(expandForMessages) {
         if (expandForMessages) {
           this.$.userCard.style.height = 'auto';
         } else {
-          let removeWarningMessageCardResize = '';
-          this.$.userCard.style = removeWarningMessageCardResize;
+          this.$.userCard.style = '';
         }
       }
 
-      whenEditOpenChanges() {
-        this.formWatcher();
+      isMode(expectedMode) {
+        return expectedMode === this.mode;
       }
+
+      isClass(expectedClass) {
+        return expectedClass === this.userCardClass;
+      }
+
     }
 
     customElements.define(UserComponentElement.is, UserComponentElement);
