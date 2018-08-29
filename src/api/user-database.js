@@ -37,9 +37,10 @@ let database = (() => {
     localStorage.setItem("onboardProjectUsers", JSON.stringify([]));
   }
 
-  function getIdIndex(id) {
+  function getIdIndex(userId) {
     let users = getUsers();
-    return users ? users.findIndex(val => val.id === id) : -1;
+    let userIndex = users ? users.findIndex(user => user.id === userId) : -1;
+    return userIndex;
   }
 
   function formatUserData(user) {
