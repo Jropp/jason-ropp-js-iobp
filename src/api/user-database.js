@@ -17,20 +17,29 @@ let database = (() => {
 
   function editUser(user) {
     let users = getUsers();
+    let popupMessage = "Save";
+
     users.splice(getIdIndex(user.id), 1, formatUserData(user));
-    updateLocalStorage(users, "Edit");
+
+    updateLocalStorage(users, popupMessage);
   }
 
   function saveUser(user) {
     let users = getUsers() ? getUsers() : [];
+    let popupMessage = "Save";
+
     users.splice(0, 0, formatUserData(user));
-    updateLocalStorage(users, "Save");
+
+    updateLocalStorage(users, popupMessage);
   }
 
   function deleteUser(user) {
     let users = getUsers();
+    let popupMessage = "Delete";
+
     users.splice(getIdIndex(user.id, users), 1);
-    updateLocalStorage(users, "Delete");
+
+    updateLocalStorage(users, popupMessage);
   }
 
   function deleteUsers() {
@@ -61,13 +70,14 @@ let database = (() => {
     return `${firstLetter}${loweredCase}`;
   }
 
-  function updateLocalStorage(users, action) {
+  function updateLocalStorage(users, popupMessage) {
     localStorage.setItem("onboardProjectUsers", JSON.stringify(users));
+    
     document.dispatchEvent(
       new CustomEvent("databaseUpdated", {
         bubbles: true,
         composed: true,
-        detail: { message: action }
+        detail: { message: popupMessage }
       })
     );
   }
