@@ -7,13 +7,11 @@ let database = (() => {
 
   function getUserById(userId) {
     let users = getUsers();
-    let match = {};
 
-    users.forEach(user => {
-      if (user.id === userId) {
-        match = user;
-      }
+    let match = users.find(user => {
+      return user.id === userId;
     });
+
     return match;
   }
 
