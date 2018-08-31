@@ -554,10 +554,18 @@
       }
 
       
+      toggleIsExpanded() {
+        let animatedCollapsed = this.classes.COLLAPSE_EXISTING;
+        let defaultCollapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
+        let isExpanded = this.isClass(animatedCollapsed) || this.isClass(defaultCollapsed);
 
-        let isCollapsed = (this.isClass(this.classes.COLLAPSE_DEFAULT) || this.isClass(this.classes.COLLAPSE_EXISTING));
+        this.dispatchEvent(new CustomEvent('cardDetailDisplayToggled', {
+          bubbles: true,
+          composed: true,
+          detail: { id: this.user.id, expanded: isExpanded }
+        }));
 
-        button.innerHTML = isCollapsed ? dropArrowIcon : upArrowIcon;
+        this.setUserCardDisplayState();
       }
 
       editButtonClicked(e) {

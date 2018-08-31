@@ -95,6 +95,10 @@
             type: Boolean,
             value: false
           },
+          expandedCardIds: {
+            type: Array,
+            value: []
+          },
           users: {
             type: Array,
             value: () => Database.getUsers()
@@ -117,6 +121,24 @@
           this.editInProgress = e.detail;
         });
 
+        document.addEventListener('cardDetailDisplayToggled', (e) => {
+          const id = e.detail.id
+          let expanded = e.detail.expanded;
+          return expanded ? this.addIdToExpanded(id) : this.removeIdFromExpanded(id);
+        });
+
+      }
+
+      addIdToExpanded(id) {
+        this.expandedCardIds.splice(0, 0, id);
+      }
+
+      removeIdFromExpanded(id) {
+        // console.log('b');
+        // let expandedIds = this.expandedCardIds;
+        // expandedIds.forEach(expandedId => {
+
+        // });
       }
 
       disconnectedCallback() {
