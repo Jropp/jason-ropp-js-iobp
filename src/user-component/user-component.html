@@ -355,10 +355,10 @@
       <footer class="card_footer">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <div id="detailsButton" on-click="toggleIsExpanded" class="expand-details-clickable">
-            <template is="dom-if" if="[[isClass(classes.EXPAND_EXISTING, userCardClass)]]">
+            <template is="dom-if" if="[[detailsExpanded]]">
               <jha-up-arrow-icon></jha-up-arrow-icon>
             </template>
-            <template is="dom-if" if="[[isClass(classes.COLLAPSE_EXISTING, userCardClass)]]">
+            <template is="dom-if" if="[[!detailsExpanded]]">
               <jha-drop-arrow-icon></jha-drop-arrow-icon>
             </template>
 
@@ -447,7 +447,7 @@
           },
           isExpanded: {
             type: Boolean,
-            observer: 'setUserCardDisplayState'
+            observer: 'setUserDetailsDisplay'
           },
           // passed in from parent of user-component
           userToDisplay: {
@@ -567,7 +567,7 @@
         return fieldsFilled;
       }
 
-      setUserCardDisplayState(event) {
+      setUserDetailsDisplay(event) {
         let animatedCollapsed = this.classes.COLLAPSE_EXISTING;
         let animatedExpanded = this.classes.EXPAND_EXISTING;
         let defaultCollapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
@@ -578,22 +578,26 @@
         let isListUpdate = typeof event === 'boolean';
 
         if (isListUpdate) {
-          this.setListUpdateCardState(isCollapsed)
+          this.setDetailsOnListUpdate(isCollapsed);
         } else {
-          this.setClickEventCardState(isCollapsed);
+          this.setDetailsOnButtonClick(isCollapsed);
         }
       }
 
-      setListUpdateCardState(isCollapsed) {
+      setDetailsOnListUpdate(isCollapsed) {
         let expanded = this.classes.EXPAND_EXISTING_DEFAULT;
         let collapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
+
         this.userCardClass = this.isExpanded ? expanded : collapsed;
+        this.detailsExpanded = this.isExpanded;
       }
 
-      setClickEventCardState(isCollapsed) {
+      setDetailsOnButtonClick(isCollapsed) {
         let collapsed = this.classes.COLLAPSE_EXISTING;
         let expanded = this.classes.EXPAND_EXISTING;
+
         this.userCardClass = isCollapsed ? expanded : collapsed;
+        this.detailsExpanded = !this.detailsExpanded;
       }
 
       toggleIsExpanded() {
@@ -607,7 +611,7 @@
           detail: { id: this.user.id, expanded: isExpanded }
         }));
 
-        this.setUserCardDisplayState();
+        this.setUserDetailsDisplay();
       }
 
       editButtonClicked(e) {
