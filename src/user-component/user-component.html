@@ -615,17 +615,6 @@
         }
       }
 
-      toggleNewUserIcon() {
-        let button = this.shadowRoot.querySelector('#createUserButton');
-        let expanded = this.classes.EXPAND_NEW;
-
-        let cancelIcon = '<jha-cancel-icon></jha-cancel-icon>';
-        let addPersonIcon = '<jha-add-person-icon></jha-add-person-icon>';
-
-        let buttonIcon = this.isClass(expanded) ? cancelIcon : addPersonIcon;
-        button.innerHTML = buttonIcon;
-      }
-
       resetNewUserForm() {
         this.shadowRoot.querySelector('form').reset();
         this.clearFormatWarningMessages();
