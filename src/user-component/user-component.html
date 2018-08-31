@@ -334,7 +334,7 @@
       </div>
       <footer class="card_footer">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-          <div id="detailsButton" on-click="toggleUserCardCollapse" class="expand-details-clickable">
+          <div id="detailsButton" on-click="toggleIsExpanded" class="expand-details-clickable">
             <template is="dom-if" if="[[isClass(classes.EXPAND_EXISTING, userCardClass)]]">
               <jha-up-arrow-icon></jha-up-arrow-icon>
             </template>
@@ -375,7 +375,8 @@
               return {
                 COLLAPSE_NEW: 'default-card collapse-new-user',
                 COLLAPSE_EXISTING: 'default-card collapse-existing-user',
-                COLLAPSE_DEFAULT: 'default-card collapse-existing-user-default',
+                COLLAPSE_EXISTING_DEFAULT: 'default-card collapse-existing-user-default',
+                EXPAND_EXISTING_DEFAULT: 'default-card expand-existing-user-default',
                 EXPAND_NEW: 'default-card expand-new-user',
                 EXPAND_EXISTING: 'default-card expand-existing-user',
               };
@@ -423,6 +424,10 @@
           emailFormatMessage: {
             type: String,
             value: 'Your email seems a little off. Would you mind formatting it as xxxx@xxxxx.xxx?'
+          },
+          isExpanded: {
+            type: Boolean,
+            observer: 'setUserCardDisplayState'
           },
           // passed in from parent of user-component
           userToDisplay: {
@@ -543,17 +548,35 @@
         return fieldsFilled;
       }
 
-      toggleUserCardCollapse() {
-        let collapsed = this.classes.COLLAPSE_EXISTING;
-        let expanded = this.classes.EXPAND_EXISTING;
-        let resetAfterDelete = this.classes.COLLAPSE_DEFAULT;
+      setUserCardDisplayState(event) {
+        let animatedCollapsed = this.classes.COLLAPSE_EXISTING;
+        let animatedExpanded = this.classes.EXPAND_EXISTING;
+        let defaultCollapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
+        let defaultExpanded = this.classes.EXPAND_EXISTING_DEFAULT;
 
-        let isCollapsed = (this.isClass(resetAfterDelete) || this.isClass(collapsed));
+        let isCollapsed = (this.isClass(animatedCollapsed) || this.isClass(defaultCollapsed));
 
+        let isListUpdate = typeof event === 'boolean';
 
+        if (isListUpdate) {
+          this.setListUpdateCardState(isCollapsed)
+        } else {
+          this.setClickEventCardState(isCollapsed);
+        }
       }
 
-      
+      setListUpdateCardState(isCollapsed) {
+        let expanded = this.classes.EXPAND_EXISTING_DEFAULT;
+        let collapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
+        this.userCardClass = this.isExpanded ? expanded : collapsed;
+      }
+
+      setClickEventCardState(isCollapsed) {
+        let collapsed = this.classes.COLLAPSE_EXISTING;
+        let expanded = this.classes.EXPAND_EXISTING;
+        this.userCardClass = isCollapsed ? expanded : collapsed;
+      }
+
       toggleIsExpanded() {
         let animatedCollapsed = this.classes.COLLAPSE_EXISTING;
         let defaultCollapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;

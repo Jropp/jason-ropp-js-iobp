@@ -74,7 +74,7 @@
             </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
-            <user-component edit-open="[[editInProgress]]" user-to-display="[[user]]"></user-component>
+            <user-component edit-open="[[editInProgress]]" is-expanded="[[setExpanded(user.id, users)]]" user-to-display="[[user]]"></user-component>
           </template>
         </div>
       </div>
@@ -160,6 +160,17 @@
         window.setTimeout(() => {
           messageBox.className = 'message-box';
         }, animationTime);
+      }
+
+      setExpanded(userId) {
+        let isExpanded = false;
+        this.expandedCardIds.forEach(id => {
+          if (id === userId) {
+            isExpanded = true;
+          }
+        });
+
+        return isExpanded;
       }
     }
 
