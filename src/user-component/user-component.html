@@ -354,7 +354,7 @@
       </div>
       <footer class="card_footer">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-          <div id="detailsButton" on-click="toggleIsExpanded" class="expand-details-clickable">
+          <div id="detailsButton" on-click="toggleDetailsVisibility" class="expand-details-clickable">
             <template is="dom-if" if="[[detailsExpanded]]">
               <jha-up-arrow-icon></jha-up-arrow-icon>
             </template>
@@ -567,6 +567,23 @@
         return fieldsFilled;
       }
 
+      toggleDetailsVisibility() {
+        this.saveCardState();
+        this.setUserDetailsDisplay();
+      }
+
+      saveCardState() {
+        let animatedCollapsed = this.classes.COLLAPSE_EXISTING;
+        let defaultCollapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
+        let isExpanded = this.isClass(animatedCollapsed) || this.isClass(defaultCollapsed);
+
+        this.dispatchEvent(new CustomEvent('cardDetailDisplayToggled', {
+          bubbles: true,
+          composed: true,
+          detail: { id: this.user.id, expanded: isExpanded }
+        }));
+      }
+
       setUserDetailsDisplay(event) {
         let animatedCollapsed = this.classes.COLLAPSE_EXISTING;
         let animatedExpanded = this.classes.EXPAND_EXISTING;
@@ -598,20 +615,6 @@
 
         this.userCardClass = isCollapsed ? expanded : collapsed;
         this.detailsExpanded = !this.detailsExpanded;
-      }
-
-      toggleIsExpanded() {
-        let animatedCollapsed = this.classes.COLLAPSE_EXISTING;
-        let defaultCollapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
-        let isExpanded = this.isClass(animatedCollapsed) || this.isClass(defaultCollapsed);
-
-        this.dispatchEvent(new CustomEvent('cardDetailDisplayToggled', {
-          bubbles: true,
-          composed: true,
-          detail: { id: this.user.id, expanded: isExpanded }
-        }));
-
-        this.setUserDetailsDisplay();
       }
 
       editButtonClicked(e) {
