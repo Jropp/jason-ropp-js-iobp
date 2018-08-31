@@ -207,6 +207,26 @@
         visibility: hidden;
       }
 
+      .expand-existing-user-default {
+        height: 370px;
+        padding: 10px 0px 30px 0px;
+      }
+
+      .expand-existing-user-default>.card_content>form {
+        height: auto;
+        visibility: visible;
+      }
+
+      .expand-existing-user-default>.card_header>.user-id {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .expand-existing-user-default>.card_footer>.expand-details-clickable {
+        background-color: #0070b7;
+        cursor: pointer;
+      }
+
       @keyframes fade-in {
         0% {
           opacity: 0;
@@ -484,7 +504,6 @@
         Database.deleteUser(this.user);
         this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
-        this.userCardClass = this.classes.COLLAPSE_DEFAULT;
         this.toggleEditableInputs();
         this.clearFormatWarningMessages();
       }
