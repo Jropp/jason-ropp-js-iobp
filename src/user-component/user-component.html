@@ -593,13 +593,13 @@
         let isListUpdate = typeof event === 'boolean';
 
         if (isListUpdate) {
-          this.setDetailsOnListUpdate(isCollapsed);
+          this.setDisplayOnListUpdate(isCollapsed);
         } else {
-          this.setDetailsOnButtonClick(isCollapsed);
+          this.setDisplayOnButtonClick(isCollapsed);
         }
       }
 
-      setDetailsOnListUpdate(isCollapsed) {
+      setDisplayOnListUpdate(isCollapsed) {
         let expanded = this.classes.EXPAND_EXISTING_DEFAULT;
         let collapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
 
@@ -610,7 +610,7 @@
 
       }
 
-      setDetailsOnButtonClick(isCollapsed) {
+      setDisplayOnButtonClick(isCollapsed) {
         let collapsed = this.classes.COLLAPSE_EXISTING;
         let expanded = this.classes.EXPAND_EXISTING;
 
