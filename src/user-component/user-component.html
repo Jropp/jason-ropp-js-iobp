@@ -480,7 +480,6 @@
         this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
         this.userCardClass = this.classes.COLLAPSE_DEFAULT;
-        this.toggleUserCardButtonIcon();
         this.toggleEditableInputs();
         this.clearFormatWarningMessages();
       }
@@ -551,15 +550,10 @@
 
         let isCollapsed = (this.isClass(resetAfterDelete) || this.isClass(collapsed));
 
-        this.userCardClass = isCollapsed ? expanded : collapsed;
 
-        this.toggleUserCardButtonIcon();
       }
 
-      toggleUserCardButtonIcon() {
-        let button = this.shadowRoot.querySelector('#detailsButton');
-        let upArrowIcon = '<jha-up-arrow-icon></jha-up-arrow-icon>';
-        let dropArrowIcon = '<jha-drop-arrow-icon></jha-drop-arrow-icon>';
+      
 
         let isCollapsed = (this.isClass(this.classes.COLLAPSE_DEFAULT) || this.isClass(this.classes.COLLAPSE_EXISTING));
 
