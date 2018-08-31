@@ -74,7 +74,7 @@
             </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
-            <user-component edit-open="[[editInProgress]]" is-expanded="[[setExpanded(user.id, users)]]" user-to-display="[[user]]"></user-component>
+            <user-component edit-open="[[editInProgress]]" is-expanded="[[isExpanded(user.id, users)]]" user-to-display="[[user]]"></user-component>
           </template>
         </div>
       </div>
@@ -113,6 +113,8 @@
         });
 
         document.addEventListener('databaseUpdated', e => {
+          console.log(this.expandedCardIds);
+
           this.users = Database.getUsers();
           this.popupMessage(e.detail.message);
         });
@@ -122,7 +124,7 @@
         });
 
         document.addEventListener('cardDetailDisplayToggled', (e) => {
-          const id = e.detail.id
+          const id = e.detail.id;
           let expanded = e.detail.expanded;
           return expanded ? this.addIdToExpanded(id) : this.removeIdFromExpanded(id);
         });
@@ -133,12 +135,12 @@
         this.expandedCardIds.splice(0, 0, id);
       }
 
-      removeIdFromExpanded(id) {
-        // console.log('b');
-        // let expandedIds = this.expandedCardIds;
-        // expandedIds.forEach(expandedId => {
+      removeIdFromExpanded(idToDelete) {
+        let idIndex = this.expandedCardIds.findIndex(id => {
+          return id === idToDelete;
+        });
 
-        // });
+        this.expandedCardIds.splice(idIndex, 1);
       }
 
       disconnectedCallback() {
@@ -162,10 +164,11 @@
         }, animationTime);
       }
 
-      setExpanded(userId) {
+      isExpanded(userId) {
         let isExpanded = false;
         this.expandedCardIds.forEach(id => {
           if (id === userId) {
+
             isExpanded = true;
           }
         });
