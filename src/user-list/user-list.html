@@ -113,8 +113,6 @@
         });
 
         document.addEventListener('databaseUpdated', e => {
-          console.log(this.expandedCardIds);
-
           this.users = Database.getUsers();
           this.popupMessage(e.detail.message);
         });

@@ -355,13 +355,12 @@
       <footer class="card_footer">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <div id="detailsButton" on-click="toggleDetailsVisibility" class="expand-details-clickable">
-            <template is="dom-if" if="[[detailsExpanded]]">
-              <jha-up-arrow-icon></jha-up-arrow-icon>
-            </template>
-            <template is="dom-if" if="[[!detailsExpanded]]">
+            <template is="dom-if" if="[[detailsArrowIconDown]]">
               <jha-drop-arrow-icon></jha-drop-arrow-icon>
             </template>
-
+            <template is="dom-if" if="[[!detailsArrowIconDown]]">
+              <jha-up-arrow-icon></jha-up-arrow-icon>
+            </template>
           </div>
         </template>
       </footer>
@@ -588,8 +587,7 @@
         let defaultCollapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
 
         let isCollapsed = (this.isClass(animatedCollapsed) || this.isClass(defaultCollapsed));
-
-        let isListUpdate = typeof event === 'boolean';
+        let isListUpdate = (typeof event === 'boolean');
 
         if (isListUpdate) {
           this.setDisplayOnListUpdate(isCollapsed);
@@ -603,10 +601,8 @@
         let collapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
 
         this.userCardClass = this.isExpanded ? expanded : collapsed;
-        this.detailsExpanded = this.isExpanded;
 
-        console.log(this.user.first, this.userCardClass);
-
+        this.setDetailsArrowIcon();
       }
 
       setDisplayOnButtonClick(isCollapsed) {
@@ -614,11 +610,19 @@
         let expanded = this.classes.EXPAND_EXISTING;
 
         this.userCardClass = isCollapsed ? expanded : collapsed;
-        this.detailsExpanded = !this.detailsExpanded;
+
+        this.setDetailsArrowIcon();
+      }
+
+      setDetailsArrowIcon() {
+        let animatedCollapsed = this.classes.COLLAPSE_EXISTING;
+        let defaultCollapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
+        this.detailsArrowIconDown = (this.isClass(animatedCollapsed) || this.isClass(defaultCollapsed));
       }
 
       editButtonClicked(e) {
         e.preventDefault();
+
         this.editInProgress(true);
         this.mode = this.modes.EDIT_EXISTING;
         this.toggleEditableInputs();
