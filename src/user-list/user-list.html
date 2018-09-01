@@ -74,7 +74,7 @@
             </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
-            <user-component edit-open="[[editInProgress]]" user-to-display="[[user]]"></user-component>
+            <user-component edit-open="[[editInProgress]]" is-expanded="[[isExpanded(user.id, users)]]" user-to-display="[[user]]"></user-component>
           </template>
         </div>
       </div>
@@ -94,6 +94,10 @@
           editInProgress: {
             type: Boolean,
             value: false
+          },
+          expandedCardIds: {
+            type: Array,
+            value: []
           },
           users: {
             type: Array,
@@ -117,6 +121,24 @@
           this.editInProgress = e.detail;
         });
 
+        document.addEventListener('cardDetailDisplayToggled', (e) => {
+          const id = e.detail.id;
+          let expanded = e.detail.expanded;
+          return expanded ? this.addIdToExpanded(id) : this.removeIdFromExpanded(id);
+        });
+
+      }
+
+      addIdToExpanded(id) {
+        this.expandedCardIds.splice(0, 0, id);
+      }
+
+      removeIdFromExpanded(idToDelete) {
+        let idIndex = this.expandedCardIds.findIndex(id => {
+          return id === idToDelete;
+        });
+
+        this.expandedCardIds.splice(idIndex, 1);
       }
 
       disconnectedCallback() {
@@ -138,6 +160,18 @@
         window.setTimeout(() => {
           messageBox.className = 'message-box';
         }, animationTime);
+      }
+
+      isExpanded(userId) {
+        let isExpanded = false;
+        this.expandedCardIds.forEach(id => {
+          if (id === userId) {
+
+            isExpanded = true;
+          }
+        });
+
+        return isExpanded;
       }
     }
 
