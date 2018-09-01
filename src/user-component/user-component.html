@@ -566,20 +566,20 @@
       }
 
       toggleDetailsVisibility() {
-        this.saveCardState();
         this.setUserDetailsDisplay();
+        this.saveCardState();
       }
 
       saveCardState() {
-        let immediateCollapse = this.classes.IMMEDIATELY_COLLAPSE_USER;
-        let animatedCollapse = this.classes.ANIMATE_COLLAPSE_USER;
+        let immediatelyExpand = this.classes.IMMEDIATELY_EXPAND_USER;
+        let animateExpand = this.classes.ANIMATE_EXPAND_USER;
 
-        let isExpanded = this.isClass(immediateCollapse) || this.isClass(animatedCollapse);
+        let userCardIsExpanded = this.isClass(immediatelyExpand) || this.isClass(animateExpand);
 
         this.dispatchEvent(new CustomEvent('cardDetailDisplayChanged', {
           bubbles: true,
           composed: true,
-          detail: { id: this.user.id, expanded: isExpanded }
+          detail: { id: this.user.id, expanded: userCardIsExpanded }
         }));
       }
 
