@@ -571,9 +571,10 @@
       }
 
       saveCardState() {
-        let animatedCollapsed = this.classes.ANIMATE_COLLAPSE_USER;
-        let defaultCollapsed = this.classes.IMMEDIATELY_COLLAPSE_USER;
-        let isExpanded = this.isClass(animatedCollapsed) || this.isClass(defaultCollapsed);
+        let immediateCollapse = this.classes.IMMEDIATELY_COLLAPSE_USER;
+        let animatedCollapse = this.classes.ANIMATE_COLLAPSE_USER;
+
+        let isExpanded = this.isClass(immediateCollapse) || this.isClass(animatedCollapse);
 
         this.dispatchEvent(new CustomEvent('cardDetailDisplayChanged', {
           bubbles: true,
@@ -607,7 +608,7 @@
         let animatedCollapse = this.classes.ANIMATE_COLLAPSE_USER;
         let animatedExpand = this.classes.ANIMATE_EXPAND_USER;
 
-        let isUserCurrentlyCollapsed = (this.isClass(animatedCollapsed) || this.isClass(immediateCollapse));
+        let isUserCurrentlyCollapsed = (this.isClass(animatedCollapse) || this.isClass(immediateCollapse));
 
         this.userCardClass = isUserCurrentlyCollapsed ? animatedExpand : animatedCollapse;
 
