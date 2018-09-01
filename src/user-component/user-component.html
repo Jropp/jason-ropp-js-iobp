@@ -615,9 +615,11 @@
         this.setDetailsArrowIcon();
       }
 
-      setDetailsArrowIcon() {
+      setDetailsArrowDirection() {
+        let animatedCollapse = this.isClass(this.classes.ANIMATE_COLLAPSE_USER);
+        let immediateCollapse = this.isClass(this.classes.IMMEDIATELY_COLLAPSE_USER);
 
-        this.detailsArrowIconDown = (this.classes.ANIMATE_COLLAPSE_USER || this.classes.IMMEDIATELY_COLLAPSE_USER);
+        this.detailsArrowIconDown = animatedCollapse || immediateCollapse;
       }
 
       editButtonClicked(e) {
