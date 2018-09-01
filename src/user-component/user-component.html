@@ -571,9 +571,10 @@
       }
 
       saveCardState() {
-        let animatedCollapsed = this.classes.ANIMATE_COLLAPSE_USER;
-        let defaultCollapsed = this.classes.IMMEDIATELY_COLLAPSE_USER;
-        let isExpanded = this.isClass(animatedCollapsed) || this.isClass(defaultCollapsed);
+        let immediateCollapse = this.classes.IMMEDIATELY_COLLAPSE_USER;
+        let animatedCollapse = this.classes.ANIMATE_COLLAPSE_USER;
+
+        let isExpanded = this.isClass(immediateCollapse) || this.isClass(animatedCollapse);
 
         this.dispatchEvent(new CustomEvent('cardDetailDisplayChanged', {
           bubbles: true,
@@ -615,9 +616,8 @@
       }
 
       setDetailsArrowIcon() {
-        let animatedCollapsed = this.classes.ANIMATE_COLLAPSE_USER;
-        let defaultCollapsed = this.classes.IMMEDIATELY_COLLAPSE_USER;
-        this.detailsArrowIconDown = (this.isClass(animatedCollapsed) || this.isClass(defaultCollapsed));
+
+        this.detailsArrowIconDown = (this.classes.ANIMATE_COLLAPSE_USER || this.classes.IMMEDIATELY_COLLAPSE_USER);
       }
 
       editButtonClicked(e) {
