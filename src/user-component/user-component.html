@@ -575,7 +575,7 @@
         let defaultCollapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
         let isExpanded = this.isClass(animatedCollapsed) || this.isClass(defaultCollapsed);
 
-        this.dispatchEvent(new CustomEvent('cardDetailDisplayToggled', {
+        this.dispatchEvent(new CustomEvent('cardDetailDisplayChanged', {
           bubbles: true,
           composed: true,
           detail: { id: this.user.id, expanded: isExpanded }

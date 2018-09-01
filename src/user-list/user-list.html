@@ -121,7 +121,7 @@
           this.editInProgress = e.detail;
         });
 
-        document.addEventListener('cardDetailDisplayToggled', (e) => {
+        document.addEventListener('cardDetailDisplayChanged', (e) => {
           const id = e.detail.id;
           let expanded = e.detail.expanded;
           return expanded ? this.addIdToExpanded(id) : this.removeIdFromExpanded(id);
