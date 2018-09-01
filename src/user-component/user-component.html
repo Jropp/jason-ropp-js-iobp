@@ -583,33 +583,33 @@
       }
 
       setUserDetailsDisplay(event) {
-        let animatedCollapsed = this.classes.ANIMATE_COLLAPSE_USER;
-        let defaultCollapsed = this.classes.IMMEDIATELY_COLLAPSE_USER;
-
-        let isCollapsed = (this.isClass(animatedCollapsed) || this.isClass(defaultCollapsed));
         let isListUpdate = (typeof event === 'boolean');
 
         if (isListUpdate) {
-          this.setDisplayOnListUpdate(isCollapsed);
+          this.setDisplayOnListUpdate();
         } else {
-          this.setDisplayOnButtonClick(isCollapsed);
+          this.setDisplayOnButtonClick();
         }
       }
 
-      setDisplayOnListUpdate(isCollapsed) {
-        let expanded = this.classes.IMMEDIATELY_EXPAND_USER;
-        let collapsed = this.classes.IMMEDIATELY_COLLAPSE_USER;
+      setDisplayOnListUpdate() {
+        let expandImmediately = this.classes.IMMEDIATELY_EXPAND_USER;
+        let collapseImmediately = this.classes.IMMEDIATELY_COLLAPSE_USER;
 
-        this.userCardClass = this.isExpanded ? expanded : collapsed;
+        let wasExpandedBeforeUpdate = this.isExpanded;
 
+        this.userCardClass = wasExpandedBeforeUpdate ? expandImmediately : collapseImmediately;
         this.setDetailsArrowIcon();
       }
 
-      setDisplayOnButtonClick(isCollapsed) {
-        let collapsed = this.classes.ANIMATE_COLLAPSE_USER;
-        let expanded = this.classes.ANIMATE_EXPAND_USER;
+      setDisplayOnButtonClick() {
+        let immediateCollapse = this.classes.IMMEDIATELY_COLLAPSE_USER;
+        let animatedCollapse = this.classes.ANIMATE_COLLAPSE_USER;
+        let animatedExpand = this.classes.ANIMATE_EXPAND_USER;
 
-        this.userCardClass = isCollapsed ? expanded : collapsed;
+        let isUserCurrentlyCollapsed = (this.isClass(animatedCollapsed) || this.isClass(immediateCollapse));
+
+        this.userCardClass = isUserCurrentlyCollapsed ? animatedExpand : animatedCollapse;
 
         this.setDetailsArrowIcon();
       }
