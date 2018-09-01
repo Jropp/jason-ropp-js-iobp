@@ -584,9 +584,9 @@
       }
 
       setUserDetailsDisplay(event) {
-        let isListUpdate = (typeof event === 'boolean');
+        let eventIsListUpdate = (typeof event === 'boolean');
 
-        if (isListUpdate) {
+        if (eventIsListUpdate) {
           this.setDisplayOnListUpdate();
         } else {
           this.setDisplayOnButtonClick();
@@ -600,7 +600,7 @@
         let wasExpandedBeforeUpdate = this.isExpanded;
 
         this.userCardClass = wasExpandedBeforeUpdate ? expandImmediately : collapseImmediately;
-        this.setDetailsArrowIcon();
+        this.setDetailsArrowDirection();
       }
 
       setDisplayOnButtonClick() {
@@ -612,7 +612,7 @@
 
         this.userCardClass = isUserCurrentlyCollapsed ? animatedExpand : animatedCollapse;
 
-        this.setDetailsArrowIcon();
+        this.setDetailsArrowDirection();
       }
 
       setDetailsArrowDirection() {
