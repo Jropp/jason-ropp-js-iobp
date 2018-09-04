@@ -66,11 +66,19 @@ User component has three mode settings:
 2. Edit: Edit is availably in an existing user display card when you click edit.
 3. Create New: If there is not a `user` object passed in with an `id` property, then the card will init as a create new user button that expands into the create new user form when you click it.
 
-#### Disable Functionality
+#### Disable Functionality: edit-open attribute
 
 When an edit button is clicked in a user-component, that user-component dispatches an event received by user-list to let other components know that there is an open edit. The user component uses this boolean to enable/disable save and edit buttons when another edit is open.
 
 `<user-component edit-open="[true,false]"><user-component>`
+
+#### Persistant User Card Display: is-expanded attribute
+
+Because of polymer's dom-repeat information recycling, class changes will persist on a certain index in the user list. So if you've displayed the details on the second user in the list, when you create a new user, it will continue to show the details of the second user in the list (even if the user you opened up details for is now in the third slot).
+
+Because of the dom-recycling feature of Polymer, the display state of each component is checked and its state is set using its id.
+
+`<user-component is-expanded="[[isExpanded(user.id, users)]]" is-open="[true,false]"><user-component>`
 
 ### NPM Scripts
 
