@@ -150,7 +150,7 @@
         transition: all .2s;
       }
 
-      /* EXISTING USER TRANSITIONS */
+      /* USER USER TRANSITIONS */
 
       .collapse-existing-user {
         height: 70px;
@@ -192,37 +192,37 @@
 
       /* Existing User Reset After User Is Deleted because of Dom-Repeat Class Recycling. */
 
-      .collapse-existing-user-default {
+      .immediately-collapse-existing-user {
         height: 70px;
         padding: 10px 0px 30px 0px;
       }
 
-      .collapse-existing-user-default>.card_content>form {
+      .immediately-collapse-existing-user>.card_content>form {
         height: 0px;
         visibility: hidden;
       }
 
-      .collapse-existing-user-default>.card_header>.user-id {
+      .immediately-collapse-existing-user>.card_header>.user-id {
         opacity: 0;
         visibility: hidden;
       }
 
-      .expand-existing-user-default {
+      .immediately-expand-existing-user {
         height: 370px;
         padding: 10px 0px 30px 0px;
       }
 
-      .expand-existing-user-default>.card_content>form {
+      .immediately-expand-existing-user>.card_content>form {
         height: auto;
         visibility: visible;
       }
 
-      .expand-existing-user-default>.card_header>.user-id {
+      .immediately-expand-existing-user>.card_header>.user-id {
         opacity: 1;
         visibility: visible;
       }
 
-      .expand-existing-user-default>.card_footer>.expand-details-clickable {
+      .immediately-expand-existing-user>.card_footer>.expand-details-clickable {
         background-color: #0070b7;
         cursor: pointer;
       }
@@ -271,7 +271,7 @@
             <span>[[user.id]]</span>
           </div>
         </template>
-        <template is="dom-if" if="[[isMode(modes.EDIT_EXISTING, mode)]]">
+        <template is="dom-if" if="[[isMode(modes.EDIT_USER, mode)]]">
           <h1 class="edit-user-header">[[setEditUserHeader(user)]]</h1>
         </template>
         <template is="dom-if" if="[[isMode(modes.CREATE_NEW, mode)]]">
@@ -337,7 +337,7 @@
             <template is="dom-if" if="[[!isMode(modes.DISPLAY, mode)]]">
               <button class="save-button" on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
-              <template is="dom-if" if="[[isMode(modes.EDIT_EXISTING, mode)]]">
+              <template is="dom-if" if="[[isMode(modes.EDIT_USER, mode)]]">
                 <button on-click="delete" type="submit" formnovalidate>Delete</button>
               </template>
               <br>
@@ -383,7 +383,7 @@
             value: () => {
               return {
                 DISPLAY: 'display',
-                EDIT_EXISTING: 'edit',
+                EDIT_USER: 'edit',
                 CREATE_NEW: 'create'
               };
             }
@@ -393,11 +393,11 @@
             value: () => {
               return {
                 COLLAPSE_NEW: 'default-card collapse-new-user',
-                COLLAPSE_EXISTING: 'default-card collapse-existing-user',
-                COLLAPSE_EXISTING_DEFAULT: 'default-card collapse-existing-user-default',
-                EXPAND_EXISTING_DEFAULT: 'default-card expand-existing-user-default',
+                ANIMATE_COLLAPSE_USER: 'default-card collapse-existing-user',
+                IMMEDIATELY_COLLAPSE_USER: 'default-card immediately-collapse-existing-user',
+                IMMEDIATELY_EXPAND_USER: 'default-card immediately-expand-existing-user',
                 EXPAND_NEW: 'default-card expand-new-user',
-                EXPAND_EXISTING: 'default-card expand-existing-user',
+                ANIMATE_EXPAND_USER: 'default-card expand-existing-user',
               };
             }
           },
@@ -424,13 +424,16 @@
             observer: 'onEditOpenChanged'
           },
           displayOpenEditMessage: {
-            type: Boolean,
+            type: Boolean
           },
           displayPhoneWarning: {
-            type: Boolean,
+            type: Boolean
           },
           displayEmailWarning: {
-            type: Boolean,
+            type: Boolean
+          },
+          detailsArrowIconDown: {
+            type: Boolean
           },
           openEditMessage: {
             type: String,
@@ -566,65 +569,67 @@
       }
 
       toggleDetailsVisibility() {
-        this.saveCardState();
         this.setUserDetailsDisplay();
+        this.saveCardState();
       }
 
       saveCardState() {
-        let animatedCollapsed = this.classes.COLLAPSE_EXISTING;
-        let defaultCollapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
-        let isExpanded = this.isClass(animatedCollapsed) || this.isClass(defaultCollapsed);
+        let immediatelyExpand = this.classes.IMMEDIATELY_EXPAND_USER;
+        let animateExpand = this.classes.ANIMATE_EXPAND_USER;
 
-        this.dispatchEvent(new CustomEvent('cardDetailDisplayToggled', {
+        let userCardIsExpanded = this.isClass(immediatelyExpand) || this.isClass(animateExpand);
+
+        this.dispatchEvent(new CustomEvent('cardDetailDisplayChanged', {
           bubbles: true,
           composed: true,
-          detail: { id: this.user.id, expanded: isExpanded }
+          detail: { id: this.user.id, expanded: userCardIsExpanded }
         }));
       }
 
       setUserDetailsDisplay(event) {
-        let animatedCollapsed = this.classes.COLLAPSE_EXISTING;
-        let defaultCollapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
+        let eventIsListUpdate = (typeof event === 'boolean');
 
-        let isCollapsed = (this.isClass(animatedCollapsed) || this.isClass(defaultCollapsed));
-        let isListUpdate = (typeof event === 'boolean');
-
-        if (isListUpdate) {
-          this.setDisplayOnListUpdate(isCollapsed);
+        if (eventIsListUpdate) {
+          this.setDisplayOnListUpdate();
         } else {
-          this.setDisplayOnButtonClick(isCollapsed);
+          this.setDisplayOnButtonClick();
         }
       }
 
-      setDisplayOnListUpdate(isCollapsed) {
-        let expanded = this.classes.EXPAND_EXISTING_DEFAULT;
-        let collapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
+      setDisplayOnListUpdate() {
+        let expandImmediately = this.classes.IMMEDIATELY_EXPAND_USER;
+        let collapseImmediately = this.classes.IMMEDIATELY_COLLAPSE_USER;
 
-        this.userCardClass = this.isExpanded ? expanded : collapsed;
+        let wasExpandedBeforeUpdate = this.isExpanded;
 
-        this.setDetailsArrowIcon();
+        this.userCardClass = wasExpandedBeforeUpdate ? expandImmediately : collapseImmediately;
+        this.setDetailsArrowDirection();
       }
 
-      setDisplayOnButtonClick(isCollapsed) {
-        let collapsed = this.classes.COLLAPSE_EXISTING;
-        let expanded = this.classes.EXPAND_EXISTING;
+      setDisplayOnButtonClick() {
+        let immediateCollapse = this.classes.IMMEDIATELY_COLLAPSE_USER;
+        let animatedCollapse = this.classes.ANIMATE_COLLAPSE_USER;
+        let animatedExpand = this.classes.ANIMATE_EXPAND_USER;
 
-        this.userCardClass = isCollapsed ? expanded : collapsed;
+        let isUserCurrentlyCollapsed = (this.isClass(animatedCollapse) || this.isClass(immediateCollapse));
 
-        this.setDetailsArrowIcon();
+        this.userCardClass = isUserCurrentlyCollapsed ? animatedExpand : animatedCollapse;
+
+        this.setDetailsArrowDirection();
       }
 
-      setDetailsArrowIcon() {
-        let animatedCollapsed = this.classes.COLLAPSE_EXISTING;
-        let defaultCollapsed = this.classes.COLLAPSE_EXISTING_DEFAULT;
-        this.detailsArrowIconDown = (this.isClass(animatedCollapsed) || this.isClass(defaultCollapsed));
+      setDetailsArrowDirection() {
+        let animatedCollapse = this.isClass(this.classes.ANIMATE_COLLAPSE_USER);
+        let immediateCollapse = this.isClass(this.classes.IMMEDIATELY_COLLAPSE_USER);
+
+        this.detailsArrowIconDown = animatedCollapse || immediateCollapse;
       }
 
       editButtonClicked(e) {
         e.preventDefault();
 
         this.editInProgress(true);
-        this.mode = this.modes.EDIT_EXISTING;
+        this.mode = this.modes.EDIT_USER;
         this.toggleEditableInputs();
       }
 
@@ -641,7 +646,7 @@
       }
 
       toggleEditDisplayMode(e) {
-        this.mode = this.isMode(this.modes.EDIT_EXISTING) ? this.modes.DISPLAY : this.modes.EDIT_EXISTING;
+        this.mode = this.isMode(this.modes.EDIT_USER) ? this.modes.DISPLAY : this.modes.EDIT_USER;
       }
 
       toggleEditableInputs() {
@@ -654,7 +659,7 @@
       resetFormState() {
         this.editInProgress(false);
 
-        if (this.isMode(this.modes.EDIT_EXISTING)) {
+        if (this.isMode(this.modes.EDIT_USER)) {
           this.toggleEditDisplayMode();
           this.toggleEditableInputs();
         } else {
