@@ -67,6 +67,12 @@
       <div class="card-container column-2">
         <div class="create-user-row">
           <user-component class="new-user-card" edit-open="[[editInProgress]]"></user-component>
+          <select on-change="filterUsers">
+            <option selected disabled hidden>Sort By:</option>
+            <option value="Last Name">Last Name</option>
+            <option value="First Name">First Name</option>
+            <option value="Department">Department</option>
+          </select>
         </div>
         <div class="user-list-row">
           <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
@@ -127,8 +133,40 @@
           let expanded = e.detail.expanded;
           return expanded ? this.addIdToExpandedList(id) : this.removeIdFromExpandedList(id);
         });
-
       }
+
+      filterUsers(e) {
+        let sorted;
+
+        if (e.target.value === 'First Name') {
+          sorted = this.sortUsersByFilter('first');
+        }
+        if (e.target.value === 'Last Name') {
+          sorted = this.sortUsersByFilter('last');
+        }
+        if (e.target.value === 'Department') {
+          sorted = this.sortUsersByFilter('department');
+        }
+
+        this.users = [];
+        this.users = sorted;
+      }
+
+      sortUsersByFilter(filterParam) {
+        let sorted = this.users.sort((a, b) => {
+          let first = a[filterParam];
+          let second = b[filterParam];
+
+          if (first === second) {
+            return 0;
+          } else {
+            return first > second ? 1 : -1;
+          }
+        });
+
+        return sorted;
+      }
+
 
       addIdToExpandedList(id) {
         this.expandedCardIds.splice(0, 0, id);
