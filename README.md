@@ -10,7 +10,7 @@ Users are by default displayed as collapsed cards that can be expanded to show t
 
 1. Run `$ npm install` to add dependencies.
 2. Run `$ yarn start` to fire up the server
-3. Open `localhost//:1280` in your browser.
+3. Open `https://localhost:1820` in your browser.
 
 ## how to use
 
@@ -20,13 +20,13 @@ Users are by default displayed as collapsed cards that can be expanded to show t
 
 - To cancel a new entry, the end user can click the cancel new user button at the top of the card.
 
-- Appropriate warnings will notify the end-user of improper email or phone formats.
+- Appropriate warnings will notify the end user of improper email or phone formats.
 
   _Improper format will disable the save button._
 
 ### Edit/Delete User
 
-- Clicking the edit button on an existing user card allows the end-user to edit the fields for that user. Clicking save locks in the changes. Updated information will be displayed immediately on save.
+- Clicking the edit button on an existing user card allows the end user to edit the fields for that user. Clicking save locks in the changes. Updated information will be displayed immediately on save.
 
 - If you already have an edit in process, all edit and save buttons in other cards will be disabled.
 
@@ -72,7 +72,7 @@ When an edit button is clicked in a `user-component`, that `user-component` disp
 
 `<user-component edit-open="[true,false]"><user-component>`
 
-#### Persistant User Card Display: is-expanded attribute
+#### Persistent User Card Display: is-expanded attribute
 
 Because of polymer's dom-repeat information recycling, class changes are re-used on the index of the dom-repeat slot.
 
@@ -141,11 +141,7 @@ You will not see the bundled folder locally when using `webpack-dev-server`.
 
 If you want to bundle the files locally to see how they will be organized in webpack-dev-server, run `$ yarn build` which fires `webpack` and builds the file locally.
 
-To view the bundled files from the server when using `webpack-dev-server`, enter `localhost:1820/localhost:8080/webpack-dev-server` in your browser.
-
-### UX-Lint
-
-Banno's lint packages for linting files. The .editorconfig file is set up to match Banno's styleguide
+To view the bundled files from the server when using `webpack-dev-server`, enter `localhost:1820/webpack-dev-server` in your browser.
 
 ### Yarn
 
