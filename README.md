@@ -1,10 +1,10 @@
-# Banno Onboarding Project
+# Banno Onboarding Project: Employee User Database Interface
 
 ## Description
 
 This app allows you to create and edit user profiles. Each profile has an ID, Name, Number, Email Address, and Department.
 
-Users are displayed in alphabetical order by last name in collapsed cards that can be expanded to show the users information.
+Users are by default displayed as collapsed cards that can be expanded to show the user's information.
 
 ## To Start
 
@@ -18,21 +18,19 @@ Users are displayed in alphabetical order by last name in collapsed cards that c
 
 - Clicking the add new user icon expands the create new user card.
 
-- Cancelling or saving a user collapses the add new user card.
+- To cancel a new entry, the end user can click the cancel new user button at the top of the card.
 
-- Appropriate warnings will notify the end-user of improper format of email or phone.
+- Appropriate warnings will notify the end-user of improper email or phone formats.
 
-- Improper format will also disable the save button.
+  _Improper format will disable the save button._
 
 ### Edit/Delete User
 
-- Clicking the edit button allows you to edit the fields for that user. Updated information will be displayed immediately on save.
+- Clicking the edit button on an existing user card allows the end-user to edit the fields for that user. Clicking save locks in the changes. Updated information will be displayed immediately on save.
 
-- If you already have an edit in process, all other edit and save buttons in other cards will be disabled.
+- If you already have an edit in process, all edit and save buttons in other cards will be disabled.
 
-- Editing an existing user disables the option to save other existing users or a new user.
-
-- The save button remains disabled while any fields are empty or formatted improperly.
+- The save button in the current card will remain disabled while any fields are empty or formatted improperly.
 
 ### Changing User Component In Code
 
@@ -66,24 +64,26 @@ User component has three mode settings:
 ```
 
 2. **Edit:** Edit is availably in an existing user display card when you click edit.
-3. **Create New:** If there is not a `user` object passed in with an `id` property, then the card will init as a create new user button that expands into the create new user form when you click it.
+3. **Create New:** If there is not a `user` object with an `id` property passed in, the card will init as a 'create new user' button that expands to display the new user form when you click it.
 
 #### Disable Functionality: edit-open attribute
 
-When an edit button is clicked in a `user-component`, that `user-component` dispatches an event received by `user-list` to let other components know that there is an open edit. The `user-component` uses this boolean to enable/disable save and edit buttons when an edit is open in another card.
+When an edit button is clicked in a `user-component`, that `user-component` dispatches an event received by `user-list`. The dispatched event lets other components know there is an edit currently in progress. The `user-component` uses this boolean to enable/disable save and edit buttons when an edit is open in another card.
 
 `<user-component edit-open="[true,false]"><user-component>`
 
 #### Persistant User Card Display: is-expanded attribute
 
-Because of polymer's dom-repeat information recycling, class changes will persist on a certain index of dom-repeated `user-components` in `user-list`. So if you've displayed the details on the second user in the list, when you create a new user, it will continue to have the expanded details class (even though the user you opened up details for is now in the third slot and has a collapsed class).
+Because of polymer's dom-repeat information recycling, class changes are re-used on the index of the dom-repeat slot.
+
+For this app, if a user card is added or deleted, other user cards are at a different index in the dom-repeat and take on whatever class that item in that index had before the list update. This causes cards to display as collapsed or expanded when they should not.
 
 Because of the dom-recycling feature of Polymer, the display state of each component is checked and its state is set using its id.
 
-`<user-component is-expanded="[[isExpanded(user.id, users)]]"><user-component>`
+`<user-component is-expanded="[[isUserCardDisplayExpanded(user.id, users)]]"><user-component>`
 
 ```js
- isExpanded(userId) {
+ isUserCardDisplayExpanded(userId) {
     let isExpanded = false;
       this.expandedCardIds.forEach(id => {
         if (id === userId) {
@@ -111,7 +111,7 @@ Because of the dom-recycling feature of Polymer, the display state of each compo
 
         `$ yarn lint`
 
-        `$ yarn start` also fires the linter before serving the project.
+        `$ yarn start` also fires the linter in `pre-start` before serving the project.
 
 #### To bundle the code for production. It gets built into the dist folder in the root.
 
