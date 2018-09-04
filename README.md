@@ -2,9 +2,15 @@
 
 ## Description
 
-This app allows you to create and edit user profiles, each of which have an ID, Name, Number, and Email Address.
+This app allows you to create and edit user profiles. Each profile has an ID, Name, Number, Email Address, and Department.
 
-To create a new user, click the 'Create User' button and fill out the form. Users will be added to the local storage database via the database API.
+Users are displayed in alphabetical order by last name in collapsed cards that can be expanded to show the users information.
+
+## To Start
+
+1. Run `$ npm install` to add dependencies.
+2. Run `$ yarn start` to fire up the server
+3. Open `localhost//:1280` in your browser.
 
 ## how to use
 
@@ -26,11 +32,7 @@ To create a new user, click the 'Create User' button and fill out the form. User
 
 - Editing an existing user disables the option to save other existing users or a new user.
 
-- Deleted users disappear immediately.
-
 - The save button remains disabled while any fields are empty or formatted improperly.
-
-- If there are no users, there should be a message prompt to create a new user.
 
 ### Changing User Component In Code
 
@@ -38,7 +40,7 @@ To create a new user, click the 'Create User' button and fill out the form. User
 
 User component has three mode settings:
 
-1. Display: If you pass a `user` object with an `id` property in to the `user-to-display` attribute, then the card will default to a collapsed display mode that only shows the first and last name and the expand for details button.
+1. **Display:** If you pass a `user` object with an `id` property in to the `user-to-display` attribute, then the card will default to a collapsed display mode that only shows the first and last name and the expand for details button.
 
 ```html
  <user-component user-to-display="[[userToDisplay]]"></user-component>
@@ -63,22 +65,35 @@ User component has three mode settings:
   }
 ```
 
-2. Edit: Edit is availably in an existing user display card when you click edit.
-3. Create New: If there is not a `user` object passed in with an `id` property, then the card will init as a create new user button that expands into the create new user form when you click it.
+2. **Edit:** Edit is availably in an existing user display card when you click edit.
+3. **Create New:** If there is not a `user` object passed in with an `id` property, then the card will init as a create new user button that expands into the create new user form when you click it.
 
 #### Disable Functionality: edit-open attribute
 
-When an edit button is clicked in a user-component, that user-component dispatches an event received by user-list to let other components know that there is an open edit. The user component uses this boolean to enable/disable save and edit buttons when another edit is open.
+When an edit button is clicked in a `user-component`, that `user-component` dispatches an event received by `user-list` to let other components know that there is an open edit. The `user-component` uses this boolean to enable/disable save and edit buttons when an edit is open in another card.
 
 `<user-component edit-open="[true,false]"><user-component>`
 
 #### Persistant User Card Display: is-expanded attribute
 
-Because of polymer's dom-repeat information recycling, class changes will persist on a certain index in the user list. So if you've displayed the details on the second user in the list, when you create a new user, it will continue to show the details of the second user in the list (even if the user you opened up details for is now in the third slot).
+Because of polymer's dom-repeat information recycling, class changes will persist on a certain index of dom-repeated `user-components` in `user-list`. So if you've displayed the details on the second user in the list, when you create a new user, it will continue to have the expanded details class (even though the user you opened up details for is now in the third slot and has a collapsed class).
 
 Because of the dom-recycling feature of Polymer, the display state of each component is checked and its state is set using its id.
 
-`<user-component is-expanded="[[isExpanded(user.id, users)]]" is-open="[true,false]"><user-component>`
+`<user-component is-expanded="[[isExpanded(user.id, users)]]"><user-component>`
+
+```js
+ isExpanded(userId) {
+    let isExpanded = false;
+      this.expandedCardIds.forEach(id => {
+        if (id === userId) {
+          isExpanded = true;
+        }
+      });
+
+      return isExpanded;
+    }
+```
 
 ### NPM Scripts
 
@@ -122,21 +137,11 @@ The bundling and serving happens together on `$ yarn start`
 
 #### To Build File Structure Locally
 
-You will not see the bundled folder locally when using webpack-dev-server.
+You will not see the bundled folder locally when using `webpack-dev-server`.
 
 If you want to bundle the files locally to see how they will be organized in webpack-dev-server, run `$ yarn build` which fires `webpack` and builds the file locally.
 
-To view the bundled files from the server:
-
-`localhost:1820/localhost:8080/webpack-dev-server` in your browser.
-
-##### Notes
-
-### Color Scheme
-
-Primary App Color: #0070b7
-Secondary App Color: #fca902
-Tertiary App Color: #e4e7ea
+To view the bundled files from the server when using `webpack-dev-server`, enter `localhost:1820/localhost:8080/webpack-dev-server` in your browser.
 
 ### UX-Lint
 
