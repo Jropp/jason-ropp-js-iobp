@@ -74,7 +74,7 @@
             </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
-            <user-component edit-open="[[editInProgress]]" is-expanded="[[isExpanded(user.id, users)]]" user-to-display="[[user]]"></user-component>
+            <user-component edit-open="[[editInProgress]]" is-expanded="[[isUserCardDisplayExpanded(user.id, users)]]" user-to-display="[[user]]"></user-component>
           </template>
         </div>
       </div>
@@ -162,7 +162,7 @@
         }, animationTime);
       }
 
-      isExpanded(userId) {
+      isUserCardDisplayExpanded(userId) {
         let isExpanded = false;
         this.expandedCardIds.forEach(id => {
           if (id === userId) {
