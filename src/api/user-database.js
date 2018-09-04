@@ -28,10 +28,20 @@ class Database {
 
     users.splice(0, 0, this.formatUserData(user));
     let sorted = this.sortUsersByLastName(users);
+    console.log(sorted);
+
     this.updateLocalStorage(sorted, popupMessage);
   }
 
-  static sortUsersByLastName(users) {}
+  static sortUsersByLastName(users) {
+    return users.sort((a, b) => {
+      if (a.last === b.last) {
+        return 0;
+      } else {
+        return a.last > b.last ? 1 : -1;
+      }
+    });
+  }
 
   static deleteUser(user) {
     let users = this.getUsers();
