@@ -124,16 +124,16 @@
         document.addEventListener('cardDetailDisplayChanged', (e) => {
           const id = e.detail.id;
           let expanded = e.detail.expanded;
-          return expanded ? this.addIdToExpanded(id) : this.removeIdFromExpanded(id);
+          return expanded ? this.addIdToExpandedList(id) : this.removeIdFromExpandedList(id);
         });
 
       }
 
-      addIdToExpanded(id) {
+      addIdToExpandedList(id) {
         this.expandedCardIds.splice(0, 0, id);
       }
 
-      removeIdFromExpanded(idToDelete) {
+      removeIdFromExpandedList(idToDelete) {
         let idIndex = this.expandedCardIds.findIndex(id => {
           return id === idToDelete;
         });
