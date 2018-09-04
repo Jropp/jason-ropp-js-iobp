@@ -27,9 +27,11 @@ class Database {
     let popupMessage = "Save";
 
     users.splice(0, 0, this.formatUserData(user));
-
-    this.updateLocalStorage(users, popupMessage);
+    let sorted = this.sortUsersByLastName(users);
+    this.updateLocalStorage(sorted, popupMessage);
   }
+
+  static sortUsersByLastName(users) {}
 
   static deleteUser(user) {
     let users = this.getUsers();
