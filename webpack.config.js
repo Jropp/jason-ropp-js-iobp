@@ -28,9 +28,6 @@ module.exports = env => {
                 processStyleLinks: true
               },
               loader: "polymer-webpack-loader"
-            },
-            {
-              loader: "./build-tools/jha-design-components-loader"
             }
           ]
         },
@@ -40,9 +37,6 @@ module.exports = env => {
           use: [
             {
               loader: "babel-loader"
-            },
-            {
-              loader: "./build-tools/jha-design-components-loader"
             }
           ]
           // Optionally exclude node_modules from transpilation except for polymer-webpack-loader:
@@ -64,7 +58,6 @@ module.exports = env => {
         /\/node_modules\/@banno\/polymer\/polymer\.html$/,
         "@banno/polymer/polymer-element.js"
       ),
-
       // This plugin will generate an index.html file for us that can be used
       // by the Webpack dev server. We can give it a template file (written in EJS)
       // and it will handle injecting our bundle for us.
