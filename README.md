@@ -1,10 +1,16 @@
-# Banno Onboarding Project
+# Banno Onboarding Project: Employee User Database Interface
 
 ## Description
 
-This app allows you to create and edit user profiles, each of which have an ID, Name, Number, and Email Address.
+This app allows you to create and edit user profiles. Each profile has an ID, Name, Number, Email Address, and Department.
 
-To create a new user, click the 'Create User' button and fill out the form. Users will be added to the local storage database via the database API.
+Users are by default displayed as collapsed cards that can be expanded to show the user's information.
+
+## To Start
+
+1. Run `$ npm install` to add dependencies.
+2. Run `$ yarn start` to fire up the server
+3. Open `https://localhost:1820` in your browser.
 
 ## how to use
 
@@ -12,25 +18,19 @@ To create a new user, click the 'Create User' button and fill out the form. User
 
 - Clicking the add new user icon expands the create new user card.
 
-- Cancelling or saving a user collapses the add new user card.
+- To cancel a new entry, the end user can click the cancel new user button at the top of the card.
 
-- Appropriate warnings will notify the end-user of improper format of email or phone.
+- Appropriate warnings will notify the end user of improper email or phone formats.
 
-- Improper format will also disable the save button.
+  _Improper format will disable the save button._
 
 ### Edit/Delete User
 
-- Clicking the edit button allows you to edit the fields for that user. Updated information will be displayed immediately on save.
+- Clicking the edit button on an existing user card allows the end user to edit the fields for that user. Clicking save locks in the changes. Updated information will be displayed immediately on save.
 
-- If you already have an edit in process, all other edit and save buttons in other cards will be disabled.
+- If you already have an edit in process, all edit and save buttons in other cards will be disabled.
 
-- Editing an existing user disables the option to save other existing users or a new user.
-
-- Deleted users disappear immediately.
-
-- The save button remains disabled while any fields are empty or formatted improperly.
-
-- If there are no users, there should be a message prompt to create a new user.
+- The save button in the current card will remain disabled while any fields are empty or formatted improperly.
 
 ### Changing User Component In Code
 
@@ -38,7 +38,7 @@ To create a new user, click the 'Create User' button and fill out the form. User
 
 User component has three mode settings:
 
-1. Display: If you pass a `user` object with an `id` property in to the `user-to-display` attribute, then the card will default to a collapsed display mode that only shows the first and last name and the expand for details button.
+1. **Display:** If you pass a `user` object with an `id` property in to the `user-to-display` attribute, then the card will default to a collapsed display mode that only shows the first and last name and the expand for details button.
 
 ```html
  <user-component user-to-display="[[userToDisplay]]"></user-component>
@@ -63,22 +63,37 @@ User component has three mode settings:
   }
 ```
 
-2. Edit: Edit is availably in an existing user display card when you click edit.
-3. Create New: If there is not a `user` object passed in with an `id` property, then the card will init as a create new user button that expands into the create new user form when you click it.
+2. **Edit:** Edit is availably in an existing user display card when you click edit.
+3. **Create New:** If there is not a `user` object with an `id` property passed in, the card will init as a 'create new user' button that expands to display the new user form when you click it.
 
 #### Disable Functionality: edit-open attribute
 
-When an edit button is clicked in a user-component, that user-component dispatches an event received by user-list to let other components know that there is an open edit. The user component uses this boolean to enable/disable save and edit buttons when another edit is open.
+When an edit button is clicked in a `user-component`, that `user-component` dispatches an event received by `user-list`. The dispatched event lets other components know there is an edit currently in progress. The `user-component` uses this boolean to enable/disable save and edit buttons when an edit is open in another card.
 
 `<user-component edit-open="[true,false]"><user-component>`
 
-#### Persistant User Card Display: is-expanded attribute
+#### Persistent User Card Display: is-expanded attribute
 
-Because of polymer's dom-repeat information recycling, class changes will persist on a certain index in the user list. So if you've displayed the details on the second user in the list, when you create a new user, it will continue to show the details of the second user in the list (even if the user you opened up details for is now in the third slot).
+Because of polymer's dom-repeat information recycling, class changes are re-used on the index of the dom-repeat slot.
+
+For this app, if a user card is added or deleted, other user cards are at a different index in the dom-repeat and take on whatever class that item in that index had before the list update. This causes cards to display as collapsed or expanded when they should not.
 
 Because of the dom-recycling feature of Polymer, the display state of each component is checked and its state is set using its id.
 
-`<user-component is-expanded="[[isExpanded(user.id, users)]]" is-open="[true,false]"><user-component>`
+`<user-component is-expanded="[[isUserCardDisplayExpanded(user.id, users)]]"><user-component>`
+
+```js
+ isUserCardDisplayExpanded(userId) {
+    let isExpanded = false;
+      this.expandedCardIds.forEach(id => {
+        if (id === userId) {
+          isExpanded = true;
+        }
+      });
+
+      return isExpanded;
+    }
+```
 
 ### NPM Scripts
 
@@ -96,7 +111,7 @@ Because of the dom-recycling feature of Polymer, the display state of each compo
 
         `$ yarn lint`
 
-        `$ yarn start` also fires the linter before serving the project.
+        `$ yarn start` also fires the linter in `pre-start` before serving the project.
 
 #### To bundle the code for production. It gets built into the dist folder in the root.
 
@@ -122,25 +137,11 @@ The bundling and serving happens together on `$ yarn start`
 
 #### To Build File Structure Locally
 
-You will not see the bundled folder locally when using webpack-dev-server.
+You will not see the bundled folder locally when using `webpack-dev-server`.
 
 If you want to bundle the files locally to see how they will be organized in webpack-dev-server, run `$ yarn build` which fires `webpack` and builds the file locally.
 
-To view the bundled files from the server:
-
-`localhost:1820/localhost:8080/webpack-dev-server` in your browser.
-
-##### Notes
-
-### Color Scheme
-
-Primary App Color: #0070b7
-Secondary App Color: #fca902
-Tertiary App Color: #e4e7ea
-
-### UX-Lint
-
-Banno's lint packages for linting files. The .editorconfig file is set up to match Banno's styleguide
+To view the bundled files from the server when using `webpack-dev-server`, enter `localhost:1820/webpack-dev-server` in your browser.
 
 ### Yarn
 
