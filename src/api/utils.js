@@ -78,8 +78,56 @@ class SortUtil {
     return sorted;
   }
 
+  static sortUsersByLastName(users) {
+    let sorted = users.sort((a, b) => {
+      if (a.last === b.last) {
+        if (a.first === b.first) {
+          return 0;
+        } else {
+          return a.first > b.first ? 1 : -1;
+        }
+      } else {
+        return a.last > b.last ? 1 : -1;
+      }
+    });
+
+    return sorted;
+  }
+  static sortUsersByFirstName(users) {
+    let sorted = users.sort((a, b) => {
+      if (a.first === b.first) {
+        if (a.last === b.last) {
+          return 0;
+        } else {
+          return a.last > b.last ? 1 : -1;
+        }
+      } else {
+        return a.first > b.first ? 1 : -1;
+      }
+    });
+
+    return sorted;
+  }
+
   static sortUsersByDepartment(users) {
-    let sorted = users.sort((a, b) => {});
+    let sorted = users.sort((a, b) => {
+      console.log(a.department, b.department);
+      if (a.department === b.department) {
+        if (a.last === b.last) {
+          if (a.first === b.first) {
+            return 0;
+          } else {
+            return a.first > b.first ? 1 : -1;
+          }
+        } else {
+          return a.last > b.last ? 1 : -1;
+        }
+      } else {
+        return a.department > b.department ? 1 : -1;
+      }
+    });
+
+    return sorted;
   }
 }
 

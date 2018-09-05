@@ -142,10 +142,10 @@
           sorted = SortUtil.sortUsersBy('first', this.users);
         }
         if (e.target.value === 'Last Name') {
-          sorted = SortUtil.sortUsersBy('last', this.users);
+          sorted = SortUtil.sortUsersByLastName(this.users);
         }
         if (e.target.value === 'Department') {
-          sorted = SortUtil.sortUsersBy('department', this.users);
+          sorted = SortUtil.sortUsersByDepartment(this.users);
         }
 
         this.users = [];
