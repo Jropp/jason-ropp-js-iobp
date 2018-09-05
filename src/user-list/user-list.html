@@ -92,6 +92,7 @@
 
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
     import Database from './../api/user-database.js';
+    import { SortUtil } from './../api/utils.js';
 
     class UserListElement extends PolymerElement {
       static get is() { return 'user-list'; }
@@ -138,34 +139,18 @@
         let sorted;
 
         if (e.target.value === 'First Name') {
-          sorted = this.sortUsersByFilter('first');
+          sorted = SortUtil.sortUsersBy('first', this.users);
         }
         if (e.target.value === 'Last Name') {
-          sorted = this.sortUsersByFilter('last');
+          sorted = SortUtil.sortUsersBy('last', this.users);
         }
         if (e.target.value === 'Department') {
-          sorted = this.sortUsersByFilter('department');
+          sorted = SortUtil.sortUsersBy('department', this.users);
         }
 
         this.users = [];
         this.users = sorted;
       }
-
-      sortUsersByFilter(filterParam) {
-        let sorted = this.users.sort((a, b) => {
-          let first = a[filterParam];
-          let second = b[filterParam];
-
-          if (first === second) {
-            return 0;
-          } else {
-            return first > second ? 1 : -1;
-          }
-        });
-
-        return sorted;
-      }
-
 
       addIdToExpandedList(id) {
         this.expandedCardIds.splice(0, 0, id);

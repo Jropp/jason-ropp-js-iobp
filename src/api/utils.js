@@ -62,4 +62,28 @@ class ValidateUtil {
   }
 }
 
-module.exports = ValidateUtil;
+class SortUtil {
+  static sortUsersBy(filter, users) {
+    let sorted = users.sort((a, b) => {
+      let first = a[filter];
+      let second = b[filter];
+
+      if (first === second) {
+        return 0;
+      } else {
+        return first > second ? 1 : -1;
+      }
+    });
+
+    return sorted;
+  }
+
+  static sortUsersByDepartment(users) {
+    let sorted = users.sort((a, b) => {});
+  }
+}
+
+module.exports = {
+  ValidateUtil: ValidateUtil,
+  SortUtil: SortUtil
+};
