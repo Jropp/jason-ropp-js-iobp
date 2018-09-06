@@ -66,16 +66,11 @@ class ValidateUtil {
 
 class SortUtil {
   static compareTwoUsers(a, b, filters) {
-    let i = 0;
     let compared = 0;
 
-    filters.forEach(() => {
-      if (a[`${filters[i]}`] === b[`${filters[i]}`]) {
-        i++;
-      } else {
-        compared = a[`${filters[i]}`] > b[`${filters[i]}`] ? 1 : -1;
-      }
-      if (i + 1 === filters.length) {
+    filters.forEach(filter => {
+      if (a[filter] !== b[filter]) {
+        compared = a[filter] > b[filter] ? 1 : -1;
         return;
       }
     });
@@ -84,11 +79,11 @@ class SortUtil {
   }
 
   static sortUsersBy(users) {
-    let filterProvided = Boolean(arguments[1]);
-    let fallbackFilter = ["last", "first", "department"];
-    let sortFilters = filterProvided
-      ? this.getFiltersUsed(arguments)
-      : fallbackFilter;
+    let isFilterProvided = Boolean(arguments[1]);
+    let fallbackFilters = ["last", "first", "department"];
+    let sortFilters = isFilterProvided
+      ? this.getProivedFilters(arguments)
+      : fallbackFilters;
 
     let sorted = users.sort((a, b) => {
       return this.compareTwoUsers(a, b, sortFilters);
@@ -97,14 +92,14 @@ class SortUtil {
     return sorted;
   }
 
-  static getFiltersUsed(args) {
+  static getProivedFilters(args) {
     let usedArgs = [];
     let bypassUsers = 1;
     for (let i = bypassUsers; i < args.length; i++) {
       const arg = args[i];
       usedArgs.push(arg);
     }
-    return usedArgs;
+    return usedArgs.reverse();
   }
 }
 

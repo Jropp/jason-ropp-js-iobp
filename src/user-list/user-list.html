@@ -66,7 +66,7 @@
       <div class="card-container column-2">
         <div class="create-user-row">
           <user-component class="new-user-card" edit-open="[[editInProgress]]"></user-component>
-          <select on-change="filterUsers">
+          <select on-change="sortUsers">
             <option selected disabled hidden>Sort By:</option>
             <option value="Last Name">Last Name</option>
             <option value="First Name">First Name</option>
@@ -135,13 +135,13 @@
         });
       }
 
-      filterUsers(e) {
+      sortUsers(e) {
         let sorted;
         let filters = {
           FIRST_NAME: 'first',
           LAST_NAME: 'last',
           DEPARTMENT: 'department'
-        }
+        };
 
         if (e.target.value === 'First Name') {
           sorted = SortUtil.sortUsersBy(this.users, filters.FIRST_NAME, filters.LAST_NAME, filters.DEPARTMENT);
