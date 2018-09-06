@@ -144,13 +144,13 @@
         }
 
         if (e.target.value === 'First Name') {
-          sorted = SortUtil.sortUsersBy(this.users, FIRST_NAME, LAST_NAME, DEPARTMENT);
+          sorted = SortUtil.sortUsersBy(this.users, filters.FIRST_NAME, filters.LAST_NAME, filters.DEPARTMENT);
         }
         if (e.target.value === 'Last Name') {
-          sorted = SortUtil.sortUsersBy(this.users, LAST_NAME, FIRST_NAME, DEPARTMENT);
+          sorted = SortUtil.sortUsersBy(this.users, filters.LAST_NAME, filters.FIRST_NAME, filters.DEPARTMENT);
         }
         if (e.target.value === 'Department') {
-          sorted = SortUtil.sortUsersBy(this.users, DEPARTMENT, LAST_NAME, FIRST_NAME);
+          sorted = SortUtil.sortUsersBy(this.users, filters.DEPARTMENT, filters.LAST_NAME, filters.FIRST_NAME);
         }
 
         this.users = [];

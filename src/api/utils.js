@@ -69,7 +69,7 @@ class SortUtil {
     let i = 0;
     let compared = 0;
 
-    filters.forEach(filter => {
+    filters.forEach(() => {
       if (a[`${filters[i]}`] === b[`${filters[i]}`]) {
         i++;
       } else {
@@ -84,8 +84,11 @@ class SortUtil {
   }
 
   static sortUsersBy(users) {
-    let sortFilters = this.getFiltersUsed(arguments);
-    console.log(sortFilters);
+    let filterProvided = Boolean(arguments[1]);
+    let fallbackFilter = ["last", "first", "department"];
+    let sortFilters = filterProvided
+      ? this.getFiltersUsed(arguments)
+      : fallbackFilter;
 
     let sorted = users.sort((a, b) => {
       return this.compareTwoUsers(a, b, sortFilters);
@@ -96,7 +99,8 @@ class SortUtil {
 
   static getFiltersUsed(args) {
     let usedArgs = [];
-    for (let i = 0; i < args.length; i++) {
+    let bypassUsers = 1;
+    for (let i = bypassUsers; i < args.length; i++) {
       const arg = args[i];
       usedArgs.push(arg);
     }
