@@ -139,13 +139,13 @@
         let sorted;
 
         if (e.target.value === 'First Name') {
-          sorted = SortUtil.sortUsersBy('first', this.users);
+          sorted = SortUtil.sortUsersByMultiple(this.users, 'first', 'last', 'department');
         }
         if (e.target.value === 'Last Name') {
-          sorted = SortUtil.sortUsersByLastName(this.users);
+          sorted = SortUtil.sortUsersByMultiple(this.users, 'last', 'first', 'department');
         }
         if (e.target.value === 'Department') {
-          sorted = SortUtil.sortUsersByDepartment(this.users);
+          sorted = SortUtil.sortUsersByMultiple(this.users, 'department', 'last', 'first');
         }
 
         this.users = [];
