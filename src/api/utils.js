@@ -65,7 +65,7 @@ class ValidateUtil {
 // create fallback defaults for each one
 
 class SortUtil {
-  static compareUsers(a, b, filters) {
+  static compareTwoUsers(a, b, filters) {
     let i = 0;
     let compared = 0;
 
@@ -83,11 +83,12 @@ class SortUtil {
     return compared;
   }
 
-  static sortUsersByMultiple(users) {
+  static sortUsersBy(users) {
     let sortFilters = this.getFiltersUsed(arguments);
+    console.log(sortFilters);
 
     let sorted = users.sort((a, b) => {
-      return this.compareUsers(a, b, sortFilters);
+      return this.compareTwoUsers(a, b, sortFilters);
     });
 
     return sorted;

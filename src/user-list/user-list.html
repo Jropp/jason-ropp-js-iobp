@@ -137,15 +137,20 @@
 
       filterUsers(e) {
         let sorted;
+        let filters = {
+          FIRST_NAME: 'first',
+          LAST_NAME: 'last',
+          DEPARTMENT: 'department'
+        }
 
         if (e.target.value === 'First Name') {
-          sorted = SortUtil.sortUsersByMultiple(this.users, 'first', 'last', 'department');
+          sorted = SortUtil.sortUsersBy(this.users, FIRST_NAME, LAST_NAME, DEPARTMENT);
         }
         if (e.target.value === 'Last Name') {
-          sorted = SortUtil.sortUsersByMultiple(this.users, 'last', 'first', 'department');
+          sorted = SortUtil.sortUsersBy(this.users, LAST_NAME, FIRST_NAME, DEPARTMENT);
         }
         if (e.target.value === 'Department') {
-          sorted = SortUtil.sortUsersByMultiple(this.users, 'department', 'last', 'first');
+          sorted = SortUtil.sortUsersBy(this.users, DEPARTMENT, LAST_NAME, FIRST_NAME);
         }
 
         this.users = [];
