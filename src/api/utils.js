@@ -62,25 +62,44 @@ class ValidateUtil {
   }
 }
 
+// create fallback defaults for each one
+
 class SortUtil {
-  static sortUsersByMultiple(users, primary, secondary, tertiary) {
-    let sorted = users.sort((a, b) => {
-      if (a[primary] === b[primary]) {
-        if (a[secondary] === b[secondary]) {
-          if (a[tertiary] === b[tertiary]) {
-            return 0;
-          } else {
-            return a[tertiary] > b[tertiary] ? 1 : -1;
-          }
-        } else {
-          return a[secondary] > b[secondary] ? 1 : -1;
-        }
+  static compareUsers(a, b, filters) {
+    let i = 0;
+    let compared = 0;
+
+    filters.forEach(filter => {
+      if (a[`${filters[i]}`] === b[`${filters[i]}`]) {
+        i++;
       } else {
-        return a[primary] > b[primary] ? 1 : -1;
+        compared = a[`${filters[i]}`] > b[`${filters[i]}`] ? 1 : -1;
+      }
+      if (i + 1 === filters.length) {
+        return;
       }
     });
 
+    return compared;
+  }
+
+  static sortUsersByMultiple(users) {
+    let sortFilters = this.getFiltersUsed(arguments);
+
+    let sorted = users.sort((a, b) => {
+      return this.compareUsers(a, b, sortFilters);
+    });
+
     return sorted;
+  }
+
+  static getFiltersUsed(args) {
+    let usedArgs = [];
+    for (let i = 0; i < args.length; i++) {
+      const arg = args[i];
+      usedArgs.push(arg);
+    }
+    return usedArgs;
   }
 }
 
