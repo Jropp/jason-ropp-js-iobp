@@ -94,7 +94,7 @@
             </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
-            <template is="dom-if" if="[[isFirstWithNewLetter(index, users)]]">
+            <template is="dom-if" if="[[isFirstWithNewLetter(users, index)]]">
               <div class="category-header">
                 <div class="category-text">[[setNewGroupHeader(user, index)]]</div>
               </div>
@@ -235,21 +235,20 @@
         return isExpanded;
       }
 
-      isFirstWithNewLetter(index, users) {
+      isFirstWithNewLetter(users, index) {
 
         let previousUser = users[index - 1];
         let currentUser = users[index];
         let category = this.currentSortFilter;
+        let isFirstInList = !previousUser
 
-        // property to match category
         if (previousUser) {
-
           let previousUserCategoryLetter = previousUser[category].slice(0, 1);
           let currentUserCategoryLetter = currentUser[category].slice(0, 1);
 
           return previousUserCategoryLetter !== currentUserCategoryLetter;
         }
-        return !previousUser;
+        return isFirstInList;
       }
 
       setNewGroupHeader(user, index) {
