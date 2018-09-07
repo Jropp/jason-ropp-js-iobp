@@ -147,7 +147,7 @@
           sorted = SortUtil.sortUsersBy(this.users, filters.FIRST_NAME, filters.LAST_NAME, filters.DEPARTMENT);
         }
         if (e.target.value === 'Last Name') {
-          sorted = SortUtil.sortUsersBy(this.users, filters.LAST_NAME, filters.FIRST_NAME, filters.DEPARTMENT);
+          sorted = SortUtil.sortUsersBy(this.users);
         }
         if (e.target.value === 'Department') {
           sorted = SortUtil.sortUsersBy(this.users, filters.DEPARTMENT, filters.LAST_NAME, filters.FIRST_NAME);

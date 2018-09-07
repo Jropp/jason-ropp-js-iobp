@@ -65,6 +65,10 @@ class ValidateUtil {
 // create fallback defaults for each one
 
 class SortUtil {
+  static fallbackFilters() {
+    return ["last", "first", "department"];
+  }
+
   static compareTwoUsers(a, b, filters) {
     let compared = 0;
 
@@ -79,9 +83,8 @@ class SortUtil {
   }
 
   static sortUsersBy(users, ...filters) {
-    filters.reverse();
-    let fallbackFilters = ["last", "first", "department"];
-    let sortFilters = filters.length ? filters : fallbackFilters;
+    let sortFilters = filters.length ? filters : this.fallbackFilters();
+    sortFilters.reverse();
 
     let sorted = users.sort((a, b) => {
       return this.compareTwoUsers(a, b, sortFilters);
