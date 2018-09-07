@@ -106,6 +106,16 @@
             type: Array,
             value: []
           },
+          sortFilters: {
+            type: Object,
+            value: () => {
+              return {
+                FIRST_NAME: 'first',
+                LAST_NAME: 'last',
+                DEPARTMENT: 'department'
+              }
+            }
+          },
           users: {
             type: Array,
             value: () => Database.getUsers()
@@ -137,20 +147,16 @@
 
       sortUsers(e) {
         let sorted;
-        let filters = {
-          FIRST_NAME: 'first',
-          LAST_NAME: 'last',
-          DEPARTMENT: 'department'
-        };
+        let sortBy = this.sortFilters;
 
         if (e.target.value === 'First Name') {
-          sorted = SortUtil.sortUsersBy(this.users, filters.FIRST_NAME, filters.LAST_NAME, filters.DEPARTMENT);
+          sorted = SortUtil.sortUsersBy(this.users, sortBy.FIRST_NAME, sortBy.LAST_NAME, sortBy.DEPARTMENT);
         }
         if (e.target.value === 'Last Name') {
-          sorted = SortUtil.sortUsersBy(this.users);
+          sorted = SortUtil.sortUsersBy(this.users, sortBy.LAST_NAME, sortBy.FIRST_NAME, sortBy.DEPARTMENT);
         }
         if (e.target.value === 'Department') {
-          sorted = SortUtil.sortUsersBy(this.users, filters.DEPARTMENT, filters.LAST_NAME, filters.FIRST_NAME);
+          sorted = SortUtil.sortUsersBy(this.users, sortBy.DEPARTMENT, sortBy.LAST_NAME, sortBy.FIRST_NAME);
         }
 
         this.users = [];
