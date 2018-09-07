@@ -128,7 +128,7 @@
           },
           currentSortFilter: {
             type: String,
-            value: 'department'
+            value: 'last'
           },
           users: {
             type: Array,
@@ -165,12 +165,15 @@
 
         if (e.target.value === 'First Name') {
           sorted = SortUtil.sortUsersBy(this.users, sortBy.FIRST_NAME, sortBy.LAST_NAME, sortBy.DEPARTMENT);
+          this.currentSortFilter = sortBy.FIRST_NAME;
         }
         if (e.target.value === 'Last Name') {
           sorted = SortUtil.sortUsersBy(this.users, sortBy.LAST_NAME, sortBy.FIRST_NAME, sortBy.DEPARTMENT);
+          this.currentSortFilter = sortBy.LAST_NAME;
         }
         if (e.target.value === 'Department') {
           sorted = SortUtil.sortUsersBy(this.users, sortBy.DEPARTMENT, sortBy.LAST_NAME, sortBy.FIRST_NAME);
+          this.currentSortFilter = sortBy.DEPARTMENT;
         }
 
         this.users = [];
