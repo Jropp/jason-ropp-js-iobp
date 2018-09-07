@@ -59,10 +59,18 @@
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
 
-      hr {
-        color: black;
-        background-color: black;
-        height: 10px;
+      .category-header {
+        position: relative;
+        margin: 50px 0px 40px 0px;
+        left: -40px;
+        border-bottom: black solid 2px;
+        width: 500px;
+      }
+
+      .category-header>.category-text {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
       }
     </style>
     <div class="columns">
@@ -87,8 +95,9 @@
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
             <template is="dom-if" if="[[isFirstWithNewLetter(index, users)]]">
-              <div>[[setNewGroupHeader(user)]]</div>
-              <hr>
+              <div class="category-header">
+                <div class="category-text">[[setNewGroupHeader(user, index)]]</div>
+              </div>
             </template>
             <user-component edit-open="[[editInProgress]]" is-expanded="[[isUserCardDisplayExpanded(user.id, users)]]" user-to-display="[[user]]"></user-component>
           </template>
@@ -128,7 +137,6 @@
           },
           currentSortFilter: {
             type: String,
-            value: 'last'
           },
           users: {
             type: Array,
@@ -138,6 +146,8 @@
       }
       connectedCallback() {
         super.connectedCallback();
+
+        this.currentSortFilter = 'last';
 
         document.addEventListener('cancel', () => {
           this.toggleMode();
@@ -233,8 +243,6 @@
 
         // property to match category
         if (previousUser) {
-          console.log();
-
 
           let previousUserCategoryLetter = previousUser[category].slice(0, 1);
           let currentUserCategoryLetter = currentUser[category].slice(0, 1);
@@ -244,14 +252,12 @@
         return !previousUser;
       }
 
-      setNewGroupHeader(user) {
+      setNewGroupHeader(user, index) {
         let category = this.currentSortFilter;
-        if (category === 'department') {
-          return `${user.department}`
-        } else {
-          let firstLetter = user[category].slice(0, 1);
-          return `${firstLetter}`
-        }
+        let categoryIsDepartment = category === this.sortFilters.DEPARTMENT
+        let firstLetterOfCategory = user[category].slice(0, 1);
+
+        return categoryIsDepartment ? `${user.department}` : `${firstLetterOfCategory}`;
       }
     }
 
