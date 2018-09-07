@@ -62,9 +62,9 @@
       .category-header {
         position: relative;
         margin: 50px 0px 40px 0px;
-        left: -40px;
+        left: -30px;
         border-bottom: black solid 2px;
-        width: 500px;
+        width: calc(100%+20px);
       }
 
       .category-header>.category-text {
@@ -132,7 +132,7 @@
                 FIRST_NAME: 'first',
                 LAST_NAME: 'last',
                 DEPARTMENT: 'department'
-              }
+              };
             }
           },
           currentSortFilter: {
@@ -240,7 +240,7 @@
         let previousUser = users[index - 1];
         let currentUser = users[index];
         let category = this.currentSortFilter;
-        let isFirstInList = !previousUser
+        let isFirstInList = !previousUser;
 
         if (previousUser) {
           let previousUserCategoryLetter = previousUser[category].slice(0, 1);
@@ -253,7 +253,7 @@
 
       setNewGroupHeader(user, index) {
         let category = this.currentSortFilter;
-        let categoryIsDepartment = category === this.sortFilters.DEPARTMENT
+        let categoryIsDepartment = category === this.sortFilters.DEPARTMENT;
         let firstLetterOfCategory = user[category].slice(0, 1);
 
         return categoryIsDepartment ? `${user.department}` : `${firstLetterOfCategory}`;
