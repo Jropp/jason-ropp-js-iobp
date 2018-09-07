@@ -80,7 +80,7 @@
       <div class="card-container column-2">
         <div class="create-user-row">
           <user-component class="new-user-card" edit-open="[[editInProgress]]"></user-component>
-          <select on-change="sortUsers">
+          <select on-change="dropdownSort" disabled="[[editInProgress]]">
             <option selected disabled hidden>Sort By:</option>
             <option value="Last Name">Last Name</option>
             <option value="First Name">First Name</option>
@@ -155,6 +155,7 @@
 
         document.addEventListener('databaseUpdated', e => {
           this.users = Database.getUsers();
+          this.sortUsers(this.currentSortFilter);
           this.popupMessage(e.detail.message);
         });
 
@@ -169,21 +170,35 @@
         });
       }
 
-      sortUsers(e) {
-        let sorted;
-        let sortBy = this.sortFilters;
+      dropdownSort(e) {
+        let sortBy;
 
         if (e.target.value === 'First Name') {
-          sorted = SortUtil.sortUsersBy(this.users, sortBy.FIRST_NAME, sortBy.LAST_NAME, sortBy.DEPARTMENT);
-          this.currentSortFilter = sortBy.FIRST_NAME;
+          sortBy = this.sortFilters.FIRST_NAME;
         }
         if (e.target.value === 'Last Name') {
-          sorted = SortUtil.sortUsersBy(this.users, sortBy.LAST_NAME, sortBy.FIRST_NAME, sortBy.DEPARTMENT);
-          this.currentSortFilter = sortBy.LAST_NAME;
+          sortBy = this.sortFilters.LAST_NAME;
         }
         if (e.target.value === 'Department') {
+          sortBy = this.sortFilters.DEPARTMENT;
+        }
+
+        this.sortUsers(sortBy);
+      }
+
+      sortUsers(primarySortFilter) {
+        let sorted;
+        let sortBy = this.sortFilters;
+        this.currentSortFilter = primarySortFilter;
+
+        if (primarySortFilter === sortBy.FIRST_NAME) {
+          sorted = SortUtil.sortUsersBy(this.users, sortBy.FIRST_NAME, sortBy.LAST_NAME, sortBy.DEPARTMENT);
+        }
+        if (primarySortFilter === sortBy.LAST_NAME) {
+          sorted = SortUtil.sortUsersBy(this.users, sortBy.LAST_NAME, sortBy.FIRST_NAME, sortBy.DEPARTMENT);
+        }
+        if (primarySortFilter === sortBy.DEPARTMENT) {
           sorted = SortUtil.sortUsersBy(this.users, sortBy.DEPARTMENT, sortBy.LAST_NAME, sortBy.FIRST_NAME);
-          this.currentSortFilter = sortBy.DEPARTMENT;
         }
 
         this.users = [];
