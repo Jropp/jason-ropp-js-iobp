@@ -78,28 +78,16 @@ class SortUtil {
     return compared;
   }
 
-  static sortUsersBy(users) {
-    let isFilterProvided = Boolean(arguments[1]);
+  static sortUsersBy(users, ...filters) {
+    filters.reverse();
     let fallbackFilters = ["last", "first", "department"];
-    let sortFilters = isFilterProvided
-      ? this.getProivedFilters(arguments)
-      : fallbackFilters;
+    let sortFilters = filters.length ? filters : fallbackFilters;
 
     let sorted = users.sort((a, b) => {
       return this.compareTwoUsers(a, b, sortFilters);
     });
 
     return sorted;
-  }
-
-  static getProivedFilters(args) {
-    let usedArgs = [];
-    let bypassUsers = 1;
-    for (let i = bypassUsers; i < args.length; i++) {
-      const arg = args[i];
-      usedArgs.push(arg);
-    }
-    return usedArgs.reverse();
   }
 }
 
