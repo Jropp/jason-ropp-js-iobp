@@ -157,6 +157,9 @@
           this.users = Database.getUsers();
           this.sortUsers(this.currentSortFilter);
           this.popupMessage(e.detail.message);
+          if (e.detail.message === 'Edit Save') {
+            this.expandedCardIds = [];
+          }
         });
 
         document.addEventListener('editInProgress', e => {

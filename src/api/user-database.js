@@ -15,7 +15,7 @@ class Database {
 
   static editUser(user) {
     let users = this.getUsers();
-    let popupMessage = "Save";
+    let popupMessage = "Edit Save";
 
     users.splice(this.getIdIndex(user.id), 1, this.formatUserData(user));
 
