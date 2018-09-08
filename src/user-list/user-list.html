@@ -96,7 +96,7 @@
           <template is="dom-repeat" items="[[users]]" as="user">
             <template is="dom-if" if="[[isFirstWithNewLetter(users, index)]]">
               <div class="category-header">
-                <div class="category-text">[[setNewGroupHeader(user, index)]]</div>
+                <div class="category-text">[[setNewGroupHeader(user, index, users)]]</div>
               </div>
             </template>
             <user-component edit-open="[[editInProgress]]" is-expanded="[[isUserCardDisplayExpanded(user.id, users)]]" user-to-display="[[user]]"></user-component>
@@ -137,6 +137,7 @@
           },
           currentSortFilter: {
             type: String,
+            value: 'last'
           },
           users: {
             type: Array,
@@ -146,8 +147,7 @@
       }
       connectedCallback() {
         super.connectedCallback();
-
-        this.currentSortFilter = 'last';
+        this.sortUsers(this.sortFilters.LAST_NAME);
 
         document.addEventListener('cancel', () => {
           this.toggleMode();
@@ -189,7 +189,6 @@
       sortUsers(primarySortFilter) {
         let sorted;
         let sortBy = this.sortFilters;
-        this.currentSortFilter = primarySortFilter;
 
         if (primarySortFilter === sortBy.FIRST_NAME) {
           sorted = SortUtil.sortUsersBy(this.users, sortBy.FIRST_NAME, sortBy.LAST_NAME, sortBy.DEPARTMENT);
@@ -200,6 +199,8 @@
         if (primarySortFilter === sortBy.DEPARTMENT) {
           sorted = SortUtil.sortUsersBy(this.users, sortBy.DEPARTMENT, sortBy.LAST_NAME, sortBy.FIRST_NAME);
         }
+
+        this.currentSortFilter = primarySortFilter;
 
         this.users = [];
         this.users = sorted;
@@ -251,27 +252,46 @@
       }
 
       isFirstWithNewLetter(users, index) {
+        if (users.length) {
 
-        let previousUser = users[index - 1];
-        let currentUser = users[index];
-        let category = this.currentSortFilter;
-        let isFirstInList = !previousUser;
+          if (index === 0) {
+            console.log(true, users[index]);
+            return true;
 
-        if (previousUser) {
-          let previousUserCategoryLetter = previousUser[category].slice(0, 1);
-          let currentUserCategoryLetter = currentUser[category].slice(0, 1);
+          }
 
-          return previousUserCategoryLetter !== currentUserCategoryLetter;
+          let previousUser = users[index - 1];
+          let currentUser = users[index];
+          let category = this.currentSortFilter || this.sortFilters.LAST_NAME;
+          let isFirstInList = !previousUser;
+
+
+          if (previousUser && currentUser) {
+            let previousUserCategoryLetter = previousUser[category].slice(0, 1);
+            let currentUserCategoryLetter = currentUser[category].slice(0, 1);
+
+            console.log(previousUserCategoryLetter !== currentUserCategoryLetter, currentUser);
+            return previousUserCategoryLetter !== currentUserCategoryLetter;
+          }
         }
-        return isFirstInList;
       }
 
-      setNewGroupHeader(user, index) {
+      setNewGroupHeader(user, index, users) {
+
+        // console.log(user);
+
         let category = this.currentSortFilter;
         let categoryIsDepartment = category === this.sortFilters.DEPARTMENT;
         let firstLetterOfCategory = user[category].slice(0, 1);
 
-        return categoryIsDepartment ? `${user.department}` : `${firstLetterOfCategory}`;
+        if (categoryIsDepartment) {
+          return `${user.department}`;
+        }
+
+        if (!categoryIsDepartment) {
+          return `${firstLetterOfCategory}`;
+        }
+
       }
     }
 
