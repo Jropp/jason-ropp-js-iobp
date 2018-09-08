@@ -157,8 +157,9 @@
           this.users = Database.getUsers();
           this.sortUsers(this.currentSortFilter);
           this.popupMessage(e.detail.message);
+
           if (e.detail.message === 'Edit Save') {
-            this.expandedCardIds = [];
+            this.collapseAllExpandedCards();
           }
         });
 
@@ -240,6 +241,10 @@
         window.setTimeout(() => {
           messageBox.className = 'message-box';
         }, animationTime);
+      }
+
+      collapseAllExpandedCards() {
+        this.expandedCardIds = [];
       }
 
       isUserCardDisplayExpanded(userId) {
