@@ -255,9 +255,7 @@
         if (users.length) {
 
           if (index === 0) {
-            console.log(true, users[index]);
             return true;
-
           }
 
           let previousUser = users[index - 1];
@@ -270,15 +268,12 @@
             let previousUserCategoryLetter = previousUser[category].slice(0, 1);
             let currentUserCategoryLetter = currentUser[category].slice(0, 1);
 
-            console.log(previousUserCategoryLetter !== currentUserCategoryLetter, currentUser);
             return previousUserCategoryLetter !== currentUserCategoryLetter;
           }
         }
       }
 
       setNewGroupHeader(user, index, users) {
-
-        // console.log(user);
 
         let category = this.currentSortFilter;
         let categoryIsDepartment = category === this.sortFilters.DEPARTMENT;
