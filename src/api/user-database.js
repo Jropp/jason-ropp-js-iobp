@@ -28,7 +28,6 @@ class Database {
 
     users.splice(0, 0, this.formatUserData(user));
     let sorted = this.sortUsersByLastName(users);
-    console.log(sorted);
 
     this.updateLocalStorage(sorted, popupMessage);
   }

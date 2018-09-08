@@ -62,4 +62,39 @@ class ValidateUtil {
   }
 }
 
-module.exports = ValidateUtil;
+// create fallback defaults for each one
+
+class SortUtil {
+  static fallbackFilters() {
+    return ["last", "first", "department"];
+  }
+
+  static compareTwoUsers(a, b, filters) {
+    let compared = 0;
+
+    filters.forEach(filter => {
+      if (a[filter] !== b[filter]) {
+        compared = a[filter] > b[filter] ? 1 : -1;
+        return;
+      }
+    });
+
+    return compared;
+  }
+
+  static sortUsersBy(users, ...filters) {
+    let sortFilters = filters.length ? filters : this.fallbackFilters();
+    sortFilters.reverse();
+
+    let sorted = users.sort((a, b) => {
+      return this.compareTwoUsers(a, b, sortFilters);
+    });
+
+    return sorted;
+  }
+}
+
+module.exports = {
+  ValidateUtil: ValidateUtil,
+  SortUtil: SortUtil
+};
