@@ -95,12 +95,14 @@
       <div class="card-container column-2">
         <div class="create-user-row">
           <user-component class="new-user-card" edit-open="[[editInProgress]]"></user-component>
-          <select on-change="dropdownSort" disabled="[[editInProgress]]">
-            <option selected disabled hidden>Sort By:</option>
-            <option value="Last Name">Last Name</option>
-            <option value="First Name">First Name</option>
-            <option value="Department">Department</option>
+          <div class="dropdown-container">
+            <div>Sort Users By:</div>
+            <select class="sort-dropdown" on-change="dropdownSort" disabled="[[editInProgress]]">
+              <option class="sort-category" selected value="Last Name">Last Name</option>
+              <option class="sort-category" value="First Name">First Name</option>
+              <option class="sort-category" value="Department">Department</option>
           </select>
+        </div>
         </div>
         <div class="user-list-row">
           <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
