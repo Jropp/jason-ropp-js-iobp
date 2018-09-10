@@ -17,17 +17,22 @@
       }
 
       .options-bar {
-        height: 80px;
+        height: 100px;
       }
 
       .dropdown-container {
         position: relative;
-        margin-left: 15px;
-        width: 200px;
-        background-color: #0070b7;
-        margin-top: 25px;
-        left: -30px;
+        display: inline-block;
+        vertical-align: top;
+        width: calc(50% -8px);
+        background-color: #3e3a3a;
         border-radius: 3px;
+        box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
+      }
+
+      .sort-direction-container {
+        vertical-align: top;
+        width: calc(50% -8px);
       }
 
       .dropdown-container>.dropdown-header {
@@ -38,33 +43,55 @@
         margin-right: 5px;
       }
 
+      .dropdown-container>hr {
+        margin: 0px 10px 0px 10px;
+        background-color: white;
+        height: .5px;
+        opacity: 0;
+        transition: opacity .3s;
+      }
+
+      .dropdown-container:hover>hr {
+        margin-bottom: 5px;
+        opacity: 1;
+        transition: opacity .2s;
+      }
+
+      .dropdown-container:hover>.dropdown-options {
+        height: 80px;
+        transition: height .3s;
+        opacity: 1;
+      }
+
+      .dropdown-container:hover>.sort-direction-options {
+        height: 50px;
+      }
+
+      .dropdown-container:hover>.dropdown-options>li {
+        list-style: none;
+        opacity: 1;
+        transition: opacity .2s .2s;
+      }
+
       .dropdown-options {
-        background-color: #0070b7;
+        background-color: #3e3a3a;
         height: 0px;
         transition: height .4s;
       }
 
       .dropdown-options>li {
         margin-left: 10px;
+        margin-bottom: 3px;
+        color: white;
         margin-right: 10px;
-        padding: 3px;
         list-style: none;
         opacity: 0;
       }
 
-      .dropdown-container:hover>.dropdown-options {
-        height: 80px;
-        transition: height .4s;
-      }
-
-      .dropdown-container:hover>.dropdown-options>li {
-        list-style: none;
-        opacity: 1;
-        transition: opacity .4s .2s;
-      }
-
       li:hover {
-        background-color: white;
+        text-decoration: underline;
+        margin-bottom: 2;
+        cursor: pointer;
       }
 
       .user-list-row {
@@ -133,11 +160,21 @@
           <user-component class="new-user-card" edit-open="[[editInProgress]]"></user-component>
           <div class="options-bar">
             <div class="dropdown-container">
-              <div class="dropdown-header">Sort Users By:</div>
+              <div class="dropdown-header">Sort Users By:
+              </div>
+              <hr>
               <div class="dropdown-options">
-                <li value="First">First</li>
-                <li value="Last">Last</li>
-                <li value="Department">Department</li>
+                <li on-click="dropdownSort">First</li>
+                <li on-click="dropdownSort">Last</li>
+                <li on-click="dropdownSort">Department</li>
+              </div>
+            </div>
+            <div class="sort-direction-container dropdown-container">
+              <div class="dropdown-header">Sort Direction:</div>
+              <hr>
+              <div class="sort-direction-options dropdown-options">
+                <li on-click="setSortDirection">A-Z</li>
+                <li on-click="setSortDirection">Z-A</li>
               </div>
             </div>
           </div>
@@ -194,6 +231,10 @@
             type: String,
             value: 'last'
           },
+          sortDirectionIsReversed: {
+            type: Boolean,
+            value: false
+          },
           users: {
             type: Array,
             value: () => Database.getUsers()
@@ -232,17 +273,24 @@
       dropdownSort(e) {
         let sortBy;
 
-        if (e.target.value === 'First Name') {
+        if (e.target.innerText === 'First') {
           sortBy = this.sortFilters.FIRST_NAME;
         }
-        if (e.target.value === 'Last Name') {
+        if (e.target.innerText === 'Last') {
           sortBy = this.sortFilters.LAST_NAME;
         }
-        if (e.target.value === 'Department') {
+        if (e.target.innerText === 'Department') {
           sortBy = this.sortFilters.DEPARTMENT;
         }
 
         this.sortUsers(sortBy);
+      }
+
+      setSortDirection(e) {
+        let reverseAlphabetical = e.target.innerText === "Z-A";
+        this.sortDirectionIsReversed = reverseAlphabetical;
+
+        this.sortUsers(this.currentSortFilter);
       }
 
       sortUsers(primarySortFilter) {
@@ -262,7 +310,7 @@
         this.currentSortFilter = primarySortFilter;
 
         this.users = [];
-        this.users = sorted;
+        this.users = this.sortDirectionIsReversed ? sorted.reverse() : sorted;
       }
 
       addIdToExpandedList(id) {
