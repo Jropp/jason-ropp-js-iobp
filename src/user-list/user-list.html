@@ -181,8 +181,16 @@
               <div class="dropdown-header">Sort Direction:</div>
               <hr>
               <div class="sort-direction-options dropdown-options">
-                <li on-click="setSortDirection">A-Z</li>
-                <li on-click="setSortDirection">Z-A</li>
+                <li on-click="setSortDirection">A-Z
+                  <template is="dom-if" if="[[!sortDirectionIsReversed]]">
+                    ✓
+                  </template>
+                </li>
+                <li on-click="setSortDirection">Z-A
+                  <template is="dom-if" if="[[sortDirectionIsReversed]]">
+                    ✓
+                  </template>
+                </li>
               </div>
             </div>
           </div>
