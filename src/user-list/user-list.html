@@ -17,14 +17,25 @@
       }
 
       .options-bar {
-        height: 80px;
+        height: 100px;
       }
 
       .dropdown-container {
         position: relative;
-        background-color: #3e3a3a;
-        width: 450px;
         margin-left: 25px;
+        display: inline-block;
+        vertical-align: top;
+        width: 42%;
+        background-color: #3e3a3a;
+        border-radius: 3px;
+        box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
+        cursor: default;
+      }
+
+      .sort-direction-container {
+        vertical-align: top;
+        width: 42%;
+        background-color: #3e3a3a;
         border-radius: 3px;
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
@@ -57,6 +68,10 @@
         opacity: 1;
       }
 
+      .dropdown-container:hover>.sort-direction-options {
+        height: 50px;
+      }
+
       .dropdown-container:hover>.dropdown-options>li {
         list-style: none;
         opacity: 1;
@@ -82,6 +97,10 @@
         text-decoration: underline;
         margin-bottom: 2;
         cursor: pointer;
+      }
+
+      li:active {
+        color: gray;
       }
 
       .user-list-row {
@@ -154,9 +173,37 @@
               </div>
               <hr>
               <div class="dropdown-options">
-                <li on-click="dropdownSort">First</li>
-                <li on-click="dropdownSort">Last</li>
-                <li on-click="dropdownSort">Department</li>
+                <li on-click="dropdownSort">Last
+                  <template is="dom-if" if="[[sortFilterIs(sortFilters.LAST_NAME, currentSortFilter)]]">
+                    ✓
+                  </template>
+                </li>
+                <li on-click="dropdownSort">First
+                  <template is="dom-if" if="[[sortFilterIs(sortFilters.FIRST_NAME, currentSortFilter)]]">
+                    ✓
+                  </template>
+                </li>
+                <li on-click="dropdownSort">Department
+                  <template is="dom-if" if="[[sortFilterIs(sortFilters.DEPARTMENT, currentSortFilter)]]">
+                    ✓
+                  </template>
+                </li>
+              </div>
+            </div>
+            <div class="sort-direction-container dropdown-container">
+              <div class="dropdown-header">Sort Direction:</div>
+              <hr>
+              <div class="sort-direction-options dropdown-options">
+                <li on-click="setSortDirection">A-Z
+                  <template is="dom-if" if="[[!sortDirectionIsReversed]]">
+                    ✓
+                  </template>
+                </li>
+                <li on-click="setSortDirection">Z-A
+                  <template is="dom-if" if="[[sortDirectionIsReversed]]">
+                    ✓
+                  </template>
+                </li>
               </div>
             </div>
           </div>
@@ -213,6 +260,10 @@
             type: String,
             value: 'last'
           },
+          sortDirectionIsReversed: {
+            type: Boolean,
+            value: false
+          },
           users: {
             type: Array,
             value: () => Database.getUsers()
@@ -261,7 +312,15 @@
           sortBy = this.sortFilters.DEPARTMENT;
         }
 
+        this.expandedCardIds = [];
         this.sortUsers(sortBy);
+      }
+
+      setSortDirection(e) {
+        let reverseAlphabetical = e.target.innerText === 'Z-A';
+        this.sortDirectionIsReversed = reverseAlphabetical;
+
+        this.sortUsers(this.currentSortFilter);
       }
 
       sortUsers(primarySortFilter) {
@@ -281,7 +340,7 @@
         this.currentSortFilter = primarySortFilter;
 
         this.users = [];
-        this.users = sorted;
+        this.users = this.sortDirectionIsReversed ? sorted.reverse() : sorted;
       }
 
       addIdToExpandedList(id) {
@@ -352,6 +411,10 @@
             return previousUserCategoryLetter !== currentUserCategoryLetter;
           }
         }
+      }
+
+      sortFilterIs(expectedSortFilter, currentSortFilter) {
+        return expectedSortFilter === currentSortFilter;
       }
 
       setNewGroupHeader(user, index, users) {
