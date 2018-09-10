@@ -32,6 +32,12 @@ Users are by default displayed as collapsed cards that can be expanded to show t
 
 - The save button in the current card will remain disabled while any fields are empty or formatted improperly.
 
+### Sort Users
+
+- Users can be sorted by Last Name, First Name and Department.
+- Sort is prioritized by Last Name, First Name and Department, which is also the default.
+  _So sorting by Department sorts Department, Last Name within Department, then by First Name Within Matching Last Names_
+
 ### Changing User Component In Code
 
 #### Modes
