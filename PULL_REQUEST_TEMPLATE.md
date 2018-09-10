@@ -6,7 +6,7 @@ What is the purpose of this pull request? Examples: "This is a spike to exploreâ
 
 Consider providing an overview of why the work is taking place (with any relevant links); don't assume familiarity with the history.
 
-Also explain *how* it was implemented, in general terms.
+Also explain _how_ it was implemented, in general terms.
 
 Reference the Github issues this is fixing/closing, or that are related, using the appropriate [Github/Waffle keywords](https://github.com/waffleio/waffle.io/wiki/Recommended-Workflow-Using-Pull-Requests-&-Automatic-Work-Tracking).
 
@@ -30,8 +30,10 @@ Under penalty of public shaming, I avow that I:
 - [ ] Updated the docs, if necessary
 - [ ] Included the appropriate labels
 - [ ] Referenced applicable issues (i.e. Closes #XXXX, Fixes #XXXX)
+- [ ] Verified that you are merging into the correct branch
 
 Browsers tested:
+
 - [ ] Chrome
 - [ ] Firefox
 - [ ] Safari
