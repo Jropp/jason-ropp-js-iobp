@@ -485,12 +485,8 @@
       }
 
       formatIncomingUserData(user) {
-        let doesNotHaveSymbols = !user.phone.match(/\D/g);
-
-        if (doesNotHaveSymbols) {
-          user.phone = ValidateUtil.formatPhoneNumber(user.phone);
-          this.user = user;
-        }
+        user.phone = ValidateUtil.formatPhoneNumber(user.phone);
+        this.user = user;
       }
 
       save(e) {
