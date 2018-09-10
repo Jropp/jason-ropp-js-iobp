@@ -150,11 +150,13 @@
           <user-component class="new-user-card" edit-open="[[editInProgress]]"></user-component>
           <div class="options-bar">
             <div class="dropdown-container">
-              <div class="dropdown-header">Sort Users By:</div>
+              <div class="dropdown-header">Sort Users By:
+              </div>
+              <hr>
               <div class="dropdown-options">
-                <li value="First">First</li>
-                <li value="Last">Last</li>
-                <li value="Department">Department</li>
+                <li on-click="dropdownSort">First</li>
+                <li on-click="dropdownSort">Last</li>
+                <li on-click="dropdownSort">Department</li>
               </div>
             </div>
           </div>
@@ -249,13 +251,13 @@
       dropdownSort(e) {
         let sortBy;
 
-        if (e.target.value === 'First Name') {
+        if (e.target.innerText === 'First') {
           sortBy = this.sortFilters.FIRST_NAME;
         }
-        if (e.target.value === 'Last Name') {
+        if (e.target.innerText === 'Last') {
           sortBy = this.sortFilters.LAST_NAME;
         }
-        if (e.target.value === 'Department') {
+        if (e.target.innerText === 'Department') {
           sortBy = this.sortFilters.DEPARTMENT;
         }
 
