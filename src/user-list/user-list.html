@@ -172,9 +172,21 @@
               </div>
               <hr>
               <div class="dropdown-options">
-                <li on-click="dropdownSort">First</li>
-                <li on-click="dropdownSort">Last</li>
-                <li on-click="dropdownSort">Department</li>
+                <li on-click="dropdownSort">Last
+                  <template is="dom-if" if="[[sortFilterIs(sortFilters.LAST_NAME, currentSortFilter)]]">
+                    ✓
+                  </template>
+                </li>
+                <li on-click="dropdownSort">First
+                  <template is="dom-if" if="[[sortFilterIs(sortFilters.FIRST_NAME, currentSortFilter)]]">
+                    ✓
+                  </template>
+                </li>
+                <li on-click="dropdownSort">Department
+                  <template is="dom-if" if="[[sortFilterIs(sortFilters.DEPARTMENT, currentSortFilter)]]">
+                    ✓
+                  </template>
+                </li>
               </div>
             </div>
             <div class="sort-direction-container dropdown-container">
@@ -397,6 +409,10 @@
             return previousUserCategoryLetter !== currentUserCategoryLetter;
           }
         }
+      }
+
+      sortFilterIs(expectedSortFilter, currentSortFilter) {
+        return expectedSortFilter === currentSortFilter;
       }
 
       setNewGroupHeader(user, index, users) {
