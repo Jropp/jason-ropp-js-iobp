@@ -15,7 +15,7 @@ class Database {
 
   static editUser(user) {
     let users = this.getUsers();
-    let popupMessage = "Edit Save";
+    let popupMessage = "Save";
 
     users.splice(this.getIdIndex(user.id), 1, this.formatUserData(user));
 
@@ -27,19 +27,8 @@ class Database {
     let popupMessage = "Save";
 
     users.splice(0, 0, this.formatUserData(user));
-    let sorted = this.sortUsersByLastName(users);
 
-    this.updateLocalStorage(sorted, popupMessage);
-  }
-
-  static sortUsersByLastName(users) {
-    return users.sort((a, b) => {
-      if (a.last === b.last) {
-        return 0;
-      } else {
-        return a.last > b.last ? 1 : -1;
-      }
-    });
+    this.updateLocalStorage(users, popupMessage);
   }
 
   static deleteUser(user) {

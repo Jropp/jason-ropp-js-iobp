@@ -13,75 +13,7 @@
 
       .columns {
         display: grid;
-        grid-template-columns: 1fr 500px 1fr;
-      }
-
-      .options-bar {
-        height: 80px;
-      }
-
-      .dropdown-container {
-        position: relative;
-        background-color: #3e3a3a;
-        width: 450px;
-        margin-left: 25px;
-        border-radius: 3px;
-        box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
-      }
-
-      .dropdown-container>.dropdown-header {
-        margin: 10px;
-        display: inline-block;
-        font-weight: bold;
-        color: white;
-        margin-right: 5px;
-      }
-
-      .dropdown-container>hr {
-        margin: 0px 10px 0px 10px;
-        background-color: white;
-        height: .5px;
-        opacity: 0;
-        transition: opacity .3s;
-      }
-
-      .dropdown-container:hover>hr {
-        margin-bottom: 5px;
-        opacity: 1;
-        transition: opacity .2s;
-      }
-
-      .dropdown-container:hover>.dropdown-options {
-        height: 80px;
-        transition: height .3s;
-        opacity: 1;
-      }
-
-      .dropdown-container:hover>.dropdown-options>li {
-        list-style: none;
-        opacity: 1;
-        transition: opacity .2s .2s;
-      }
-
-      .dropdown-options {
-        background-color: #3e3a3a;
-        height: 0px;
-        transition: height .4s;
-      }
-
-      .dropdown-options>li {
-        margin-left: 10px;
-        margin-bottom: 3px;
-        color: white;
-        margin-right: 10px;
-        list-style: none;
-        opacity: 0;
-      }
-
-      li:hover {
-        text-decoration: underline;
-        margin-bottom: 2;
-        cursor: pointer;
+        grid-template-columns: repeat(3, 1fr);
       }
 
       .user-list-row {
@@ -126,20 +58,6 @@
         border-radius: 3px;
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
-
-      .category-header {
-        position: relative;
-        margin: 50px 0px 40px 0px;
-        left: -30px;
-        border-bottom: black solid 2px;
-        width: calc(100%+20px);
-      }
-
-      .category-header>.category-text {
-        position: absolute;
-        bottom: 10px;
-        left: 10px;
-      }
     </style>
     <div class="columns">
       <div class="column-1">
@@ -148,18 +66,6 @@
       <div class="card-container column-2">
         <div class="create-user-row">
           <user-component class="new-user-card" edit-open="[[editInProgress]]"></user-component>
-          <div class="options-bar">
-            <div class="dropdown-container">
-              <div class="dropdown-header">Sort Users By:
-              </div>
-              <hr>
-              <div class="dropdown-options">
-                <li on-click="dropdownSort">First</li>
-                <li on-click="dropdownSort">Last</li>
-                <li on-click="dropdownSort">Department</li>
-              </div>
-            </div>
-          </div>
         </div>
         <div class="user-list-row">
           <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
@@ -168,11 +74,6 @@
             </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
-            <template is="dom-if" if="[[isFirstWithNewLetter(users, index)]]">
-              <div class="category-header">
-                <div class="category-text">[[setNewGroupHeader(user, index, users)]]</div>
-              </div>
-            </template>
             <user-component edit-open="[[editInProgress]]" is-expanded="[[isUserCardDisplayExpanded(user.id, users)]]" user-to-display="[[user]]"></user-component>
           </template>
         </div>
@@ -185,7 +86,6 @@
 
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
     import Database from './../api/user-database.js';
-    import { SortUtil } from './../api/utils.js';
 
     class UserListElement extends PolymerElement {
       static get is() { return 'user-list'; }
@@ -199,20 +99,6 @@
             type: Array,
             value: []
           },
-          sortFilters: {
-            type: Object,
-            value: () => {
-              return {
-                FIRST_NAME: 'first',
-                LAST_NAME: 'last',
-                DEPARTMENT: 'department'
-              };
-            }
-          },
-          currentSortFilter: {
-            type: String,
-            value: 'last'
-          },
           users: {
             type: Array,
             value: () => Database.getUsers()
@@ -221,7 +107,6 @@
       }
       connectedCallback() {
         super.connectedCallback();
-        this.sortUsers(this.sortFilters.LAST_NAME);
 
         document.addEventListener('cancel', () => {
           this.toggleMode();
@@ -229,12 +114,7 @@
 
         document.addEventListener('databaseUpdated', e => {
           this.users = Database.getUsers();
-          this.sortUsers(this.currentSortFilter);
           this.popupMessage(e.detail.message);
-
-          if (e.detail.message === 'Edit Save') {
-            this.collapseAllExpandedCards();
-          }
         });
 
         document.addEventListener('editInProgress', e => {
@@ -246,42 +126,7 @@
           let expanded = e.detail.expanded;
           return expanded ? this.addIdToExpandedList(id) : this.removeIdFromExpandedList(id);
         });
-      }
 
-      dropdownSort(e) {
-        let sortBy;
-
-        if (e.target.innerText === 'First') {
-          sortBy = this.sortFilters.FIRST_NAME;
-        }
-        if (e.target.innerText === 'Last') {
-          sortBy = this.sortFilters.LAST_NAME;
-        }
-        if (e.target.innerText === 'Department') {
-          sortBy = this.sortFilters.DEPARTMENT;
-        }
-
-        this.sortUsers(sortBy);
-      }
-
-      sortUsers(primarySortFilter) {
-        let sorted;
-        let sortBy = this.sortFilters;
-
-        if (primarySortFilter === sortBy.FIRST_NAME) {
-          sorted = SortUtil.sortUsersBy(this.users, sortBy.FIRST_NAME, sortBy.LAST_NAME, sortBy.DEPARTMENT);
-        }
-        if (primarySortFilter === sortBy.LAST_NAME) {
-          sorted = SortUtil.sortUsersBy(this.users, sortBy.LAST_NAME, sortBy.FIRST_NAME, sortBy.DEPARTMENT);
-        }
-        if (primarySortFilter === sortBy.DEPARTMENT) {
-          sorted = SortUtil.sortUsersBy(this.users, sortBy.DEPARTMENT, sortBy.LAST_NAME, sortBy.FIRST_NAME);
-        }
-
-        this.currentSortFilter = primarySortFilter;
-
-        this.users = [];
-        this.users = sorted;
       }
 
       addIdToExpandedList(id) {
@@ -317,10 +162,6 @@
         }, animationTime);
       }
 
-      collapseAllExpandedCards() {
-        this.expandedCardIds = [];
-      }
-
       isUserCardDisplayExpanded(userId) {
         let isExpanded = false;
         this.expandedCardIds.forEach(id => {
@@ -331,43 +172,6 @@
         });
 
         return isExpanded;
-      }
-
-      isFirstWithNewLetter(users, index) {
-        if (users.length) {
-
-          let isFirstUserInSortedList = index === 0;
-          if (isFirstUserInSortedList) {
-            return true;
-          }
-
-          let previousUser = users[index - 1];
-          let currentUser = users[index];
-          let category = this.currentSortFilter || this.sortFilters.LAST_NAME;
-
-          if (previousUser && currentUser) {
-            let previousUserCategoryLetter = previousUser[category].slice(0, 1);
-            let currentUserCategoryLetter = currentUser[category].slice(0, 1);
-
-            return previousUserCategoryLetter !== currentUserCategoryLetter;
-          }
-        }
-      }
-
-      setNewGroupHeader(user, index, users) {
-
-        let category = this.currentSortFilter;
-        let categoryIsDepartment = category === this.sortFilters.DEPARTMENT;
-        let firstLetterOfCategory = user[category].slice(0, 1);
-
-        if (categoryIsDepartment) {
-          return `${user.department}`;
-        }
-
-        if (!categoryIsDepartment) {
-          return `${firstLetterOfCategory}`;
-        }
-
       }
     }
 
