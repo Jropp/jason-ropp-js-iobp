@@ -13,7 +13,75 @@
 
       .columns {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: 1fr 500px 1fr;
+      }
+
+      .options-bar {
+        height: 80px;
+      }
+
+      .dropdown-container {
+        position: relative;
+        background-color: #3e3a3a;
+        width: 450px;
+        margin-left: 25px;
+        border-radius: 3px;
+        box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
+      }
+
+      .dropdown-container>.dropdown-header {
+        margin: 10px;
+        display: inline-block;
+        font-weight: bold;
+        color: white;
+        margin-right: 5px;
+      }
+
+      .dropdown-container>hr {
+        margin: 0px 10px 0px 10px;
+        background-color: white;
+        height: .5px;
+        opacity: 0;
+        transition: opacity .3s;
+      }
+
+      .dropdown-container:hover>hr {
+        margin-bottom: 5px;
+        opacity: 1;
+        transition: opacity .2s;
+      }
+
+      .dropdown-container:hover>.dropdown-options {
+        height: 80px;
+        transition: height .3s;
+        opacity: 1;
+      }
+
+      .dropdown-container:hover>.dropdown-options>li {
+        list-style: none;
+        opacity: 1;
+        transition: opacity .2s .2s;
+      }
+
+      .dropdown-options {
+        background-color: #3e3a3a;
+        height: 0px;
+        transition: height .4s;
+      }
+
+      .dropdown-options>li {
+        margin-left: 10px;
+        margin-bottom: 3px;
+        color: white;
+        margin-right: 10px;
+        list-style: none;
+        opacity: 0;
+      }
+
+      li:hover {
+        text-decoration: underline;
+        margin-bottom: 2;
+        cursor: pointer;
       }
 
       .user-list-row {
@@ -80,12 +148,18 @@
       <div class="card-container column-2">
         <div class="create-user-row">
           <user-component class="new-user-card" edit-open="[[editInProgress]]"></user-component>
-          <select on-change="dropdownSort" disabled="[[editInProgress]]">
-            <option selected disabled hidden>Sort By:</option>
-            <option value="Last Name">Last Name</option>
-            <option value="First Name">First Name</option>
-            <option value="Department">Department</option>
-          </select>
+          <div class="options-bar">
+            <div class="dropdown-container">
+              <div class="dropdown-header">Sort Users By:
+              </div>
+              <hr>
+              <div class="dropdown-options">
+                <li on-click="dropdownSort">First</li>
+                <li on-click="dropdownSort">Last</li>
+                <li on-click="dropdownSort">Department</li>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="user-list-row">
           <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
@@ -177,13 +251,13 @@
       dropdownSort(e) {
         let sortBy;
 
-        if (e.target.value === 'First Name') {
+        if (e.target.innerText === 'First') {
           sortBy = this.sortFilters.FIRST_NAME;
         }
-        if (e.target.value === 'Last Name') {
+        if (e.target.innerText === 'Last') {
           sortBy = this.sortFilters.LAST_NAME;
         }
-        if (e.target.value === 'Department') {
+        if (e.target.innerText === 'Department') {
           sortBy = this.sortFilters.DEPARTMENT;
         }
 
@@ -262,15 +336,14 @@
       isFirstWithNewLetter(users, index) {
         if (users.length) {
 
-          if (index === 0) {
+          let isFirstUserInSortedList = index === 0;
+          if (isFirstUserInSortedList) {
             return true;
           }
 
           let previousUser = users[index - 1];
           let currentUser = users[index];
           let category = this.currentSortFilter || this.sortFilters.LAST_NAME;
-          let isFirstInList = !previousUser;
-
 
           if (previousUser && currentUser) {
             let previousUserCategoryLetter = previousUser[category].slice(0, 1);
