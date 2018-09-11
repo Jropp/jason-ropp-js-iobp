@@ -42,7 +42,11 @@ input:focus {
 }
 
 input:read-only {
-  border: none;
+  border-bottom: none;
+}
+
+input:-moz-read-only {
+  border-bottom: none;
 }
 
 input:-webkit-autofill {
