@@ -31,7 +31,7 @@ class Database {
 
   static editUser(user) {
     let users = this.getUsers();
-    let popupMessage = "Edit Save";
+    let popupMessage = "Save";
 
     users.splice(this.getIdIndex(user.id), 1, this.formatUserData(user));
 

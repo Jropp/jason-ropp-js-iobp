@@ -62,6 +62,4 @@ class ValidateUtil {
   }
 }
 
-module.exports = {
-  ValidateUtil: ValidateUtil
-};
+module.exports = ValidateUtil;
