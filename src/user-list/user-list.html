@@ -194,12 +194,12 @@
               <div class="dropdown-header">Sort Direction:</div>
               <hr>
               <div class="sort-direction-options dropdown-options">
-                <li on-click="setSortDirection">A-Z
+                <li id="alphabetical" on-click="sortByDirection">A-Z
                   <template is="dom-if" if="[[!sortDirectionIsReversed]]">
                     ✓
                   </template>
                 </li>
-                <li on-click="setSortDirection">Z-A
+                <li id="reversed" on-click="sortByDirection">Z-A
                   <template is="dom-if" if="[[sortDirectionIsReversed]]">
                     ✓
                   </template>
@@ -257,8 +257,8 @@
             }
           },
           currentSortFilters: {
-            type: Array,
-            value: ['last']
+            type: String,
+            value: 'last'
           },
           sortDirectionIsReversed: {
             type: Boolean,
@@ -279,8 +279,7 @@
         });
 
         document.addEventListener('databaseUpdated', e => {
-          this.users = Database.getUsers();
-          this.sortUsers(this.currentSortFilters);
+          this.sortUsers(this.currentSortFilter);
           this.popupMessage(e.detail.message);
 
           if (e.detail.message === 'Edit Save') {
@@ -301,9 +300,10 @@
 
       sortUsers(sortFilter) {
         let filters = this.sortFilters;
-        let isDropdownSelection = sortFilter.target.id
+        let isDropdownSelection = Boolean(sortFilter.target);
         let sortBy;
         let primaryFilterIs = isDropdownSelection ? sortFilter.target.id : sortFilter;
+        this.currentSortFilter = primaryFilterIs;
 
         if (primaryFilterIs === filters.FIRST_NAME) {
           sortBy = [filters.FIRST_NAME, filters.LAST_NAME, filters.DEPARTMENT];
@@ -317,15 +317,13 @@
 
         this.collapseAllExpandedCards();
         let sorted = Database.getUsersSortedBy(sortBy);
-        // this.users = this.sortDirectionIsReversed ? sorted.reverse() : sorted;
+        this.users = this.sortDirectionIsReversed ? sorted.reverse() : sorted;
         this.users = sorted;
       }
 
-      setSortDirection(e) {
-        let reverseAlphabetical = e.target.innerText === 'Z-A';
-        this.sortDirectionIsReversed = reverseAlphabetical;
-
-        this.sortUsers(this.currentSortFilters);
+      sortByDirection(e) {
+        this.sortDirectionIsReversed = e.target.id === 'reversed';
+        this.sortUsers(this.currentSortFilter);
       }
 
       addIdToExpandedList(id) {
@@ -388,7 +386,7 @@
 
           let previousUser = users[index - 1];
           let currentUser = users[index];
-          let category = this.currentSortFilters[0] || this.sortFilters.LAST_NAME;
+          let category = this.currentSortFilter || this.sortFilters.LAST_NAME;
 
           if (previousUser && currentUser) {
             let previousUserCategoryLetter = previousUser[category].slice(0, 1);
@@ -408,7 +406,8 @@
 
       setNewGroupHeader(user, index, users) {
 
-        let category = this.currentSortFilters[0];
+        let category = this.currentSortFilter || this.sortFilters.LAST_NAME;
+
         let categoryIsDepartment = category === this.sortFilters.DEPARTMENT;
         let firstLetterOfCategory = user[category].slice(0, 1);
 
