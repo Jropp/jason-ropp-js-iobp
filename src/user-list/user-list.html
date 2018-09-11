@@ -173,18 +173,18 @@
               </div>
               <hr>
               <div class="dropdown-options">
-                <li on-click="dropdownSort">Last
-                  <template is="dom-if" if="[[sortFilterIs(sortFilters.LAST_NAME, currentSortFilter)]]">
+                <li id="last" on-click="sortUsers">Last
+                  <template is="dom-if" if="[[primarySortFilterIs(sortFilters.LAST_NAME, currentSortFilters)]]">
                     ✓
                   </template>
                 </li>
-                <li on-click="dropdownSort">First
-                  <template is="dom-if" if="[[sortFilterIs(sortFilters.FIRST_NAME, currentSortFilter)]]">
+                <li id="first" on-click="sortUsers">First
+                  <template is="dom-if" if="[[primarySortFilterIs(sortFilters.FIRST_NAME, currentSortFilters)]]">
                     ✓
                   </template>
                 </li>
-                <li on-click="dropdownSort">Department
-                  <template is="dom-if" if="[[sortFilterIs(sortFilters.DEPARTMENT, currentSortFilter)]]">
+                <li id="department" on-click="sortUsers">Department
+                  <template is="dom-if" if="[[primarySortFilterIs(sortFilters.DEPARTMENT, currentSortFilters)]]">
                     ✓
                   </template>
                 </li>
@@ -256,9 +256,9 @@
               };
             }
           },
-          currentSortFilter: {
-            type: String,
-            value: 'last'
+          currentSortFilters: {
+            type: Array,
+            value: ['last']
           },
           sortDirectionIsReversed: {
             type: Boolean,
@@ -266,13 +266,13 @@
           },
           users: {
             type: Array,
-            value: () => Database.getUsers()
+            value: () => Database.getUsersSortedBy(['last', 'first', 'department'])
           }
         };
       }
       connectedCallback() {
         super.connectedCallback();
-        this.sortUsers(this.sortFilters.LAST_NAME);
+
 
         document.addEventListener('cancel', () => {
           this.toggleMode();
@@ -280,7 +280,7 @@
 
         document.addEventListener('databaseUpdated', e => {
           this.users = Database.getUsers();
-          this.sortUsers(this.currentSortFilter);
+          this.sortUsers(this.currentSortFilters);
           this.popupMessage(e.detail.message);
 
           if (e.detail.message === 'Edit Save') {
@@ -299,48 +299,33 @@
         });
       }
 
-      dropdownSort(e) {
+      sortUsers(sortFilter) {
+        let filters = this.sortFilters;
+        let isDropdownSelection = sortFilter.target.id
         let sortBy;
+        let primaryFilterIs = isDropdownSelection ? sortFilter.target.id : sortFilter;
 
-        if (e.target.innerText === 'First') {
-          sortBy = this.sortFilters.FIRST_NAME;
+        if (primaryFilterIs === filters.FIRST_NAME) {
+          sortBy = [filters.FIRST_NAME, filters.LAST_NAME, filters.DEPARTMENT];
         }
-        if (e.target.innerText === 'Last') {
-          sortBy = this.sortFilters.LAST_NAME;
+        if (primaryFilterIs === filters.LAST_NAME) {
+          sortBy = [filters.LAST_NAME, filters.FIRST_NAME, filters.DEPARTMENT];
         }
-        if (e.target.innerText === 'Department') {
-          sortBy = this.sortFilters.DEPARTMENT;
+        if (primaryFilterIs === filters.DEPARTMENT) {
+          sortBy = [filters.DEPARTMENT, filters.FIRST_NAME, filters.LAST_NAME];
         }
 
-        this.expandedCardIds = [];
-        this.sortUsers(sortBy);
+        this.collapseAllExpandedCards();
+        let sorted = Database.getUsersSortedBy(sortBy);
+        // this.users = this.sortDirectionIsReversed ? sorted.reverse() : sorted;
+        this.users = sorted;
       }
 
       setSortDirection(e) {
         let reverseAlphabetical = e.target.innerText === 'Z-A';
         this.sortDirectionIsReversed = reverseAlphabetical;
 
-        this.sortUsers(this.currentSortFilter);
-      }
-
-      sortUsers(primarySortFilter) {
-        let sorted;
-        let sortBy = this.sortFilters;
-
-        if (primarySortFilter === sortBy.FIRST_NAME) {
-          sorted = SortUtil.sortUsersBy(this.users, sortBy.FIRST_NAME, sortBy.LAST_NAME, sortBy.DEPARTMENT);
-        }
-        if (primarySortFilter === sortBy.LAST_NAME) {
-          sorted = SortUtil.sortUsersBy(this.users, sortBy.LAST_NAME, sortBy.FIRST_NAME, sortBy.DEPARTMENT);
-        }
-        if (primarySortFilter === sortBy.DEPARTMENT) {
-          sorted = SortUtil.sortUsersBy(this.users, sortBy.DEPARTMENT, sortBy.LAST_NAME, sortBy.FIRST_NAME);
-        }
-
-        this.currentSortFilter = primarySortFilter;
-
-        this.users = [];
-        this.users = this.sortDirectionIsReversed ? sorted.reverse() : sorted;
+        this.sortUsers(this.currentSortFilters);
       }
 
       addIdToExpandedList(id) {
@@ -393,6 +378,7 @@
       }
 
       isFirstWithNewLetter(users, index) {
+
         if (users.length) {
 
           let isFirstUserInSortedList = index === 0;
@@ -402,7 +388,7 @@
 
           let previousUser = users[index - 1];
           let currentUser = users[index];
-          let category = this.currentSortFilter || this.sortFilters.LAST_NAME;
+          let category = this.currentSortFilters[0] || this.sortFilters.LAST_NAME;
 
           if (previousUser && currentUser) {
             let previousUserCategoryLetter = previousUser[category].slice(0, 1);
@@ -413,13 +399,16 @@
         }
       }
 
-      sortFilterIs(expectedSortFilter, currentSortFilter) {
-        return expectedSortFilter === currentSortFilter;
+      sortFilterIs(expectedSortFilter, currentSortFilters) {
+        if (currentSortFilters.length) {
+
+          return expectedSortFilter === currentSortFilters[0];
+        }
       }
 
       setNewGroupHeader(user, index, users) {
 
-        let category = this.currentSortFilter;
+        let category = this.currentSortFilters[0];
         let categoryIsDepartment = category === this.sortFilters.DEPARTMENT;
         let firstLetterOfCategory = user[category].slice(0, 1);
 
@@ -430,7 +419,6 @@
         if (!categoryIsDepartment) {
           return `${firstLetterOfCategory}`;
         }
-
       }
     }
 
