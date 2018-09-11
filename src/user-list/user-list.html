@@ -316,9 +316,7 @@
         }
 
         this.collapseAllExpandedCards();
-        let sorted = Database.getUsersSortedBy(sortBy);
-        this.users = this.sortDirectionIsReversed ? sorted.reverse() : sorted;
-        this.users = sorted;
+        this.users = this.sortDirectionIsReversed ? Database.getUsersSortedBy(sortBy).reverse() : Database.getUsersSortedBy(sortBy);
       }
 
       sortByDirection(e) {
