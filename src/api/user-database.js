@@ -27,19 +27,38 @@ class Database {
     let popupMessage = "Save";
 
     users.splice(0, 0, this.formatUserData(user));
-    let sorted = this.sortUsersByLastName(users);
+    let sorted = this.getUsersSortedBy(["last", "first", "department"]);
 
     this.updateLocalStorage(sorted, popupMessage);
   }
 
-  static sortUsersByLastName(users) {
-    return users.sort((a, b) => {
-      if (a.last === b.last) {
-        return 0;
-      } else {
-        return a.last > b.last ? 1 : -1;
+  static getUsersSortedBy(filters) {
+    let users = JSON.parse(localStorage.getItem("onboardProjectUsers")) || [];
+    let sortFilters = filters.length ? filters : this.fallbackFilters();
+    sortFilters.reverse();
+
+    let sorted = users.sort((a, b) => {
+      return this.compareTwoUsers(a, b, sortFilters);
+    });
+
+    return sorted;
+  }
+
+  static compareTwoUsers(a, b, filters) {
+    let compared = 0;
+
+    filters.forEach(filter => {
+      if (a[filter] !== b[filter]) {
+        compared = a[filter] > b[filter] ? 1 : -1;
+        return;
       }
     });
+
+    return compared;
+  }
+
+  static fallbackFilters() {
+    return ["last", "first", "department"];
   }
 
   static deleteUser(user) {
