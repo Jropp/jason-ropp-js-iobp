@@ -220,7 +220,8 @@
                 <div class="category-text">[[setNewGroupHeader(user, index, users)]]</div>
               </div>
             </template>
-            <user-component edit-open="[[editInProgress]]" is-expanded="[[isUserCardDisplayExpanded(user.id, users)]]" user-to-display="[[user]]"></user-component>
+            <user-component edit-open="[[editInProgress]]" is-expanded="[[isUserCardDisplayExpanded(user.id, users, expandedCardIds)]]"
+              user-to-display="[[user]]"></user-component>
           </template>
         </div>
       </div>
@@ -280,10 +281,7 @@
         document.addEventListener('databaseUpdated', e => {
           this.setSortedUsersBy(this.currentSortFilter);
           this.popupMessage(e.detail.message);
-
-          if (e.detail.message === 'Edit Save') {
-            this.collapseAllExpandedCards();
-          }
+          this.updateExpandedIds(e.detail.message)
         });
 
         document.addEventListener('editInProgress', e => {
@@ -314,7 +312,10 @@
           sortBy = [filters.DEPARTMENT, filters.FIRST_NAME, filters.LAST_NAME];
         }
 
-        this.collapseAllExpandedCards();
+        if (isDropdownSelection) {
+          this.updateExpandedIds("Dropdown Sort");
+        }
+
         let reversedSort = this.sortDirectionIsReversed;
         this.users = reversedSort ? Database.getUsersSortedBy(sortBy).reverse() : Database.getUsersSortedBy(sortBy);
       }
@@ -322,6 +323,15 @@
       sortByDirection(e) {
         this.sortDirectionIsReversed = e.target.id === 'sortReversedAlphabetical';
         this.setSortedUsersBy(this.currentSortFilter);
+      }
+
+      updateExpandedIds(action) {
+        let isSaveEdit = action === "Save Edit";
+        let isDropdownSort = action === "Dropdown Sort";
+
+        if (isSaveEdit || isDropdownSort) {
+          this.expandedCardIds = [];
+        }
       }
 
       addIdToExpandedList(id) {
@@ -355,10 +365,6 @@
         window.setTimeout(() => {
           messageBox.className = 'message-box';
         }, animationTime);
-      }
-
-      collapseAllExpandedCards() {
-        this.expandedCardIds = [];
       }
 
       isUserCardDisplayExpanded(userId) {
