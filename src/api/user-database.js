@@ -13,25 +13,6 @@ class Database {
     return match;
   }
 
-  static editUser(user) {
-    let users = this.getUsers();
-    let popupMessage = "Edit Save";
-
-    users.splice(this.getIdIndex(user.id), 1, this.formatUserData(user));
-
-    this.updateLocalStorage(users, popupMessage);
-  }
-
-  static saveUser(user) {
-    let users = this.getUsers() ? this.getUsers() : [];
-    let popupMessage = "Save";
-
-    users.splice(0, 0, this.formatUserData(user));
-    let sorted = this.getUsersSortedBy(["last", "first", "department"]);
-
-    this.updateLocalStorage(sorted, popupMessage);
-  }
-
   static getUsersSortedBy(filters) {
     let users = JSON.parse(localStorage.getItem("onboardProjectUsers")) || [];
     let sortFilters = filters.length ? filters : this.fallbackFilters();
@@ -42,6 +23,28 @@ class Database {
     });
 
     return sorted;
+  }
+
+  static fallbackFilters() {
+    return ["last", "first", "department"];
+  }
+
+  static editUser(user) {
+    let users = this.getUsers();
+    let popupMessage = "Edit Save";
+
+    users.splice(this.getIdIndex(user.id), 1, this.formatUserData(user));
+
+    this.updateLocalStorage(users, popupMessage);
+  }
+
+  static saveUser(user) {
+    let users = this.getUsers();
+    let popupMessage = "Save";
+
+    users.splice(0, 0, this.formatUserData(user));
+
+    this.updateLocalStorage(users, popupMessage);
   }
 
   static compareTwoUsers(a, b, filters) {
@@ -57,10 +60,6 @@ class Database {
     return compared;
   }
 
-  static fallbackFilters() {
-    return ["last", "first", "department"];
-  }
-
   static deleteUser(user) {
     let users = this.getUsers();
     let popupMessage = "Delete";
@@ -71,12 +70,14 @@ class Database {
   }
 
   static deleteAllUsers() {
-    localStorage.setItem("onboardProjectUsers", JSON.stringify([]));
+    let popupMessage = "Delete All Users";
+    this.updateLocalStorage([], popupMessage);
   }
 
   static getIdIndex(userId) {
     let users = this.getUsers();
     let userIndex = users ? users.findIndex(user => user.id === userId) : -1;
+
     return userIndex;
   }
 
@@ -85,6 +86,7 @@ class Database {
     user.last = this.titleCaseName(user.last);
     user.id = user.id || this.createNewUserId();
     user.phone = this.getOnlyPhoneDigits(user.phone);
+
     return user;
   }
 
@@ -95,6 +97,7 @@ class Database {
   static titleCaseName(name) {
     let firstLetter = name.charAt(0).toUpperCase();
     let restOfName = name.slice(1).toLowerCase();
+
     return `${firstLetter}${restOfName}`;
   }
 
@@ -124,6 +127,7 @@ class Database {
     }
 
     let idAlreadyExists = this.getIdIndex(id) !== -1;
+
     return idAlreadyExists ? this.createNewUserId() : id;
   }
 }
