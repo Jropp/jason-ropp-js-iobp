@@ -30,6 +30,7 @@ Under penalty of public shaming, I avow that I:
 - [ ] Updated the docs, if necessary
 - [ ] Included the appropriate labels
 - [ ] Referenced applicable issues (i.e. Closes #XXXX, Fixes #XXXX)
+- [ ] ARE YOU MERGING INTO THE CORRECT BRANCH!?
 
 Browsers tested:
 - [ ] Chrome
