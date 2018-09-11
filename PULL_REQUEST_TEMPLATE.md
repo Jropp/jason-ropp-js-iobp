@@ -30,7 +30,7 @@ Under penalty of public shaming, I avow that I:
 - [ ] Updated the docs, if necessary
 - [ ] Included the appropriate labels
 - [ ] Referenced applicable issues (i.e. Closes #XXXX, Fixes #XXXX)
-- [ ] Verified that you are merging into the correct branch
+- [ ] ARE YOU MERGING INTO THE CORRECT BRANCH!?
 
 Browsers tested:
 

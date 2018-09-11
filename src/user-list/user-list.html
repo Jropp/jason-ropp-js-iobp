@@ -173,17 +173,17 @@
               </div>
               <hr>
               <div class="dropdown-options">
-                <li on-click="dropdownSort">Last
+                <li id="last" on-click="setSortedUsersBy">Last
                   <template is="dom-if" if="[[sortFilterIs(sortFilters.LAST_NAME, currentSortFilter)]]">
                     ✓
                   </template>
                 </li>
-                <li on-click="dropdownSort">First
+                <li id="first" on-click="setSortedUsersBy">First
                   <template is="dom-if" if="[[sortFilterIs(sortFilters.FIRST_NAME, currentSortFilter)]]">
                     ✓
                   </template>
                 </li>
-                <li on-click="dropdownSort">Department
+                <li id="department" on-click="setSortedUsersBy">Department
                   <template is="dom-if" if="[[sortFilterIs(sortFilters.DEPARTMENT, currentSortFilter)]]">
                     ✓
                   </template>
@@ -194,12 +194,12 @@
               <div class="dropdown-header">Sort Direction:</div>
               <hr>
               <div class="sort-direction-options dropdown-options">
-                <li on-click="setSortDirection">A-Z
+                <li id="sortAlphabetical" on-click="sortByDirection">A-Z
                   <template is="dom-if" if="[[!sortDirectionIsReversed]]">
                     ✓
                   </template>
                 </li>
-                <li on-click="setSortDirection">Z-A
+                <li id="sortReversedAlphabetical" on-click="sortByDirection">Z-A
                   <template is="dom-if" if="[[sortDirectionIsReversed]]">
                     ✓
                   </template>
@@ -215,7 +215,7 @@
             </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
-            <template is="dom-if" if="[[isFirstWithNewLetter(users, index)]]">
+            <template is="dom-if" if="[[setDisplayOfSortSection(users, index)]]">
               <div class="category-header">
                 <div class="category-text">[[setNewGroupHeader(user, index, users)]]</div>
               </div>
@@ -232,7 +232,6 @@
 
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
     import Database from './../api/user-database.js';
-    import { SortUtil } from './../api/utils.js';
 
     class UserListElement extends PolymerElement {
       static get is() { return 'user-list'; }
@@ -266,21 +265,20 @@
           },
           users: {
             type: Array,
-            value: () => Database.getUsers()
+            value: () => Database.getUsersSortedBy(['last', 'first', 'department'])
           }
         };
       }
       connectedCallback() {
         super.connectedCallback();
-        this.sortUsers(this.sortFilters.LAST_NAME);
+
 
         document.addEventListener('cancel', () => {
           this.toggleMode();
         });
 
         document.addEventListener('databaseUpdated', e => {
-          this.users = Database.getUsers();
-          this.sortUsers(this.currentSortFilter);
+          this.setSortedUsersBy(this.currentSortFilter);
           this.popupMessage(e.detail.message);
 
           if (e.detail.message === 'Edit Save') {
@@ -299,48 +297,31 @@
         });
       }
 
-      dropdownSort(e) {
+      setSortedUsersBy(sortFilter) {
+        let filters = this.sortFilters;
+        let isDropdownSelection = Boolean(sortFilter.target);
         let sortBy;
+        let primaryFilterIs = isDropdownSelection ? sortFilter.target.id : sortFilter;
+        this.currentSortFilter = primaryFilterIs;
 
-        if (e.target.innerText === 'First') {
-          sortBy = this.sortFilters.FIRST_NAME;
+        if (primaryFilterIs === filters.LAST_NAME) {
+          sortBy = [filters.LAST_NAME, filters.FIRST_NAME, filters.DEPARTMENT];
         }
-        if (e.target.innerText === 'Last') {
-          sortBy = this.sortFilters.LAST_NAME;
+        if (primaryFilterIs === filters.FIRST_NAME) {
+          sortBy = [filters.FIRST_NAME, filters.LAST_NAME, filters.DEPARTMENT];
         }
-        if (e.target.innerText === 'Department') {
-          sortBy = this.sortFilters.DEPARTMENT;
+        if (primaryFilterIs === filters.DEPARTMENT) {
+          sortBy = [filters.DEPARTMENT, filters.FIRST_NAME, filters.LAST_NAME];
         }
 
-        this.expandedCardIds = [];
-        this.sortUsers(sortBy);
+        this.collapseAllExpandedCards();
+        let reversedSort = this.sortDirectionIsReversed;
+        this.users = reversedSort ? Database.getUsersSortedBy(sortBy).reverse() : Database.getUsersSortedBy(sortBy);
       }
 
-      setSortDirection(e) {
-        let reverseAlphabetical = e.target.innerText === 'Z-A';
-        this.sortDirectionIsReversed = reverseAlphabetical;
-
-        this.sortUsers(this.currentSortFilter);
-      }
-
-      sortUsers(primarySortFilter) {
-        let sorted;
-        let sortBy = this.sortFilters;
-
-        if (primarySortFilter === sortBy.FIRST_NAME) {
-          sorted = SortUtil.sortUsersBy(this.users, sortBy.FIRST_NAME, sortBy.LAST_NAME, sortBy.DEPARTMENT);
-        }
-        if (primarySortFilter === sortBy.LAST_NAME) {
-          sorted = SortUtil.sortUsersBy(this.users, sortBy.LAST_NAME, sortBy.FIRST_NAME, sortBy.DEPARTMENT);
-        }
-        if (primarySortFilter === sortBy.DEPARTMENT) {
-          sorted = SortUtil.sortUsersBy(this.users, sortBy.DEPARTMENT, sortBy.LAST_NAME, sortBy.FIRST_NAME);
-        }
-
-        this.currentSortFilter = primarySortFilter;
-
-        this.users = [];
-        this.users = this.sortDirectionIsReversed ? sorted.reverse() : sorted;
+      sortByDirection(e) {
+        this.sortDirectionIsReversed = e.target.id === 'sortReversedAlphabetical';
+        this.setSortedUsersBy(this.currentSortFilter);
       }
 
       addIdToExpandedList(id) {
@@ -392,24 +373,28 @@
         return isExpanded;
       }
 
-      isFirstWithNewLetter(users, index) {
+      setDisplayOfSortSection(users, index) {
         if (users.length) {
 
           let isFirstUserInSortedList = index === 0;
+
           if (isFirstUserInSortedList) {
             return true;
           }
 
           let previousUser = users[index - 1];
           let currentUser = users[index];
-          let category = this.currentSortFilter || this.sortFilters.LAST_NAME;
+          let defaultSort = this.sortFilters.LAST_NAME;
+          let category = this.currentSortFilter || defaultSort;
 
           if (previousUser && currentUser) {
             let previousUserCategoryLetter = previousUser[category].slice(0, 1);
             let currentUserCategoryLetter = currentUser[category].slice(0, 1);
+            let isFirstInNewSortSection = previousUserCategoryLetter !== currentUserCategoryLetter;
 
-            return previousUserCategoryLetter !== currentUserCategoryLetter;
+            return isFirstInNewSortSection;
           }
+
         }
       }
 
@@ -419,7 +404,8 @@
 
       setNewGroupHeader(user, index, users) {
 
-        let category = this.currentSortFilter;
+        let category = this.currentSortFilter || this.sortFilters.LAST_NAME;
+
         let categoryIsDepartment = category === this.sortFilters.DEPARTMENT;
         let firstLetterOfCategory = user[category].slice(0, 1);
 
@@ -430,7 +416,6 @@
         if (!categoryIsDepartment) {
           return `${firstLetterOfCategory}`;
         }
-
       }
     }
 
