@@ -332,8 +332,6 @@
       }
 
       resetExpandedCardIds(reset) {
-        console.log(reset);
-
         if (reset) {
           this.expandedCardIds = [];
         } else {
@@ -400,7 +398,8 @@
         let compareWholeWord = previousUser[sortCategory] !== currentUser[sortCategory];
         let compareFirstLetter = previousUser[sortCategory].slice(0, 1) !== currentUser[sortCategory].slice(0, 1);
 
-        let insertNewCategoryHeader = (sortCategory === this.sortFilters.DEPARTMENT) ? compareWholeWord : compareFirstLetter;
+        let categoryIsDepartment = sortCategory === this.sortFilters.DEPARTMENT;
+        let insertNewCategoryHeader = categoryIsDepartment ? compareWholeWord : compareFirstLetter;
 
         return insertNewCategoryHeader;
       }
