@@ -173,17 +173,17 @@
               </div>
               <hr>
               <div class="dropdown-options">
-                <li id="last" on-click="setSortedUsersBy">Last
+                <li id="last" on-click="dropdownSort">Last
                   <template is="dom-if" if="[[sortFilterIs(sortFilters.LAST_NAME, currentSortFilter)]]">
                     ✓
                   </template>
                 </li>
-                <li id="first" on-click="setSortedUsersBy">First
+                <li id="first" on-click="dropdownSort">First
                   <template is="dom-if" if="[[sortFilterIs(sortFilters.FIRST_NAME, currentSortFilter)]]">
                     ✓
                   </template>
                 </li>
-                <li id="department" on-click="setSortedUsersBy">Department
+                <li id="department" on-click="dropdownSort">Department
                   <template is="dom-if" if="[[sortFilterIs(sortFilters.DEPARTMENT, currentSortFilter)]]">
                     ✓
                   </template>
@@ -215,12 +215,13 @@
             </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
-            <template is="dom-if" if="[[setDisplayOfSortSection(users, index)]]">
+            <template is="dom-if" if="[[setDisplayOfSortSection(users, index, currentSortFilter)]]">
               <div class="category-header">
                 <div class="category-text">[[setNewGroupHeader(user, index, users)]]</div>
               </div>
             </template>
-            <user-component edit-open="[[editInProgress]]" is-expanded="[[isUserCardDisplayExpanded(user.id, users)]]" user-to-display="[[user]]"></user-component>
+            <user-component edit-open="[[editInProgress]]" is-expanded="[[isUserCardDisplayExpanded(user.id, users, expandedCardIds)]]"
+              user-to-display="[[user]]"></user-component>
           </template>
         </div>
       </div>
@@ -280,10 +281,7 @@
         document.addEventListener('databaseUpdated', e => {
           this.setSortedUsersBy(this.currentSortFilter);
           this.popupMessage(e.detail.message);
-
-          if (e.detail.message === 'Edit Save') {
-            this.collapseAllExpandedCards();
-          }
+          this.resetExpandedCardIds(e.detail.message === 'Edit Save');
         });
 
         document.addEventListener('editInProgress', e => {
@@ -297,31 +295,48 @@
         });
       }
 
-      setSortedUsersBy(sortFilter) {
-        let filters = this.sortFilters;
-        let isDropdownSelection = Boolean(sortFilter.target);
-        let sortBy;
-        let primaryFilterIs = isDropdownSelection ? sortFilter.target.id : sortFilter;
-        this.currentSortFilter = primaryFilterIs;
+      dropdownSort(e) {
+        this.setSortedUsersBy(e.target.id);
+        this.resetExpandedCardIds(true);
+      }
 
-        if (primaryFilterIs === filters.LAST_NAME) {
-          sortBy = [filters.LAST_NAME, filters.FIRST_NAME, filters.DEPARTMENT];
-        }
-        if (primaryFilterIs === filters.FIRST_NAME) {
-          sortBy = [filters.FIRST_NAME, filters.LAST_NAME, filters.DEPARTMENT];
-        }
-        if (primaryFilterIs === filters.DEPARTMENT) {
-          sortBy = [filters.DEPARTMENT, filters.FIRST_NAME, filters.LAST_NAME];
-        }
+      setSortedUsersBy(filterFirstBy) {
 
-        this.collapseAllExpandedCards();
+        let sortBy = this.getSortArray(filterFirstBy);
+
+        this.currentSortFilter = filterFirstBy;
         let reversedSort = this.sortDirectionIsReversed;
         this.users = reversedSort ? Database.getUsersSortedBy(sortBy).reverse() : Database.getUsersSortedBy(sortBy);
+      }
+
+      getSortArray(filterFirstBy) {
+        let firstName = this.sortFilters.FIRST_NAME;
+        let lastName = this.sortFilters.LAST_NAME;
+        let department = this.sortFilters.DEPARTMENT;
+
+        if (filterFirstBy === lastName) {
+          return [lastName, firstName, department];
+        }
+        if (filterFirstBy === firstName) {
+          return [firstName, lastName, department];
+        }
+        if (filterFirstBy === department) {
+          return [department, firstName, lastName];
+        }
       }
 
       sortByDirection(e) {
         this.sortDirectionIsReversed = e.target.id === 'sortReversedAlphabetical';
         this.setSortedUsersBy(this.currentSortFilter);
+        this.resetExpandedCardIds(true);
+      }
+
+      resetExpandedCardIds(reset) {
+        if (reset) {
+          this.expandedCardIds = [];
+        } else {
+          this.expandedCardIds = this.expandedCardIds;
+        }
       }
 
       addIdToExpandedList(id) {
@@ -357,10 +372,6 @@
         }, animationTime);
       }
 
-      collapseAllExpandedCards() {
-        this.expandedCardIds = [];
-      }
-
       isUserCardDisplayExpanded(userId) {
         let isExpanded = false;
         this.expandedCardIds.forEach(id => {
@@ -374,28 +385,23 @@
       }
 
       setDisplayOfSortSection(users, index) {
-        if (users.length) {
+        let previousUser = users[index - 1];
+        let currentUser = users[index];
+        let sortCategory = this.currentSortFilter || this.sortFilters.LAST_NAME;
 
-          let isFirstUserInSortedList = index === 0;
+        let isFirstUserInSortedList = !previousUser;
 
-          if (isFirstUserInSortedList) {
-            return true;
-          }
-
-          let previousUser = users[index - 1];
-          let currentUser = users[index];
-          let defaultSort = this.sortFilters.LAST_NAME;
-          let category = this.currentSortFilter || defaultSort;
-
-          if (previousUser && currentUser) {
-            let previousUserCategoryLetter = previousUser[category].slice(0, 1);
-            let currentUserCategoryLetter = currentUser[category].slice(0, 1);
-            let isFirstInNewSortSection = previousUserCategoryLetter !== currentUserCategoryLetter;
-
-            return isFirstInNewSortSection;
-          }
-
+        if (isFirstUserInSortedList) {
+          return true;
         }
+
+        let compareWholeWord = previousUser[sortCategory] !== currentUser[sortCategory];
+        let compareFirstLetter = previousUser[sortCategory].slice(0, 1) !== currentUser[sortCategory].slice(0, 1);
+
+        let categoryIsDepartment = sortCategory === this.sortFilters.DEPARTMENT;
+        let insertNewCategoryHeader = categoryIsDepartment ? compareWholeWord : compareFirstLetter;
+
+        return insertNewCategoryHeader;
       }
 
       sortFilterIs(expectedSortFilter, currentSortFilter) {
