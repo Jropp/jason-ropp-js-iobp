@@ -174,17 +174,17 @@
               <hr>
               <div class="dropdown-options">
                 <li id="last" on-click="sortUsers">Last
-                  <template is="dom-if" if="[[primarySortFilterIs(sortFilters.LAST_NAME, currentSortFilters)]]">
+                  <template is="dom-if" if="[[sortFilterIs(sortFilters.LAST_NAME, currentSortFilter)]]">
                     ✓
                   </template>
                 </li>
                 <li id="first" on-click="sortUsers">First
-                  <template is="dom-if" if="[[primarySortFilterIs(sortFilters.FIRST_NAME, currentSortFilters)]]">
+                  <template is="dom-if" if="[[sortFilterIs(sortFilters.FIRST_NAME, currentSortFilter)]]">
                     ✓
                   </template>
                 </li>
                 <li id="department" on-click="sortUsers">Department
-                  <template is="dom-if" if="[[primarySortFilterIs(sortFilters.DEPARTMENT, currentSortFilters)]]">
+                  <template is="dom-if" if="[[sortFilterIs(sortFilters.DEPARTMENT, currentSortFilter)]]">
                     ✓
                   </template>
                 </li>
@@ -256,7 +256,7 @@
               };
             }
           },
-          currentSortFilters: {
+          currentSortFilter: {
             type: String,
             value: 'last'
           },
@@ -305,13 +305,13 @@
         let primaryFilterIs = isDropdownSelection ? sortFilter.target.id : sortFilter;
         this.currentSortFilter = primaryFilterIs;
 
-        if (primaryFilterIs === filters.FIRST_NAME) {
-          sortBy = [filters.FIRST_NAME, filters.LAST_NAME, filters.DEPARTMENT];
-        }
         if (primaryFilterIs === filters.LAST_NAME) {
           sortBy = [filters.LAST_NAME, filters.FIRST_NAME, filters.DEPARTMENT];
         }
-        if (primaryFilterIs === filters.DEPARTMENT) {
+        else if (primaryFilterIs === filters.FIRST_NAME) {
+          sortBy = [filters.FIRST_NAME, filters.LAST_NAME, filters.DEPARTMENT];
+        }
+        else if (primaryFilterIs === filters.DEPARTMENT) {
           sortBy = [filters.DEPARTMENT, filters.FIRST_NAME, filters.LAST_NAME];
         }
 
@@ -397,11 +397,8 @@
         }
       }
 
-      sortFilterIs(expectedSortFilter, currentSortFilters) {
-        if (currentSortFilters.length) {
-
-          return expectedSortFilter === currentSortFilters[0];
-        }
+      sortFilterIs(expectedSortFilter, currentSortFilter) {
+        return expectedSortFilter === currentSortFilter;
       }
 
       setNewGroupHeader(user, index, users) {
