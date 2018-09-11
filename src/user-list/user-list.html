@@ -232,7 +232,6 @@
 
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
     import Database from './../api/user-database.js';
-    import { SortUtil } from './../api/utils.js';
 
     class UserListElement extends PolymerElement {
       static get is() { return 'user-list'; }
@@ -308,15 +307,16 @@
         if (primaryFilterIs === filters.LAST_NAME) {
           sortBy = [filters.LAST_NAME, filters.FIRST_NAME, filters.DEPARTMENT];
         }
-        else if (primaryFilterIs === filters.FIRST_NAME) {
+        if (primaryFilterIs === filters.FIRST_NAME) {
           sortBy = [filters.FIRST_NAME, filters.LAST_NAME, filters.DEPARTMENT];
         }
-        else if (primaryFilterIs === filters.DEPARTMENT) {
+        if (primaryFilterIs === filters.DEPARTMENT) {
           sortBy = [filters.DEPARTMENT, filters.FIRST_NAME, filters.LAST_NAME];
         }
 
         this.collapseAllExpandedCards();
-        this.users = this.sortDirectionIsReversed ? Database.getUsersSortedBy(sortBy).reverse() : Database.getUsersSortedBy(sortBy);
+        let reversedSort = this.sortDirectionIsReversed;
+        this.users = reversedSort ? Database.getUsersSortedBy(sortBy).reverse() : Database.getUsersSortedBy(sortBy);
       }
 
       sortByDirection(e) {
