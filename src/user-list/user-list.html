@@ -215,7 +215,7 @@
             </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
-            <template is="dom-if" if="[[setDisplayOfSortSection(users, index)]]">
+            <template is="dom-if" if="[[setDisplayOfSortSection(users, index, currentSortFilter)]]">
               <div class="category-header">
                 <div class="category-text">[[setNewGroupHeader(user, index, users)]]</div>
               </div>
@@ -332,6 +332,8 @@
       }
 
       resetExpandedCardIds(reset) {
+        console.log(reset);
+
         if (reset) {
           this.expandedCardIds = [];
         } else {
@@ -385,28 +387,22 @@
       }
 
       setDisplayOfSortSection(users, index) {
-        if (users.length) {
+        let previousUser = users[index - 1];
+        let currentUser = users[index];
+        let sortCategory = this.currentSortFilter || this.sortFilters.LAST_NAME;
 
-          let isFirstUserInSortedList = index === 0;
+        let isFirstUserInSortedList = !previousUser;
 
-          if (isFirstUserInSortedList) {
-            return true;
-          }
-
-          let previousUser = users[index - 1];
-          let currentUser = users[index];
-          let defaultSort = this.sortFilters.LAST_NAME;
-          let category = this.currentSortFilter || defaultSort;
-
-          if (previousUser && currentUser) {
-            let previousUserCategoryLetter = previousUser[category].slice(0, 1);
-            let currentUserCategoryLetter = currentUser[category].slice(0, 1);
-            let isFirstInNewSortSection = previousUserCategoryLetter !== currentUserCategoryLetter;
-
-            return isFirstInNewSortSection;
-          }
-
+        if (isFirstUserInSortedList) {
+          return true;
         }
+
+        let compareWholeWord = previousUser[sortCategory] !== currentUser[sortCategory];
+        let compareFirstLetter = previousUser[sortCategory].slice(0, 1) !== currentUser[sortCategory].slice(0, 1);
+
+        let insertNewCategoryHeader = (sortCategory === this.sortFilters.DEPARTMENT) ? compareWholeWord : compareFirstLetter;
+
+        return insertNewCategoryHeader;
       }
 
       sortFilterIs(expectedSortFilter, currentSortFilter) {
