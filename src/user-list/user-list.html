@@ -194,12 +194,12 @@
               <div class="dropdown-header">Sort Direction:</div>
               <hr>
               <div class="sort-direction-options dropdown-options">
-                <li id="alphabetical" on-click="sortByDirection">A-Z
+                <li id="sortAlphabetical" on-click="sortByDirection">A-Z
                   <template is="dom-if" if="[[!sortDirectionIsReversed]]">
                     ✓
                   </template>
                 </li>
-                <li id="reversed" on-click="sortByDirection">Z-A
+                <li id="sortReversedAlphabetical" on-click="sortByDirection">Z-A
                   <template is="dom-if" if="[[sortDirectionIsReversed]]">
                     ✓
                   </template>
@@ -322,7 +322,7 @@
       }
 
       sortByDirection(e) {
-        this.sortDirectionIsReversed = e.target.id === 'reversed';
+        this.sortDirectionIsReversed = e.target.id === 'sortReversedAlphabetical';
         this.sortUsers(this.currentSortFilter);
       }
 
