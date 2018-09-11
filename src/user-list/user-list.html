@@ -173,17 +173,17 @@
               </div>
               <hr>
               <div class="dropdown-options">
-                <li id="last" on-click="setSortedUsersBy">Last
+                <li id="last" on-click="dropdownSort">Last
                   <template is="dom-if" if="[[sortFilterIs(sortFilters.LAST_NAME, currentSortFilter)]]">
                     ✓
                   </template>
                 </li>
-                <li id="first" on-click="setSortedUsersBy">First
+                <li id="first" on-click="dropdownSort">First
                   <template is="dom-if" if="[[sortFilterIs(sortFilters.FIRST_NAME, currentSortFilter)]]">
                     ✓
                   </template>
                 </li>
-                <li id="department" on-click="setSortedUsersBy">Department
+                <li id="department" on-click="dropdownSort">Department
                   <template is="dom-if" if="[[sortFilterIs(sortFilters.DEPARTMENT, currentSortFilter)]]">
                     ✓
                   </template>
@@ -281,7 +281,7 @@
         document.addEventListener('databaseUpdated', e => {
           this.setSortedUsersBy(this.currentSortFilter);
           this.popupMessage(e.detail.message);
-          this.resetExpandedCardIds(message === 'Edit Save');
+          this.resetExpandedCardIds(e.detail.message === 'Edit Save');
         });
 
         document.addEventListener('editInProgress', e => {
@@ -295,13 +295,16 @@
         });
       }
 
-      setSortedUsersBy(sortFilter) {
-        let isDropdownSelection = Boolean(sortFilter.target);
-        let filterFirstBy = isDropdownSelection ? sortFilter.target.id : sortFilter;
-        this.currentSortFilter = filterFirstBy;
+      dropdownSort(e) {
+        this.resetExpandedCardIds(true);
+        this.setSortedUsersBy(e.target.id);
+      }
+
+      setSortedUsersBy(filterFirstBy) {
 
         let sortBy = this.getSortArray(filterFirstBy);
 
+        this.currentSortFilter = filterFirstBy;
         let reversedSort = this.sortDirectionIsReversed;
         this.users = reversedSort ? Database.getUsersSortedBy(sortBy).reverse() : Database.getUsersSortedBy(sortBy);
       }
@@ -325,15 +328,13 @@
       sortByDirection(e) {
         this.sortDirectionIsReversed = e.target.id === 'sortReversedAlphabetical';
         this.setSortedUsersBy(this.currentSortFilter);
+        this.resetExpandedCardIds(true);
       }
 
-      resetExpandedCardIds(bool) {
-
-        if (bool) {
+      resetExpandedCardIds(reset) {
+        if (reset) {
           this.expandedCardIds = [];
-        }
-
-        if (bool) {
+        } else {
           this.expandedCardIds = this.expandedCardIds;
         }
       }
