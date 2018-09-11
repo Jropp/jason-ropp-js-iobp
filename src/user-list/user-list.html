@@ -215,7 +215,7 @@
             </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
-            <template is="dom-if" if="[[isFirstWithNewLetter(users, index)]]">
+            <template is="dom-if" if="[[setDisplayOfSortSection(users, index)]]">
               <div class="category-header">
                 <div class="category-text">[[setNewGroupHeader(user, index, users)]]</div>
               </div>
@@ -375,25 +375,28 @@
         return isExpanded;
       }
 
-      isFirstWithNewLetter(users, index) {
-
+      setDisplayOfSortSection(users, index) {
         if (users.length) {
 
           let isFirstUserInSortedList = index === 0;
+
           if (isFirstUserInSortedList) {
             return true;
           }
 
           let previousUser = users[index - 1];
           let currentUser = users[index];
-          let category = this.currentSortFilter || this.sortFilters.LAST_NAME;
+          let defaultSort = this.sortFilters.LAST_NAME;
+          let category = this.currentSortFilter || defaultSort;
 
           if (previousUser && currentUser) {
             let previousUserCategoryLetter = previousUser[category].slice(0, 1);
             let currentUserCategoryLetter = currentUser[category].slice(0, 1);
+            let isFirstInNewSortSection = previousUserCategoryLetter !== currentUserCategoryLetter;
 
-            return previousUserCategoryLetter !== currentUserCategoryLetter;
+            return isFirstInNewSortSection;
           }
+
         }
       }
 
