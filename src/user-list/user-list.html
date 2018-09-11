@@ -281,7 +281,7 @@
         document.addEventListener('databaseUpdated', e => {
           this.setSortedUsersBy(this.currentSortFilter);
           this.popupMessage(e.detail.message);
-          this.updateExpandedIds(e.detail.message)
+          this.resetExpandedCardIds(message === 'Edit Save');
         });
 
         document.addEventListener('editInProgress', e => {
@@ -296,28 +296,30 @@
       }
 
       setSortedUsersBy(sortFilter) {
-        let filters = this.sortFilters;
         let isDropdownSelection = Boolean(sortFilter.target);
-        let sortBy;
-        let primaryFilterIs = isDropdownSelection ? sortFilter.target.id : sortFilter;
-        this.currentSortFilter = primaryFilterIs;
+        let filterFirstBy = isDropdownSelection ? sortFilter.target.id : sortFilter;
+        this.currentSortFilter = filterFirstBy;
 
-        if (primaryFilterIs === filters.LAST_NAME) {
-          sortBy = [filters.LAST_NAME, filters.FIRST_NAME, filters.DEPARTMENT];
-        }
-        if (primaryFilterIs === filters.FIRST_NAME) {
-          sortBy = [filters.FIRST_NAME, filters.LAST_NAME, filters.DEPARTMENT];
-        }
-        if (primaryFilterIs === filters.DEPARTMENT) {
-          sortBy = [filters.DEPARTMENT, filters.FIRST_NAME, filters.LAST_NAME];
-        }
-
-        if (isDropdownSelection) {
-          this.updateExpandedIds("Dropdown Sort");
-        }
+        let sortBy = this.getSortArray(filterFirstBy);
 
         let reversedSort = this.sortDirectionIsReversed;
         this.users = reversedSort ? Database.getUsersSortedBy(sortBy).reverse() : Database.getUsersSortedBy(sortBy);
+      }
+
+      getSortArray(filterFirstBy) {
+        let firstName = this.sortFilters.FIRST_NAME;
+        let lastName = this.sortFilters.LAST_NAME;
+        let department = this.sortFilters.DEPARTMENT;
+
+        if (filterFirstBy === lastName) {
+          return [lastName, firstName, department];
+        }
+        if (filterFirstBy === firstName) {
+          return [firstName, lastName, department];
+        }
+        if (filterFirstBy === department) {
+          return [department, firstName, lastName];
+        }
       }
 
       sortByDirection(e) {
@@ -325,12 +327,14 @@
         this.setSortedUsersBy(this.currentSortFilter);
       }
 
-      updateExpandedIds(action) {
-        let isSaveEdit = action === "Save Edit";
-        let isDropdownSort = action === "Dropdown Sort";
+      resetExpandedCardIds(bool) {
 
-        if (isSaveEdit || isDropdownSort) {
+        if (bool) {
           this.expandedCardIds = [];
+        }
+
+        if (bool) {
+          this.expandedCardIds = this.expandedCardIds;
         }
       }
 
