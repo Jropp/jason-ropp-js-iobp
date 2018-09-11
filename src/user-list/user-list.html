@@ -173,17 +173,17 @@
               </div>
               <hr>
               <div class="dropdown-options">
-                <li id="last" on-click="sortUsers">Last
+                <li id="last" on-click="setSortedUsersBy">Last
                   <template is="dom-if" if="[[sortFilterIs(sortFilters.LAST_NAME, currentSortFilter)]]">
                     ✓
                   </template>
                 </li>
-                <li id="first" on-click="sortUsers">First
+                <li id="first" on-click="setSortedUsersBy">First
                   <template is="dom-if" if="[[sortFilterIs(sortFilters.FIRST_NAME, currentSortFilter)]]">
                     ✓
                   </template>
                 </li>
-                <li id="department" on-click="sortUsers">Department
+                <li id="department" on-click="setSortedUsersBy">Department
                   <template is="dom-if" if="[[sortFilterIs(sortFilters.DEPARTMENT, currentSortFilter)]]">
                     ✓
                   </template>
@@ -279,7 +279,7 @@
         });
 
         document.addEventListener('databaseUpdated', e => {
-          this.sortUsers(this.currentSortFilter);
+          this.setSortedUsersBy(this.currentSortFilter);
           this.popupMessage(e.detail.message);
 
           if (e.detail.message === 'Edit Save') {
@@ -298,7 +298,7 @@
         });
       }
 
-      sortUsers(sortFilter) {
+      setSortedUsersBy(sortFilter) {
         let filters = this.sortFilters;
         let isDropdownSelection = Boolean(sortFilter.target);
         let sortBy;
@@ -321,7 +321,7 @@
 
       sortByDirection(e) {
         this.sortDirectionIsReversed = e.target.id === 'sortReversedAlphabetical';
-        this.sortUsers(this.currentSortFilter);
+        this.setSortedUsersBy(this.currentSortFilter);
       }
 
       addIdToExpandedList(id) {
