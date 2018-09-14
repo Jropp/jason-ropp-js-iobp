@@ -359,7 +359,7 @@
       </div>
       <footer class="card_footer">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-          <div id="detailsButton" on-click="toggleClicked" class="expand-details-clickable">
+          <div id="detailsButton" on-click="toggleDetailsVisibility" class="expand-details-clickable">
             <template is="dom-if" if="[[detailsArrowIconDown]]">
               <jha-drop-arrow-icon></jha-drop-arrow-icon>
             </template>
@@ -455,11 +455,6 @@
             type: Boolean,
             observer: 'setUserDetailsDisplay'
           },
-          // passed in from parent of user-component
-          userToDisplay: {
-            type: Object,
-            observer: 'formatIncomingUserData'
-          },
           userCardClass: {
             type: String,
             value: 'default-card collapse-new-user'
@@ -477,8 +472,19 @@
 
       ready() {
         super.ready();
-
         this.firstLoad = false;
+
+        require.ensure(
+          ['./../api/utils'],
+          (require) => {
+            window.ValidateUtil = require('./../api/utils').ValidateUtil;
+          },
+          () => { },
+          'ValidateUtil'
+        ).then(() => {
+          this.formatUserData();
+        });
+
       }
 
       initCardState() {
@@ -492,7 +498,14 @@
         }
       }
 
-      formatIncomingUserData(user) {
+      formatUserData() {
+        let user = this.user;
+
+        if (!this.user.phone.match(/\D/)) {
+          this.user = [];
+          user.phone = ValidateUtil.formatPhoneNumber(user.phone);
+        }
+
         this.user = user;
       }
 
@@ -584,42 +597,6 @@
         });
 
         return fieldsFilled;
-      }
-
-      toggleClicked() {
-        if (!window.ValidateUtil) {
-          require.ensure(
-            ['./../api/utils'],
-            (require) => {
-              window.ValidateUtil = require('./../api/utils').ValidateUtil;
-            },
-            () => { },
-            'ValidateUtil'
-          ).then(() => {
-            if (!this.user.phone.match(/\D/)) {
-              let user = this.user;
-              this.user = [];
-              user.phone = ValidateUtil.formatPhoneNumber(user.phone);
-              this.user = user;
-            }
-
-          }).then(() => {
-
-            this.toggleDetailsVisibility();
-          });
-        } else {
-
-          if (!this.user.phone.match(/\D/)) {
-            let user = this.user;
-            this.user = [];
-            user.phone = ValidateUtil.formatPhoneNumber(user.phone);
-            this.user = user;
-          }
-
-          this.toggleDetailsVisibility();
-        }
-
-
       }
 
       toggleDetailsVisibility() {
