@@ -359,7 +359,7 @@
       </div>
       <footer class="card_footer">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-          <div id="detailsButton" on-click="toggleDetailsVisibility" class="expand-details-clickable">
+          <div id="detailsButton" on-click="toggleClicked" class="expand-details-clickable">
             <template is="dom-if" if="[[detailsArrowIconDown]]">
               <jha-drop-arrow-icon></jha-drop-arrow-icon>
             </template>
@@ -373,8 +373,7 @@
   </template>
   <script type="module">
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
-    import Database from './../api/user-database.js';
-    import { ValidateUtil } from './../api/utils.js';
+    // import { ValidateUtil } from './../api/utils.js';
     class UserComponentElement extends PolymerElement {
       static get is() { return 'user-component'; }
       static get properties() {
@@ -485,7 +484,6 @@
       }
 
       formatIncomingUserData(user) {
-        user.phone = ValidateUtil.formatPhoneNumber(user.phone);
         this.user = user;
       }
 
@@ -531,8 +529,8 @@
       updateDisableSaveButton() {
         let editOpenAndNewUser = this.editOpen && this.isMode(this.modes.CREATE_NEW);
         let emptyFields = !this.areFieldsFilled();
-        let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
-        let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
+        // let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
+        // let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
 
         this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
       }
@@ -542,8 +540,8 @@
         let emailInProgress = this.user.email;
         let phoneInProgress = this.user.phone;
 
-        this.displayEmailWarning = emailInProgress && !ValidateUtil.checkEmailInput(this.user.email);
-        this.displayPhoneWarning = phoneInProgress && !ValidateUtil.checkPhoneInput(this.user.phone);
+        // this.displayEmailWarning = emailInProgress && !ValidateUtil.checkEmailInput(this.user.email);
+        // this.displayPhoneWarning = phoneInProgress && !ValidateUtil.checkPhoneInput(this.user.phone);
         this.displayOpenEditMessage = isNewUserCard && this.editOpen;
 
         let errorMessageDisplayed = this.displayEmailWarning || this.displayPhoneWarning || this.displayOpenEditMessage;
@@ -571,6 +569,29 @@
         });
 
         return fieldsFilled;
+      }
+
+      toggleClicked() {
+
+        if (!window.ValidateUtil) {
+          require.ensure(
+            ['./../api/utils'],
+            (require) => {
+              window.ValidateUtil = require('./../api/utils').ValidateUtil;
+            },
+            () => { },
+            'ValidateUtil'
+          );
+        }
+
+        if (!this.user.phone.match(/\D/)) {
+          let user = this.user;
+          this.user = [];
+          user.phone = ValidateUtil.formatPhoneNumber(user.phone);
+          this.user = user;
+        }
+
+        this.toggleDetailsVisibility();
       }
 
       toggleDetailsVisibility() {

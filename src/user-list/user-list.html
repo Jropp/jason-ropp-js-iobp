@@ -232,7 +232,7 @@
   <script type="module">
 
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
-    import Database from './../api/user-database.js';
+    import { Database } from './../api/user-database.js';
 
     class UserListElement extends PolymerElement {
       static get is() { return 'user-list'; }
@@ -300,17 +300,6 @@
       }
 
       setSortedUsersBy(filterFirstBy) {
-        require.ensure(
-          ['./../api/utils'],
-          (mod) => {
-            console.log('wow', mod);
-
-            // this.functions.ValidateUtil = require('./../api/utils').ValidateUtil;
-          },
-          () => { },
-          'ValidateUtil'
-        );
-
         let sortBy = this.getSortArray(filterFirstBy);
 
         this.currentSortFilter = filterFirstBy;

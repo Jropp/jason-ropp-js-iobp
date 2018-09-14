@@ -1,4 +1,4 @@
-class Database {
+export class Database {
   static getUsers() {
     return JSON.parse(localStorage.getItem("onboardProjectUsers")) || [];
   }
@@ -131,5 +131,3 @@ class Database {
     return idAlreadyExists ? this.createNewUserId() : id;
   }
 }
-
-module.exports = Database;
