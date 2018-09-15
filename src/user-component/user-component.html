@@ -477,7 +477,9 @@
       ready() {
         super.ready();
         this.firstLoad = false;
-        this.importClasses();
+        if (this.user.id) {
+          this.importClasses();
+        }
       }
 
       importClasses() {
@@ -507,25 +509,20 @@
 
       userUpdated(newUser) {
         if (this.user.id) {
-          if (!newUser.phone.match(/\D/)) {
-            newUser.phone = ValidateUtil.formatPhoneNumber(newUser.phone);
-          }
+          this.formatUserData(newUser);
         }
         this.user = newUser;
 
       }
 
-      formatUserData() {
-        if (!this.firstLoad && this.user) {
+      formatUserData(newUser) {
+        let user = Boolean(newUser) ? newUser : Object.assign({}, this.user);
 
-          let user = Object.assign({}, this.user);
-          this.user = [];
-
-          if (!user.phone.match(/\D/)) {
-            user.phone = ValidateUtil.formatPhoneNumber(user.phone);
-          }
-          this.user = user;
+        if (!user.phone.match(/\D/)) {
+          user.phone = ValidateUtil.formatPhoneNumber(user.phone);
         }
+
+        this.user = user;
       }
 
       save(e) {
