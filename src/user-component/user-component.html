@@ -405,6 +405,9 @@
               };
             }
           },
+          userToDisplay: {
+            type: Object
+          },
           user: {
             type: Object,
             value: () => {
@@ -416,7 +419,7 @@
                 department: '',
                 id: ''
               };
-            }
+            },
           },
           disableSave: {
             type: Boolean,
@@ -468,36 +471,27 @@
       connectedCallback() {
         super.connectedCallback();
         this.initCardState();
+
+        // document.addEventListener('databaseUpdated', (e) => {
+        //   this.formatUserData();
+        // });
       }
 
       ready() {
         super.ready();
         this.firstLoad = false;
-        this.importValidateUtil();
-        this.importDatabase();
+        this.importClasses();
       }
 
-      importValidateUtil() {
+      importClasses() {
         require.ensure(
-          ['./../api/utils'],
+          ['./../api/utils', './../api/user-database'],
           (require) => {
             window.ValidateUtil = require('./../api/utils').ValidateUtil;
-          },
-          () => { },
-          'ValidateUtil'
-        ).then(() => {
-          this.formatUserData();
-        });
-      }
-
-      importDatabase() {
-        require.ensure(
-          ['./../api/user-database'],
-          (require) => {
             window.Database = require('./../api/user-database').Database;
           },
           () => { },
-          'ValidateUtil'
+          'Classes'
         ).then(() => {
           this.formatUserData();
         });
@@ -515,14 +509,17 @@
       }
 
       formatUserData() {
-        let user = this.user;
+        if (!this.firstLoad && this.user) {
 
-        if (!this.user.phone.match(/\D/)) {
+          let user = Object.assign({}, this.user);
           this.user = [];
-          user.phone = ValidateUtil.formatPhoneNumber(user.phone);
-        }
 
-        this.user = user;
+          if (!user.phone.match(/\D/)) {
+            user.phone = ValidateUtil.formatPhoneNumber(user.phone);
+          }
+          this.user = user;
+
+        }
       }
 
       save(e) {
@@ -538,6 +535,7 @@
 
         this.resetFormState();
         this.editInProgress(false);
+        this.formatUserData();
       }
 
       delete(e) {
