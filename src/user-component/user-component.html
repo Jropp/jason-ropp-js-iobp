@@ -473,7 +473,11 @@
       ready() {
         super.ready();
         this.firstLoad = false;
+        this.importValidateUtil();
+        this.importDatabase();
+      }
 
+      importValidateUtil() {
         require.ensure(
           ['./../api/utils'],
           (require) => {
@@ -484,7 +488,19 @@
         ).then(() => {
           this.formatUserData();
         });
+      }
 
+      importDatabase() {
+        require.ensure(
+          ['./../api/user-database'],
+          (require) => {
+            window.Database = require('./../api/user-database').Database;
+          },
+          () => { },
+          'ValidateUtil'
+        ).then(() => {
+          this.formatUserData();
+        });
       }
 
       initCardState() {
@@ -522,7 +538,6 @@
 
         this.resetFormState();
         this.editInProgress(false);
-
       }
 
       delete(e) {

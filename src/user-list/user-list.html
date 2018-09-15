@@ -386,10 +386,11 @@
         let previousUser = users[index - 1];
         let currentUser = users[index];
         let sortCategory = this.currentSortFilter || this.sortFilters.LAST_NAME;
+        let isLastUser = !Boolean(users[index + 1]);
 
         let isFirstUserInSortedList = !previousUser;
 
-        if (isFirstUserInSortedList) {
+        if (isFirstUserInSortedList || isLastUser) {
           return true;
         }
 
