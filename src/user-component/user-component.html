@@ -406,7 +406,8 @@
             }
           },
           userToDisplay: {
-            type: Object
+            type: Object,
+            observer: 'userUpdated'
           },
           user: {
             type: Object,
@@ -471,10 +472,6 @@
       connectedCallback() {
         super.connectedCallback();
         this.initCardState();
-
-        // document.addEventListener('databaseUpdated', (e) => {
-        //   this.formatUserData();
-        // });
       }
 
       ready() {
@@ -508,6 +505,16 @@
         }
       }
 
+      userUpdated(newUser) {
+        if (this.user.id) {
+          if (!newUser.phone.match(/\D/)) {
+            newUser.phone = ValidateUtil.formatPhoneNumber(newUser.phone);
+          }
+        }
+        this.user = newUser;
+
+      }
+
       formatUserData() {
         if (!this.firstLoad && this.user) {
 
@@ -518,7 +525,6 @@
             user.phone = ValidateUtil.formatPhoneNumber(user.phone);
           }
           this.user = user;
-
         }
       }
 
@@ -535,7 +541,6 @@
 
         this.resetFormState();
         this.editInProgress(false);
-        this.formatUserData();
       }
 
       delete(e) {
