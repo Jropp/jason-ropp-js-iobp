@@ -477,9 +477,7 @@
       ready() {
         super.ready();
         this.firstLoad = false;
-        if (this.user.id) {
-          this.importClasses();
-        }
+        this.importClasses();
       }
 
       importClasses() {
@@ -519,8 +517,9 @@
 
       formatUserData(newUser) {
         let user = newUser ? newUser : Object.assign({}, this.user);
+        let isExistingUser = this.user.id;
 
-        if (!user.phone.match(/\D/)) {
+        if (!user.phone.match(/\D/) && isExistingUser) {
           user.phone = ValidateUtil.formatPhoneNumber(user.phone); // eslint-disable-line no-undef
         }
 
