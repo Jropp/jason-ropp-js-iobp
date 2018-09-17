@@ -6,6 +6,7 @@
   "scripts": {
     "prestart": "ux-lint --extend .lintrc.json src/*/*.html",
     "build": "webpack --env.production",
+    "analyze": "webpack --env.analyze",
     "start": "webpack-dev-server --env.development",
     "help": "npm-scripts-help",
     "lint": "ux-lint src/*/*.html"
