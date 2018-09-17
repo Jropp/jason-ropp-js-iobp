@@ -516,10 +516,10 @@
       }
 
       formatUserData(newUser) {
-        let user = Boolean(newUser) ? newUser : Object.assign({}, this.user);
+        let user = newUser ? newUser : Object.assign({}, this.user);
 
         if (!user.phone.match(/\D/)) {
-          user.phone = ValidateUtil.formatPhoneNumber(user.phone);
+          user.phone = ValidateUtil.formatPhoneNumber(user.phone); // eslint-disable-line no-undef
         }
 
         this.user = user;
@@ -531,9 +531,9 @@
         let user = Object.assign({}, this.user);
 
         if (this.isMode(this.modes.CREATE_NEW)) {
-          Database.saveUser(user);
+          Database.saveUser(user); // eslint-disable-line no-undef
         } else {
-          Database.editUser(user);
+          Database.editUser(user); // eslint-disable-line no-undef
         }
 
         this.resetFormState();
@@ -542,7 +542,7 @@
 
       delete(e) {
         e.preventDefault();
-        Database.deleteUser(this.user);
+        Database.deleteUser(this.user); // eslint-disable-line no-undef
         this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
         this.toggleEditableInputs();
@@ -571,7 +571,9 @@
         if (!this.firstLoad) {
           let editOpenAndNewUser = this.editOpen && this.isMode(this.modes.CREATE_NEW);
           let emptyFields = !this.areFieldsFilled();
+          // eslint-disable-next-line no-undef
           let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
+          // eslint-disable-next-line no-undef
           let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
 
           this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
@@ -583,7 +585,9 @@
         let emailInProgress = this.user.email;
         let phoneInProgress = this.user.phone;
 
+        // eslint-disable-next-line no-undef
         this.displayEmailWarning = emailInProgress && !ValidateUtil.checkEmailInput(this.user.email);
+        // eslint-disable-next-line no-undef
         this.displayPhoneWarning = phoneInProgress && !ValidateUtil.checkPhoneInput(this.user.phone);
         this.displayOpenEditMessage = isNewUserCard && this.editOpen;
 
