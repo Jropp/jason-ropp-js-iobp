@@ -1,4 +1,4 @@
-class ValidateUtil {
+export class ValidateUtil {
   static formatPhoneNumber(phoneNumber) {
     let domesticPhoneLength = 10;
     let isInternationalNumber = phoneNumber.length > domesticPhoneLength;
@@ -62,4 +62,4 @@ class ValidateUtil {
   }
 }
 
-module.exports = ValidateUtil;
+// module.exports = ValidateUtil;

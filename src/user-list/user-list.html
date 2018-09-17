@@ -145,7 +145,7 @@
         border-radius: 3px;
         box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px, rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
-      
+
       .category-header {
         position: relative;
         margin: 50px 0px 40px 0px;
@@ -232,7 +232,7 @@
   <script type="module">
 
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
-    import Database from './../api/user-database.js';
+    import { Database } from './../api/user-database.js';
 
     class UserListElement extends PolymerElement {
       static get is() { return 'user-list'; }
@@ -272,7 +272,7 @@
       }
       connectedCallback() {
         super.connectedCallback();
-    
+
         document.addEventListener('cancel', () => {
           this.toggleMode();
         });
@@ -300,7 +300,6 @@
       }
 
       setSortedUsersBy(filterFirstBy) {
-
         let sortBy = this.getSortArray(filterFirstBy);
 
         this.currentSortFilter = filterFirstBy;
@@ -387,10 +386,11 @@
         let previousUser = users[index - 1];
         let currentUser = users[index];
         let sortCategory = this.currentSortFilter || this.sortFilters.LAST_NAME;
+        let isLastUser = !users[index + 1];
 
         let isFirstUserInSortedList = !previousUser;
 
-        if (isFirstUserInSortedList) {
+        if (isFirstUserInSortedList || isLastUser) {
           return true;
         }
 

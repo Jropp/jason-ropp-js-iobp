@@ -373,8 +373,7 @@
   </template>
   <script type="module">
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
-    import Database from './../api/user-database.js';
-    import ValidateUtil from './../api/utils.js';
+    // import { ValidateUtil } from './../api/utils.js';
     class UserComponentElement extends PolymerElement {
       static get is() { return 'user-component'; }
       static get properties() {
@@ -406,6 +405,10 @@
               };
             }
           },
+          userToDisplay: {
+            type: Object,
+            observer: 'userUpdated'
+          },
           user: {
             type: Object,
             value: () => {
@@ -417,7 +420,7 @@
                 department: '',
                 id: ''
               };
-            }
+            },
           },
           disableSave: {
             type: Boolean,
@@ -456,21 +459,43 @@
             type: Boolean,
             observer: 'setUserDetailsDisplay'
           },
-          // passed in from parent of user-component
-          userToDisplay: {
-            type: Object,
-            observer: 'formatIncomingUserData'
-          },
           userCardClass: {
             type: String,
             value: 'default-card collapse-new-user'
+          },
+          firstLoad: {
+            type: Boolean,
+            value: true
           }
         };
       }
-
       connectedCallback() {
         super.connectedCallback();
         this.initCardState();
+      }
+
+      ready() {
+        super.ready();
+        this.firstLoad = false;
+        if (this.user.id) {
+          this.importClasses();
+        }
+      }
+
+      importClasses() {
+        require.ensure(
+          ['./../api/utils', './../api/user-database'],
+          (require) => {
+            window.ValidateUtil = require('./../api/utils').ValidateUtil;
+            window.Database = require('./../api/user-database').Database;
+          },
+          (error) => {
+            return error;
+          },
+          'Classes'
+        ).then(() => {
+          this.formatUserData();
+        });
       }
 
       initCardState() {
@@ -484,8 +509,21 @@
         }
       }
 
-      formatIncomingUserData(user) {
-        user.phone = ValidateUtil.formatPhoneNumber(user.phone);
+      userUpdated(newUser) {
+        if (this.user.id) {
+          this.formatUserData(newUser);
+        }
+        this.user = newUser;
+
+      }
+
+      formatUserData(newUser) {
+        let user = newUser ? newUser : Object.assign({}, this.user);
+
+        if (!user.phone.match(/\D/)) {
+          user.phone = ValidateUtil.formatPhoneNumber(user.phone); // eslint-disable-line no-undef
+        }
+
         this.user = user;
       }
 
@@ -495,19 +533,19 @@
         let user = Object.assign({}, this.user);
 
         if (this.isMode(this.modes.CREATE_NEW)) {
-          Database.saveUser(user);
+          Database.saveUser(user); // eslint-disable-line no-undef
         } else {
-          Database.editUser(user);
+          this.toggleDetailsVisibility();
+          Database.editUser(user); // eslint-disable-line no-undef
         }
 
         this.resetFormState();
         this.editInProgress(false);
-
       }
 
       delete(e) {
         e.preventDefault();
-        Database.deleteUser(this.user);
+        Database.deleteUser(this.user); // eslint-disable-line no-undef
         this.editInProgress(false);
         this.mode = this.modes.DISPLAY;
         this.toggleEditableInputs();
@@ -519,22 +557,30 @@
       }
 
       onInputChanged() {
-        this.updateDisableSaveButton();
-        this.updateWarningMessageDisplay();
+        if (!this.firstLoad) {
+          this.updateDisableSaveButton();
+          this.updateWarningMessageDisplay();
+        }
       }
 
       onEditOpenChanged() {
-        this.updateDisableSaveButton();
-        this.updateWarningMessageDisplay();
+        if (!this.firstLoad) {
+          this.updateDisableSaveButton();
+          this.updateWarningMessageDisplay();
+        }
       }
 
       updateDisableSaveButton() {
-        let editOpenAndNewUser = this.editOpen && this.isMode(this.modes.CREATE_NEW);
-        let emptyFields = !this.areFieldsFilled();
-        let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
-        let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
+        if (!this.firstLoad) {
+          let editOpenAndNewUser = this.editOpen && this.isMode(this.modes.CREATE_NEW);
+          let emptyFields = !this.areFieldsFilled();
+          // eslint-disable-next-line no-undef
+          let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
+          // eslint-disable-next-line no-undef
+          let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
 
-        this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
+          this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
+        }
       }
 
       updateWarningMessageDisplay() {
@@ -542,7 +588,9 @@
         let emailInProgress = this.user.email;
         let phoneInProgress = this.user.phone;
 
+        // eslint-disable-next-line no-undef
         this.displayEmailWarning = emailInProgress && !ValidateUtil.checkEmailInput(this.user.email);
+        // eslint-disable-next-line no-undef
         this.displayPhoneWarning = phoneInProgress && !ValidateUtil.checkPhoneInput(this.user.phone);
         this.displayOpenEditMessage = isNewUserCard && this.editOpen;
 
