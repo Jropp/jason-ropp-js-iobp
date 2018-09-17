@@ -7,6 +7,7 @@ const modeConfig = env => require(`./build-tools/webpack.${env}.js`)(env);
 
 module.exports = env => {
   env = env || {};
+  let mode = Object.keys(env)[0];
 
   return webpackMerge(
     {
@@ -52,11 +53,6 @@ module.exports = env => {
           }
         ]
       },
-      devServer: {
-        contentBase: path.join(__dirname, "dist"),
-        compress: true,
-        port: 1820
-      },
       plugins: [
         new webpack.NormalModuleReplacementPlugin(
           /\/node_modules\/@banno\/polymer\/polymer\.html$/,
@@ -69,7 +65,7 @@ module.exports = env => {
           template: path.resolve(__dirname, "./src/index.ejs"),
           alwaysWriteToDisk: true,
           inject: false,
-          production: Boolean(env === "release"),
+          production: Boolean(env.release),
           filename: "index.html"
         }),
         // This plugin will copy files over for us without transforming them.
@@ -86,7 +82,7 @@ module.exports = env => {
         ])
       ]
     },
-    modeConfig(env)
+    modeConfig(mode)
   );
 };
 

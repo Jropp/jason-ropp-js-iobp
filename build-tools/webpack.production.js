@@ -1,10 +1,8 @@
 const webpack = require("webpack");
+const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 module.exports = () => {
-  console.log("producing");
   return {
-    output: {
-      filename: "[chunkhash].js"
-    }
+    plugins: [new MinifyPlugin()]
   };
 };
