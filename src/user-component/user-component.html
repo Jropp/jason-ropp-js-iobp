@@ -533,6 +533,7 @@
         if (this.isMode(this.modes.CREATE_NEW)) {
           Database.saveUser(user); // eslint-disable-line no-undef
         } else {
+          this.toggleDetailsVisibility();
           Database.editUser(user); // eslint-disable-line no-undef
         }
 
