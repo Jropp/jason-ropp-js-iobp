@@ -489,7 +489,9 @@
             window.ValidateUtil = require('./../api/utils').ValidateUtil;
             window.Database = require('./../api/user-database').Database;
           },
-          () => { },
+          (error) => {
+            return error;
+          },
           'Classes'
         ).then(() => {
           this.formatUserData();
