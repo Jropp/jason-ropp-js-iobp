@@ -40,6 +40,7 @@
     "style-loader": "^0.22.1",
     "ux-lint": "^1.8.0",
     "webpack": "^3.0.0",
+    "webpack-bundle-analyzer": "^3.0.2",
     "webpack-dev-server": "^2.5.0",
     "webpack-merge": "^4.1.4"
   },
