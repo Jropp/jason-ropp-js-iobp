@@ -1,7 +1,4 @@
 export class ValidateUtil {
-  static helloKitty() {
-    return "kitty";
-  }
   static formatPhoneNumber(phoneNumber) {
     let domesticPhoneLength = 10;
     let isInternationalNumber = phoneNumber.length > domesticPhoneLength;
