@@ -65,7 +65,7 @@ module.exports = env => {
           template: path.resolve(__dirname, "./src/index.ejs"),
           alwaysWriteToDisk: true,
           inject: false,
-          production: Boolean(env.release),
+          production: Boolean(env.production),
           filename: "index.html"
         }),
         // This plugin will copy files over for us without transforming them.
