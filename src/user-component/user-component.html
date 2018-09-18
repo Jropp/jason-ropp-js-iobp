@@ -25,7 +25,6 @@
         text-align: center;
         margin: 1em auto;
         padding-bottom: 30px;
-        max-height: 750px;
         transition: max-height 0.5s ease-out;
       }
 
@@ -35,7 +34,7 @@
         width: 100%;
         height: 90px;
         margin: 0;
-        transition: background-color .2s;
+        transition: background-color .4s;
       }
 
       .create-user-button:hover>jha-add-person-icon {
@@ -118,15 +117,14 @@
         padding: 0px;
         border-bottom-left-radius: 0px;
         border-bottom-right-radius: 0px;
+        transition: background-color .6s;
       }
 
       .expand-new-user>.create-user-button>jha-add-person-icon {
         fill: white;
-        transition: fill .5s;
       }
 
       .expand-new-user>.card_content {
-        height: auto;
         animation: fade-in .7s;
       }
 
@@ -169,7 +167,6 @@
       }
 
       .collapse-existing-user>.card_header>.user-id {
-        opacity: 0;
         visibility: hidden;
       }
 
@@ -185,8 +182,7 @@
       }
 
       .expand-existing-user>.card_header>.user-id {
-        animation: fade-in .2s;
-        visibility: visible;
+        animation: fade-in .6s;
       }
 
       .expand-existing-user>.card_footer>.expand-details-clickable {
@@ -202,13 +198,12 @@
         padding: 10px 0px 30px 0px;
       }
 
-      .immediately-collapse-existing-user>.card_content>form {
+      .immediately-collapse-existing-user>.card_content {
         height: 0px;
         visibility: hidden;
       }
 
       .immediately-collapse-existing-user>.card_header>.user-id {
-        opacity: 0;
         visibility: hidden;
       }
 
@@ -217,8 +212,7 @@
         padding: 10px 0px 30px 0px;
       }
 
-      .immediately-expand-existing-user>.card_content>form {
-        height: auto;
+      .immediately-expand-existing-user>.card_content {
         visibility: visible;
       }
 
@@ -246,12 +240,10 @@
 
       .expand-details-clickable:hover>jha-drop-arrow-icon {
         fill: white;
-        transition: fill .3s;
       }
 
       .expand-details-clickable>jha-up-arrow-icon {
         fill: white;
-        transition: fill .3s;
       }
 
       .expand-existing-user>jha-drop-arrow-icon {
@@ -464,7 +456,7 @@
           }
         };
       }
-      
+
       connectedCallback() {
         super.connectedCallback();
         this.initCardState();
