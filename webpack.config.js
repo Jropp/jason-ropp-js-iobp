@@ -1,6 +1,7 @@
 const webpack = require("webpack");
 const webpackMerge = require("webpack-merge");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const path = require("path");
 const modeConfig = env => require(`./build-tools/webpack.${env}.js`)(env);
@@ -79,7 +80,8 @@ module.exports = env => {
             ),
             to: "./webcomponentsjs/[name].[ext]"
           }
-        ])
+        ]),
+        new CleanWebpackPlugin(path.resolve("dist"))
       ]
     },
     modeConfig(mode)
