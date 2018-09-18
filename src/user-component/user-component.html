@@ -317,7 +317,7 @@
           <br>
 
           <template is="dom-if" if="[[displayEmailWarning]]">
-            <span class="warning">[[emailFormatMessage]]</span>
+            <span class="warning">[[messages.EMAIL_FORMAT]]</span>
           </template>
 
           <label for="phone">
@@ -328,7 +328,7 @@
           <br>
 
           <template is="dom-if" if="[[displayPhoneWarning]]">
-            <span class="warning">[[phoneFormatMessage]]</span>
+            <span class="warning">[[messages.PHONE_FORMAT]]</span>
           </template>
 
           <label for="department">
@@ -347,7 +347,7 @@
               </template>
               <br>
               <template is="dom-if" if="[[displayOpenEditMessage]]">
-                <span class="warning">[[openEditMessage]]</span>
+                <span class="warning">[[messages.OPEN_EDIT]]</span>
               </template>
 
             </template>
@@ -440,17 +440,15 @@
           displayEmailWarning: {
             type: Boolean
           },
-          openEditMessage: {
-            type: String,
-            value: 'You are safe to save this once the other open edits are closed.'
-          },
-          phoneFormatMessage: {
-            type: String,
-            value: 'Would you mind formatting your number as (xxx) xxx-xxxx?'
-          },
-          emailFormatMessage: {
-            type: String,
-            value: 'Your email seems a little off. Would you mind formatting it as xxxx@xxxxx.xxx?'
+          messages: {
+            type: Object,
+            value: () => {
+              return {
+                OPEN_EDIT: 'You are safe to save this once the other open edits are closed.',
+                PHONE_FORMAT: 'Would you mind formatting your number as (xxx) xxx-xxxx?',
+                EMAIL_FORMAT: 'Your email seems a little off. Would you mind formatting it as xxxx@xxxxx.xxx?'
+              }
+            }
           },
           isExpanded: {
             type: Boolean,
