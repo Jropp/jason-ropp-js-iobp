@@ -636,11 +636,7 @@
       }
 
       setDetailsArrowDirection() {
-        let animatedCollapse = this.classes.ANIMATE_COLLAPSE_USER;
-        let immediateCollapse = this.classes.IMMEDIATELY_COLLAPSE_USER;
-
-        let arrowIsDown = this.isClass(animatedCollapse) || this.isClass(immediateCollapse);
-
+        let arrowIsDown = this.userCardClass.match(/collapse/g);
         return arrowIsDown;
       }
 
