@@ -215,7 +215,7 @@
             </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
-            <template is="dom-if" if="[[setDisplayOfSortSection(users, index, currentSortCategory)]]">
+            <template is="dom-if" if="[[setDisplayOfSortHeader(users, index, currentSortCategory)]]">
               <div class="category-header">
                 <div class="category-text">[[setNewGroupHeader(user, index, users)]]</div>
               </div>
@@ -382,26 +382,41 @@
         return isExpanded;
       }
 
-      setDisplayOfSortSection(users, index) {
+      setDisplayOfSortHeader(users, index) {
         let previousUser = users[index - 1];
         let currentUser = users[index];
         let sortCategory = this.currentSortCategory || this.sortCategories.LAST_NAME;
-        let isLastUser = !users[index + 1];
 
-        let isFirstUserInSortedList = !previousUser;
         let deletingLastUser = !previousUser || !currentUser;
 
-        if (isFirstUserInSortedList || deletingLastUser) {
+        if (!previousUser || deletingLastUser) {
           return true;
+        } else {
+
+          let insertNewCategoryHeader = this.compareCatLetterWithPreviousUser(previousUser, currentUser, sortCategory);
+
+          return insertNewCategoryHeader;
         }
+      }
 
-        let compareWholeWord = previousUser[sortCategory] !== currentUser[sortCategory];
-        let compareFirstLetter = previousUser[sortCategory].slice(0, 1) !== currentUser[sortCategory].slice(0, 1);
+      compareCatLetterWithPreviousUser(previous, current, sortCategory) {
+        let compareWholeWord = prevoius[sortCategory] !== current[sortCategory];
+        let compareFirstLetter = this.firstLetterOf(previous[sortCategory]) !== this.firstLetterOf(current[sortCategory]);
 
-        let categoryIsDepartment = sortCategory === this.sortCategories.DEPARTMENT;
-        let insertNewCategoryHeader = categoryIsDepartment ? compareWholeWord : compareFirstLetter;
+        let insertNewCategoryHeader = this.categoryIsFirstOrLastName() ? compareWholeWord : compareFirstLetter;
 
         return insertNewCategoryHeader;
+      }
+
+      categoryIsFirstOrLastName() {
+        let isFirstName = this.sortIs(this.sortCategories.FIRST_NAME, this.currentSortCategory);
+        let isLastName = this.sortIs(this.sortCategories.LAST_NAME, this.currentSortCategory);
+
+        return isFirstName || isLastName;
+      }
+
+      firstLetterOf(wordToSlice) {
+        return wordToSlice.slice(0, 1);
       }
 
       sortIs(expectedSortCategory, currentSortCategory) {
@@ -410,12 +425,8 @@
 
       setNewGroupHeader(user, index, users) {
         let category = this.currentSortCategory || this.sortCategories.LAST_NAME;
-        let isFirstName = this.sortIs(this.sortCategories.FIRST_NAME, this.currentSortCategory);
-        let isLastName = this.sortIs(this.sortCategories.LAST_NAME, this.currentSortCategory);
 
-        let firstLetterOfCategory = user[category].slice(0, 1);
-
-        return isFirstName || isLastName ? `${firstLetterOfCategory}` : `${user[category]}`;
+        return this.sortCategoryIsFirstOrLast() ? `${this.firstLetterOf(user[category])}` : `${user[category]}`;
       }
     }
 
