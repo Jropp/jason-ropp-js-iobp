@@ -434,7 +434,7 @@
                 OPEN_EDIT: 'You are safe to save this once the other open edits are closed.',
                 PHONE_FORMAT: 'Would you mind formatting your number as (xxx) xxx-xxxx?',
                 EMAIL_FORMAT: 'Your email seems a little off. Would you mind formatting it as xxxx@xxxxx.xxx?'
-              }
+              };
             }
           },
           disableSave: {
@@ -616,7 +616,7 @@
 
       setUserDetailsDisplay(event) {
         let eventIsUserListUpdate = (typeof event === 'boolean');
-        let animationStyle = eventIsUserListUpdate ? "IMMEDIATELY" : "ANIMATE"
+        let animationStyle = eventIsUserListUpdate ? 'IMMEDIATELY' : 'ANIMATE';
 
         let expand = this.classes[`${animationStyle}_EXPAND_USER`];
         let collapse = this.classes[`${animationStyle}_COLLAPSE_USER`];
