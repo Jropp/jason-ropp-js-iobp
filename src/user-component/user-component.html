@@ -460,7 +460,7 @@
             type: String,
             value: 'default-card collapse-new-user'
           },
-          firstLoad: {
+          isFirstLoad: {
             type: Boolean,
             value: true
           }
@@ -473,7 +473,7 @@
 
       ready() {
         super.ready();
-        this.firstLoad = false;
+        this.isFirstLoad = false;
         this.importClasses();
       }
 
@@ -505,9 +505,7 @@
       }
 
       userUpdated(newUser) {
-        if (this.user.id) {
-          this.formatUserData(newUser);
-        }
+        this.formatUserData(newUser);
         this.user = newUser;
 
       }
@@ -547,21 +545,21 @@
       }
 
       onInputChanged() {
-        if (!this.firstLoad) {
+        if (!this.isFirstLoad) {
           this.updateDisableSaveButton();
           this.updateWarningMessageDisplay();
         }
       }
 
       onEditOpenChanged() {
-        if (!this.firstLoad) {
+        if (!this.isFirstLoad) {
           this.updateDisableSaveButton();
           this.updateWarningMessageDisplay();
         }
       }
 
       updateDisableSaveButton() {
-        if (!this.firstLoad) {
+        if (!this.isFirstLoad) {
           let editOpenAndNewUser = this.editOpen && this.isMode(this.modes.CREATE_NEW);
           let emptyFields = !this.areFieldsFilled();
           // eslint-disable-next-line no-undef
