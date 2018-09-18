@@ -665,10 +665,10 @@
       }
 
       setDetailsArrowDirection() {
-        let animatedCollapse = this.isClass(this.classes.ANIMATE_COLLAPSE_USER);
-        let immediateCollapse = this.isClass(this.classes.IMMEDIATELY_COLLAPSE_USER);
+        let animatedCollapse = this.classes.ANIMATE_COLLAPSE_USER;
+        let immediateCollapse = this.classes.IMMEDIATELY_COLLAPSE_USER;
 
-        this.detailsArrowIconDown = animatedCollapse || immediateCollapse;
+        this.detailsArrowIconDown = this.isClass(animatedCollapse) || this.isClass(immediateCollapse);
       }
 
       setEditUserHeader() {
@@ -685,7 +685,7 @@
 
       toggleEditDisplayMode(isButtonClick) {
         if (isButtonClick) {
-          isButtonClick.preventDefault()
+          isButtonClick.preventDefault();
         }
 
         this.mode = this.isMode(this.modes.EDIT_USER) ? this.modes.DISPLAY : this.modes.EDIT_USER;
