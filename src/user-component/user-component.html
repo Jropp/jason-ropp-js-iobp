@@ -360,10 +360,10 @@
       <footer class="card_footer">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <div id="detailsButton" on-click="toggleDetailsVisibility" class="expand-details-clickable">
-            <template is="dom-if" if="[[detailsArrowIconDown]]">
+            <template is="dom-if" if="[[setDetailsArrowDirection(isExpanded, userCardClass)]]">
               <jha-drop-arrow-icon></jha-drop-arrow-icon>
             </template>
-            <template is="dom-if" if="[[!detailsArrowIconDown]]">
+            <template is="dom-if" if="[[!setDetailsArrowDirection(isExpanded, userCardClass)]]">
               <jha-up-arrow-icon></jha-up-arrow-icon>
             </template>
           </div>
@@ -438,9 +438,6 @@
             type: Boolean
           },
           displayEmailWarning: {
-            type: Boolean
-          },
-          detailsArrowIconDown: {
             type: Boolean
           },
           openEditMessage: {
@@ -615,60 +612,36 @@
       }
 
       toggleDetailsVisibility() {
+        this.isExpanded = !this.isExpanded;
         this.setUserDetailsDisplay();
         this.saveCardState();
       }
 
       saveCardState() {
-        let immediatelyExpand = this.classes.IMMEDIATELY_EXPAND_USER;
-        let animateExpand = this.classes.ANIMATE_EXPAND_USER;
-
-        let userCardIsExpanded = this.isClass(immediatelyExpand) || this.isClass(animateExpand);
-
         this.dispatchEvent(new CustomEvent('cardDetailDisplayChanged', {
           bubbles: true,
           composed: true,
-          detail: { id: this.user.id, expanded: userCardIsExpanded }
+          detail: { id: this.user.id, expanded: this.isExpanded }
         }));
       }
 
       setUserDetailsDisplay(event) {
-        let eventIsListUpdate = (typeof event === 'boolean');
+        let eventIsUserListUpdate = (typeof event === 'boolean');
+        let animationStyle = eventIsUserListUpdate ? "IMMEDIATELY" : "ANIMATE"
 
-        if (eventIsListUpdate) {
-          this.setDisplayOnListUpdate();
-        } else {
-          this.setDisplayOnButtonClick();
-        }
-      }
+        let expand = this.classes[`${animationStyle}_EXPAND_USER`];
+        let collapse = this.classes[`${animationStyle}_COLLAPSE_USER`];
 
-      setDisplayOnListUpdate() {
-        let expandImmediately = this.classes.IMMEDIATELY_EXPAND_USER;
-        let collapseImmediately = this.classes.IMMEDIATELY_COLLAPSE_USER;
-
-        let wasExpandedBeforeUpdate = this.isExpanded;
-
-        this.userCardClass = wasExpandedBeforeUpdate ? expandImmediately : collapseImmediately;
-        this.setDetailsArrowDirection();
-      }
-
-      setDisplayOnButtonClick() {
-        let immediateCollapse = this.classes.IMMEDIATELY_COLLAPSE_USER;
-        let animatedCollapse = this.classes.ANIMATE_COLLAPSE_USER;
-        let animatedExpand = this.classes.ANIMATE_EXPAND_USER;
-
-        let isUserCurrentlyCollapsed = (this.isClass(animatedCollapse) || this.isClass(immediateCollapse));
-
-        this.userCardClass = isUserCurrentlyCollapsed ? animatedExpand : animatedCollapse;
-
-        this.setDetailsArrowDirection();
+        this.userCardClass = this.isExpanded ? expand : collapse;
       }
 
       setDetailsArrowDirection() {
         let animatedCollapse = this.classes.ANIMATE_COLLAPSE_USER;
         let immediateCollapse = this.classes.IMMEDIATELY_COLLAPSE_USER;
 
-        this.detailsArrowIconDown = this.isClass(animatedCollapse) || this.isClass(immediateCollapse);
+        let arrowIsDown = this.isClass(animatedCollapse) || this.isClass(immediateCollapse);
+
+        return arrowIsDown;
       }
 
       setEditUserHeader() {
