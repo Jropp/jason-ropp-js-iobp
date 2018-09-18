@@ -352,7 +352,7 @@
 
             </template>
             <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-              <button on-click="editButtonClicked" type="submit" disabled="[[editOpen]]">Edit</button>
+              <button on-click="toggleEditDisplayMode" type="submit" disabled="[[editOpen]]">Edit</button>
             </template>
           </div>
         </form>
@@ -671,13 +671,6 @@
         this.detailsArrowIconDown = animatedCollapse || immediateCollapse;
       }
 
-      editButtonClicked(e) {
-        e.preventDefault();
-
-        this.toggleEditDisplayMode();
-        this.toggleEditableInputs();
-      }
-
       setEditUserHeader() {
         return `Edit: ${this.user.last}, ${this.user.first}`;
       }
@@ -690,8 +683,13 @@
         }));
       }
 
-      toggleEditDisplayMode(e) {
+      toggleEditDisplayMode(isButtonClick) {
+        if (isButtonClick) {
+          isButtonClick.preventDefault()
+        }
+
         this.mode = this.isMode(this.modes.EDIT_USER) ? this.modes.DISPLAY : this.modes.EDIT_USER;
+
         this.editInProgress(this.isMode(this.modes.EDIT_USER));
         this.toggleEditableInputs();
       }
