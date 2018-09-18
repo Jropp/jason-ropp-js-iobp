@@ -471,6 +471,17 @@
         this.initCardState();
       }
 
+      initCardState() {
+        let isExistingUser = Boolean(this.user.id);
+
+        if (isExistingUser) {
+          this.mode = this.modes.DISPLAY;
+          this.toggleEditableInputs();
+        } else {
+          this.mode = this.modes.CREATE_NEW;
+        }
+      }
+
       ready() {
         super.ready();
         this.isFirstLoad = false;
@@ -491,17 +502,6 @@
         ).then(() => {
           this.formatUserData();
         });
-      }
-
-      initCardState() {
-        let isExistingUser = Boolean(this.user.id);
-
-        if (isExistingUser) {
-          this.mode = this.modes.DISPLAY;
-          this.toggleEditableInputs();
-        } else {
-          this.mode = this.modes.CREATE_NEW;
-        }
       }
 
       userUpdated(newUser) {
