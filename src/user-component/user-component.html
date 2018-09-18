@@ -539,16 +539,14 @@
         }
 
         this.resetFormState();
-        this.editInProgress(false);
       }
 
       delete(e) {
         e.preventDefault();
+
         Database.deleteUser(this.user); // eslint-disable-line no-undef
-        this.editInProgress(false);
-        this.mode = this.modes.DISPLAY;
-        this.toggleEditableInputs();
-        this.clearFormatWarningMessages();
+        this.toggleEditDisplayMode();
+        this.clearInputFormatWarnings();
       }
 
       cancel() {
@@ -600,7 +598,7 @@
         }
       }
 
-      clearFormatWarningMessages() {
+      clearInputFormatWarnings() {
         this.displayEmailWarning = false;
         this.displayPhoneWarning = false;
         this.resizeCardForWarningMessages(false);
@@ -680,8 +678,7 @@
       editButtonClicked(e) {
         e.preventDefault();
 
-        this.editInProgress(true);
-        this.mode = this.modes.EDIT_USER;
+        this.toggleEditDisplayMode();
         this.toggleEditableInputs();
       }
 
@@ -699,6 +696,8 @@
 
       toggleEditDisplayMode(e) {
         this.mode = this.isMode(this.modes.EDIT_USER) ? this.modes.DISPLAY : this.modes.EDIT_USER;
+        this.editInProgress(this.isMode(this.modes.EDIT_USER));
+        this.toggleEditableInputs();
       }
 
       toggleEditableInputs() {
@@ -709,17 +708,13 @@
       }
 
       resetFormState() {
-        this.editInProgress(false);
-
         if (this.isMode(this.modes.EDIT_USER)) {
           this.toggleEditDisplayMode();
-          this.toggleEditableInputs();
         } else {
           this.toggleNewUserFormDisplay();
-          this.resetNewUserForm();
         }
 
-        this.clearFormatWarningMessages();
+        this.clearInputFormatWarnings();
       }
 
       toggleNewUserFormDisplay() {
@@ -735,7 +730,7 @@
 
       resetNewUserForm() {
         this.shadowRoot.querySelector('form').reset();
-        this.clearFormatWarningMessages();
+        this.clearInputFormatWarnings();
       }
 
       resizeCardForWarningMessages(expandForMessages) {
