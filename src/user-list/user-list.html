@@ -174,17 +174,17 @@
               <hr>
               <div class="dropdown-options">
                 <li id="last" on-click="dropdownSort">Last
-                  <template is="dom-if" if="[[sortCategoryIs(sortCategories.LAST_NAME, currentSortCategory)]]">
+                  <template is="dom-if" if="[[sortIs(sortCategories.LAST_NAME, currentSortCategory)]]">
                     ✓
                   </template>
                 </li>
                 <li id="first" on-click="dropdownSort">First
-                  <template is="dom-if" if="[[sortCategoryIs(sortCategories.FIRST_NAME, currentSortCategory)]]">
+                  <template is="dom-if" if="[[sortIs(sortCategories.FIRST_NAME, currentSortCategory)]]">
                     ✓
                   </template>
                 </li>
                 <li id="department" on-click="dropdownSort">Department
-                  <template is="dom-if" if="[[sortCategoryIs(sortCategories.DEPARTMENT, currentSortCategory)]]">
+                  <template is="dom-if" if="[[sortIs(sortCategories.DEPARTMENT, currentSortCategory)]]">
                     ✓
                   </template>
                 </li>
@@ -404,23 +404,18 @@
         return insertNewCategoryHeader;
       }
 
-      sortCategoryIs(expectedSortCategory) {
+      sortIs(expectedSortCategory, currentSortCategory) {
+        return expectedSortCategory === currentSortCategory
       }
 
       setNewGroupHeader(user, index, users) {
+        let category = this.currentSortCategory || this.sortCategories.LAST_NAME;
+        let isFirstName = this.sortIs(this.sortCategories.FIRST_NAME, this.currentSortCategory);
+        let isLastName = this.sortIs(this.sortCategories.LAST_NAME, this.currentSortCategory);
 
-        let category = this.currentSortFilter || this.sortFilters.LAST_NAME;
-
-        let categoryIsDepartment = category === this.sortFilters.DEPARTMENT;
         let firstLetterOfCategory = user[category].slice(0, 1);
 
-        if (categoryIsDepartment) {
-          return `${user.department}`;
-        }
-
-        if (!categoryIsDepartment) {
-          return `${firstLetterOfCategory}`;
-        }
+        return isFirstName || isLastName ? `${firstLetterOfCategory}` : `${user[category]}`;
       }
     }
 
