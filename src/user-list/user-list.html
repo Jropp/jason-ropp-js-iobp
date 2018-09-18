@@ -383,29 +383,20 @@
       }
 
       setDisplayOfSortHeader(users, index) {
-        let previousUser = users[index - 1];
-        let currentUser = users[index];
-        let sortCategory = this.currentSortCategory || this.sortCategories.LAST_NAME;
+        let isFirstUser = index === 0;
+        let deletedLastUser = index === users.length;
 
-        let deletingLastUser = !previousUser || !currentUser;
-
-        if (!previousUser || deletingLastUser) {
+        if (isFirstUser || deletedLastUser) {
           return true;
-        } else {
-
-          let insertNewCategoryHeader = this.compareCatLetterWithPreviousUser(previousUser, currentUser, sortCategory);
-
-          return insertNewCategoryHeader;
         }
-      }
 
-      compareCatLetterWithPreviousUser(previous, current, sortCategory) {
-        let compareWholeWord = prevoius[sortCategory] !== current[sortCategory];
-        let compareFirstLetter = this.firstLetterOf(previous[sortCategory]) !== this.firstLetterOf(current[sortCategory]);
+        let prevUserCat = users[index - 1][this.currentSortCategory];
+        let curUserCat = users[index][this.currentSortCategory];
 
-        let insertNewCategoryHeader = this.categoryIsFirstOrLastName() ? compareWholeWord : compareFirstLetter;
+        let firstLetterDifferent = this.firstLetterOf(prevUserCat) !== this.firstLetterOf(curUserCat);
+        let wholeWordDifferent = prevUserCat !== curUserCat;
 
-        return insertNewCategoryHeader;
+        return this.categoryIsFirstOrLastName() ? firstLetterDifferent : wholeWordDifferent;
       }
 
       categoryIsFirstOrLastName() {
@@ -420,13 +411,13 @@
       }
 
       sortIs(expectedSortCategory, currentSortCategory) {
-        return expectedSortCategory === currentSortCategory
+        return expectedSortCategory === currentSortCategory;
       }
 
       setNewGroupHeader(user, index, users) {
         let category = this.currentSortCategory || this.sortCategories.LAST_NAME;
 
-        return this.sortCategoryIsFirstOrLast() ? `${this.firstLetterOf(user[category])}` : `${user[category]}`;
+        return this.categoryIsFirstOrLastName() ? `${this.firstLetterOf(user[category])}` : `${user[category]}`;
       }
     }
 
