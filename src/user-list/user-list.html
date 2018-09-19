@@ -410,7 +410,11 @@
 
       setNewGroupHeader(user, index, users) {
         let category = this.currentSortCategory || this.sortCategories.LAST_NAME;
+        let firstLetter = `${this.firstLetterOf(user[category])}`;
+        let wholeCategory = `${user[category]}`;
 
+        return this.categoryIsFirstOrLastName() ? firstLetter : wholeCategory;
+      }
 
       disconnectedCallback() {
         super.disconnectedCallback();
