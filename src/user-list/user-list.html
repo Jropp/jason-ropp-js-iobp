@@ -350,13 +350,6 @@
         this.expandedCardIds.splice(idIndex, 1);
       }
 
-      disconnectedCallback() {
-        super.disconnectedCallback();
-        document.removeEventListener('editInProgress');
-        document.removeEventListener('databaseUpdated');
-        document.removeEventListener('cancel');
-      }
-
       noUsersHeaderMessage(users) {
         return !users.length;
       }
@@ -418,7 +411,12 @@
       setNewGroupHeader(user, index, users) {
         let category = this.currentSortCategory || this.sortCategories.LAST_NAME;
 
-        return this.categoryIsFirstOrLastName() ? `${this.firstLetterOf(user[category])}` : `${user[category]}`;
+
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        document.removeEventListener('editInProgress');
+        document.removeEventListener('databaseUpdated');
+        document.removeEventListener('cancel');
       }
     }
 
