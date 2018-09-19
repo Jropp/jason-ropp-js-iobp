@@ -1,0 +1,21 @@
+{
+  "short_name": "List",
+  "name": "User List",
+  "icons": [
+    {
+      "src": "/images/person-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/images/person-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/user-list/",
+  "background_color": "#e4e7ea",
+  "display": "standalone",
+  "scope": "",
+  "theme_color": "#0070b7"
+}

@@ -65,6 +65,10 @@ module.exports = env => {
               "./node_modules/@webcomponents/webcomponentsjs/*.js"
             ),
             to: "./webcomponentsjs/[name].[ext]"
+          },
+          {
+            from: path.resolve("./src/manifest.json"),
+            to: "./manifest.json"
           }
         ]),
         new CleanWebpackPlugin(path.resolve("dist"))
