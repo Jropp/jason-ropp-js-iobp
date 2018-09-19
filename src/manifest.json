@@ -3,12 +3,12 @@
   "name": "User List",
   "icons": [
     {
-      "src": "/images/person-192.png",
+      "src": "/design/images/person-192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/images/person-512.png",
+      "src": "/design/images/person-512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
