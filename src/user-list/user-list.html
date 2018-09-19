@@ -288,22 +288,23 @@
         });
 
         document.addEventListener('cardDetailDisplayChanged', (e) => {
-          const id = e.detail.id;
           let cardIsExpanded = e.detail.expanded;
-          return cardIsExpanded ? this.addIdToExpandedList(id) : this.removeIdFromExpandedList(id);
+          return cardIsExpanded ? this.addIdToExpandedList(e.detail.id) : this.removeIdFromExpandedList(e.detail.id);
         });
       }
 
       dropdownSort(e) {
-        this.setSortedUsersBy(e.target.id);
+        let primarySortBy = e.target.id;
+
+        this.setSortedUsersBy(primarySortBy);
         this.resetExpandedCardIds(true);
       }
 
       setSortedUsersBy(sortFirstBy) {
         let sortBy = this.getSortArray(sortFirstBy);
-
         this.currentSortCategory = sortFirstBy;
         let reversedSort = this.sortDirectionIsReversed;
+
         this.users = reversedSort ? Database.getUsersSortedBy(sortBy).reverse() : Database.getUsersSortedBy(sortBy);
       }
 
