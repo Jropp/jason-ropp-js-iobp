@@ -238,6 +238,10 @@
       static get is() { return 'user-list'; }
       static get properties() {
         return {
+          users: {
+            type: Array,
+            value: () => Database.getUsersSortedBy(['last', 'first', 'department'])
+          },
           editInProgress: {
             type: Boolean,
             value: false
@@ -250,8 +254,8 @@
             type: Object,
             value: () => {
               return {
-                FIRST_NAME: 'first',
                 LAST_NAME: 'last',
+                FIRST_NAME: 'first',
                 DEPARTMENT: 'department'
               };
             }
@@ -263,10 +267,6 @@
           sortDirectionIsReversed: {
             type: Boolean,
             value: false
-          },
-          users: {
-            type: Array,
-            value: () => Database.getUsersSortedBy(['last', 'first', 'department'])
           }
         };
       }
