@@ -357,8 +357,10 @@
       popupMessage(action) {
         let animationTime = 3000;
         let messageBox = this.$.popupBox;
-        messageBox.textContent = action + ' Successful';
-        messageBox.className = 'message-box show-message ' + action;
+
+        messageBox.textContent = `${action} Successful`;
+        messageBox.className = 'message-box show-message';
+
         window.setTimeout(() => {
           messageBox.className = 'message-box';
         }, animationTime);
