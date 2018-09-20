@@ -130,6 +130,13 @@ Because of the dom-recycling feature of Polymer, the display state of each compo
 
 The app database API uses your browsers local storage. Clearing your browsers cache will delete that database of users.
 
+### PWA Features
+
+The app uses some PWA features outlined by Google Lighthouse Audit.
+
+- Manifest with splash page colors, phone toolbar styling, and page icons.
+- No Javascript fallback message that alerts users that the page is not functional without Javascript.
+
 ### @Banno/Polymer
 
 ### Webpack
