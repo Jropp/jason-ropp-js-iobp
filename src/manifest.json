@@ -13,7 +13,7 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "/user-list/",
+  "start_url": "/",
   "background_color": "#e4e7ea",
   "display": "standalone",
   "scope": "",

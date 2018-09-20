@@ -136,6 +136,7 @@ The app uses some PWA features outlined by Google Lighthouse Audit.
 
 - Manifest with splash page colors, phone toolbar styling, and page icons.
 - No Javascript fallback message that alerts users that the page is not functional without Javascript.
+- Service worker that registers with the browser and caches primary files for future loads
 
 ### @Banno/Polymer
 
