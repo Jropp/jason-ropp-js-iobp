@@ -4,6 +4,8 @@ const webpackMerge = require("webpack-merge");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
+const ManifestPlugin = require("webpack-manifest-plugin");
+const manifestImport = require("./src/manifest.json");
 
 const modeConfig = env => require(`./build-tools/webpack.${env}.js`)(env);
 
@@ -67,6 +69,10 @@ module.exports = env => {
             to: "./webcomponentsjs/[name].[ext]"
           }
         ]),
+        new ManifestPlugin({
+          seed: manifestImport,
+          writeToFileEmit: Boolean(env.development)
+        }),
         new CleanWebpackPlugin(path.resolve("dist"))
       ]
     },
