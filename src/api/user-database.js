@@ -41,7 +41,6 @@ export class Database {
         });
 
         this.sendUsers(sorted);
-        firstLoad = false;
       }
     };
   }
@@ -51,35 +50,26 @@ export class Database {
     return ["department", "firstName", "lastName"];
   }
 
-  static sendRequest(method, user, _id) {}
-
   static editUser(user) {
-    let databaseUrl = `http://iop-db.herokuapp.com/users/${user._id}`;
+    this.sendRequest("PUT", user);
+  }
+
+  static saveUser(user) {
+    this.sendRequest("POST", user);
+  }
+
+  static sendRequest(method, user) {
+    let databaseUrl = `http://iop-db.herokuapp.com/users`;
+    let requestUrl = user._id ? `${databaseUrl}/${user._id}` : `${databaseUrl}`;
     let formatted = this.formatUserData(user);
 
     let xhr = new XMLHttpRequest();
-    xhr.open("PUT", databaseUrl, true);
+    xhr.open(method, requestUrl, true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(formatted);
     xhr.onreadystatechange = responseText => {
       if (xhr.readyState === 4 && xhr.status === 200) {
         console.log(xhr.responseText);
-        this.getUsersSortedBy(lastSort);
-      }
-    };
-  }
-
-  static saveUser(user) {
-    let databaseUrl = `http://iop-db.herokuapp.com/users`;
-    let formatted = this.formatUserData(user);
-
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", databaseUrl, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(formatted);
-    xhr.onreadystatechange = responseText => {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        console.log("hey", xhr.responseText);
         this.getUsersSortedBy(lastSort);
       }
     };
