@@ -290,21 +290,21 @@
           <template is="dom-if" if="[[!isMode(modes.DISPLAY, mode)]]">
             <label for="firstName">
               <jha-person-icon></jha-person-icon>
-              <input id="firstName" type="text" class="first-name name" placeholder="First" autocomplete="given-name" value="{{user.firstName::change}}"
-                required>
+              <input id="firstName" type="text" class="first-name name" placeholder="First" autocomplete="given-name"
+                value="{{user.firstName::change}}" required>
             </label>
 
             <label for="lastName">
-              <input id="lastName" type="text" class="last-name name" placeholder="Last" autocomplete="family-name" value="{{user.lastName::change}}"
-                required>
+              <input id="lastName" type="text" class="last-name name" placeholder="Last" autocomplete="family-name"
+                value="{{user.lastName::change}}" required>
             </label>
             <br>
           </template>
 
           <label for="email">
             <jha-email-icon></jha-email-icon>
-            <input id="email" type="email" on-blur="onInputChanged" class="email" placeholder="Email" autocomplete="email" value="{{user.email::change}}"
-              name="email" required>
+            <input id="email" type="email" on-blur="onInputChanged" class="email" placeholder="Email" autocomplete="email"
+              value="{{user.email::change}}" name="email" required>
           </label>
           <br>
 
@@ -314,8 +314,8 @@
 
           <label for="phone">
             <jha-phone-icon></jha-phone-icon>
-            <input id="phone" type="tel" on-blur="onInputChanged" class="phone" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
-              required>
+            <input id="phone" type="tel" on-blur="onInputChanged" class="phone" placeholder="Phone" autocomplete="tel"
+              value="{{user.phone::change}}" required>
           </label>
           <br>
 
@@ -325,7 +325,8 @@
 
           <label for="department">
             <jha-department-icon></jha-department-icon>
-            <input id="department" class="department" placeholder="Department" value="{{user.department::change}}" required/>
+            <input id="department" class="department" placeholder="Department" value="{{user.department::change}}"
+              required />
           </label>
 
           <!-- bplint-enable no-auto-binding -->
