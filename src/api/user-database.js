@@ -124,34 +124,4 @@ export class Database {
 
     return `${firstLetter}${restOfName}`;
   }
-
-  static updateLocalStorage(users, popupMessage) {
-    localStorage.setItem("onboardProjectUsers", JSON.stringify(users));
-
-    document.dispatchEvent(
-      new CustomEvent("databaseUpdated", {
-        bubbles: true,
-        composed: true,
-        detail: { message: popupMessage }
-      })
-    );
-  }
-
-  static createNewUserId() {
-    const asciiCharsLowest = 33;
-    const asciiCharsHighest = 123;
-    const idLength = 9;
-    let id = "";
-
-    for (let i = 0; i < idLength; i++) {
-      let charCode =
-        Math.floor(Math.random() * (asciiCharsHighest - asciiCharsLowest)) +
-        asciiCharsLowest;
-      id += String.fromCharCode(charCode);
-    }
-
-    let idAlreadyExists = this.getIdIndex(id) !== -1;
-
-    return idAlreadyExists ? this.createNewUserId() : id;
-  }
 }
