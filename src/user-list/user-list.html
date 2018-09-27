@@ -273,6 +273,11 @@
 
         Database.getUsers();
 
+        document.addEventListener('usersLoaded', (e) => {
+          let users = e.detail;
+          this.users = users;
+        });
+
         document.addEventListener('cancel', () => {
           this.toggleMode();
         });

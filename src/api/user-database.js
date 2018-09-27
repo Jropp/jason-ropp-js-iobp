@@ -19,7 +19,13 @@ export class Database {
   }
 
   static sendUsers(users) {
-    console.log(users);
+    document.dispatchEvent(
+      new CustomEvent("usersLoaded", {
+        bubbles: true,
+        composed: true,
+        detail: users
+      })
+    );
   }
 
   static getUserById(userId) {
@@ -40,11 +46,7 @@ export class Database {
     xhr.send();
     xhr.onreadystatechange = responseText => {
       if (firstLoad) {
-        let sortFilters = filters;
-        console.log(sortFilters);
-
-        // let sortFilters = filters ? filters : this.fallbackFilters();
-
+        let sortFilters = filters ? filters : this.fallbackFilters();
         let sorted = JSON.parse(xhr.response).sort((a, b) => {
           return this.compareTwoUsers(a, b, sortFilters);
         });
@@ -59,7 +61,8 @@ export class Database {
   }
 
   static fallbackFilters() {
-    return ["lastName", "firstName", "department"];
+    // priority from right to left
+    return ["department", "firstName", "firstName"];
   }
 
   static editUser(user) {
