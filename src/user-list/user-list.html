@@ -275,7 +275,7 @@
 
         document.addEventListener('usersLoaded', (e) => {
           let users = e.detail;
-          this.users = users;
+          this.users = this.sortDirectionIsReversed ? users.reverse() : users;
         });
 
         document.addEventListener('cancel', () => {
@@ -308,7 +308,6 @@
       setSortedUsersBy(sortFirstBy) {
         let sortBy = this.getSortArray(sortFirstBy);
         this.currentSortCategory = sortFirstBy;
-        let reversedSort = this.sortDirectionIsReversed;
 
         Database.getUsersSortedBy(sortBy);
       }
