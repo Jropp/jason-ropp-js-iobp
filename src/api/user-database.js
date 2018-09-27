@@ -2,20 +2,8 @@ let firstLoad = true;
 
 export class Database {
   static getUsers() {
-    let databaseUrl = `http://iop-db.herokuapp.com/users`;
-    let xhr = new XMLHttpRequest();
-    xhr.open("GET", databaseUrl, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send();
-    xhr.onreadystatechange = responseText => {
-      if (firstLoad) {
-        this.sendUsers(JSON.parse(xhr.response));
-        firstLoad = false;
-      }
-      setTimeout(() => {
-        firstLoad = true;
-      }, 1000);
-    };
+    // priority from right to left
+    this.getUsersSortedBy(["department", "firstName", "lastName"]);
   }
 
   static sendUsers(users) {
@@ -62,7 +50,7 @@ export class Database {
 
   static fallbackFilters() {
     // priority from right to left
-    return ["department", "firstName", "firstName"];
+    return ["department", "firstName", "lastName"];
   }
 
   static editUser(user) {
