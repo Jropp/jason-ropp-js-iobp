@@ -275,6 +275,8 @@
 
         document.addEventListener('usersLoaded', (e) => {
           let users = e.detail;
+          console.log(users);
+
           this.users = this.sortDirectionIsReversed ? users.reverse() : users;
         });
 

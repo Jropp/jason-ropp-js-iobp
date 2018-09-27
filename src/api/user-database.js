@@ -1,4 +1,5 @@
 let firstLoad = true;
+let currentSortFilter;
 
 export class Database {
   static getUsers() {
@@ -56,8 +57,6 @@ export class Database {
   static sendRequest(method, user, _id) {}
 
   static editUser(user) {
-    console.log(user._id);
-
     let databaseUrl = `http://iop-db.herokuapp.com/users/${user._id}`;
     let formatted = this.formatUserData(user);
     console.log(formatted);
@@ -77,12 +76,22 @@ export class Database {
   }
 
   static saveUser(user) {
-    let users = this.getUsers();
-    let popupMessage = "Save";
+    let databaseUrl = `http://iop-db.herokuapp.com/users`;
+    let formatted = this.formatUserData(user);
 
-    users.splice(0, 0, this.formatUserData(user));
-
-    this.updateLocalStorage(users, popupMessage);
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", databaseUrl, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(formatted);
+    xhr.onreadystatechange = responseText => {
+      if (firstLoad) {
+        this.getUsersSortedBy(["department", "firstName", "lastName"]);
+        firstLoad = false;
+      }
+      setTimeout(() => {
+        firstLoad = true;
+      }, 1000);
+    };
   }
 
   static compareTwoUsers(a, b, filters) {
