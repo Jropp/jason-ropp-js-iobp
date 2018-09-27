@@ -1,5 +1,4 @@
-let firstLoad = true;
-let currentSortFilter;
+let lastSort = ["department", "firstName", "lastName"];
 
 export class Database {
   static getUsers() {
@@ -28,13 +27,14 @@ export class Database {
   }
 
   static getUsersSortedBy(filters) {
+    lastSort = filters;
     let databaseUrl = `http://iop-db.herokuapp.com/users`;
     let xhr = new XMLHttpRequest();
     xhr.open("GET", databaseUrl, true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send();
     xhr.onreadystatechange = responseText => {
-      if (firstLoad) {
+      if (xhr.readyState === 4 && xhr.status === 200) {
         let sortFilters = filters ? filters : this.fallbackFilters();
         let sorted = JSON.parse(xhr.response).sort((a, b) => {
           return this.compareTwoUsers(a, b, sortFilters);
@@ -43,9 +43,6 @@ export class Database {
         this.sendUsers(sorted);
         firstLoad = false;
       }
-      setTimeout(() => {
-        firstLoad = true;
-      }, 1000);
     };
   }
 
@@ -59,19 +56,16 @@ export class Database {
   static editUser(user) {
     let databaseUrl = `http://iop-db.herokuapp.com/users/${user._id}`;
     let formatted = this.formatUserData(user);
-    console.log(formatted);
 
     let xhr = new XMLHttpRequest();
     xhr.open("PUT", databaseUrl, true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(formatted);
     xhr.onreadystatechange = responseText => {
-      if (firstLoad) {
-        firstLoad = false;
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        console.log(xhr.responseText);
+        this.getUsersSortedBy(lastSort);
       }
-      setTimeout(() => {
-        firstLoad = true;
-      }, 1000);
     };
   }
 
@@ -84,13 +78,10 @@ export class Database {
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(formatted);
     xhr.onreadystatechange = responseText => {
-      if (firstLoad) {
-        this.getUsersSortedBy(["department", "firstName", "lastName"]);
-        firstLoad = false;
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        console.log("hey", xhr.responseText);
+        this.getUsersSortedBy(lastSort);
       }
-      setTimeout(() => {
-        firstLoad = true;
-      }, 1000);
     };
   }
 
