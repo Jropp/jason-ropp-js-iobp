@@ -1,6 +1,25 @@
+let firstLoad = true;
+
 export class Database {
   static getUsers() {
-    return JSON.parse(localStorage.getItem("onboardProjectUsers")) || [];
+    let databaseUrl = `http://iop-db.herokuapp.com/users`;
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", databaseUrl, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send();
+    xhr.onreadystatechange = responseText => {
+      if (firstLoad) {
+        this.sendUsers(JSON.parse(xhr.response));
+        firstLoad = false;
+      }
+      setTimeout(() => {
+        firstLoad = true;
+      }, 1000);
+    };
+  }
+
+  static sendUsers(users) {
+    console.log(users);
   }
 
   static getUserById(userId) {
@@ -14,19 +33,33 @@ export class Database {
   }
 
   static getUsersSortedBy(filters) {
-    let users = JSON.parse(localStorage.getItem("onboardProjectUsers")) || [];
-    let sortFilters = filters.length ? filters : this.fallbackFilters();
-    sortFilters.reverse();
+    let databaseUrl = `http://iop-db.herokuapp.com/users`;
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", databaseUrl, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send();
+    xhr.onreadystatechange = responseText => {
+      if (firstLoad) {
+        let sortFilters = filters;
+        console.log(sortFilters);
 
-    let sorted = users.sort((a, b) => {
-      return this.compareTwoUsers(a, b, sortFilters);
-    });
+        // let sortFilters = filters ? filters : this.fallbackFilters();
 
-    return sorted;
+        let sorted = JSON.parse(xhr.response).sort((a, b) => {
+          return this.compareTwoUsers(a, b, sortFilters);
+        });
+
+        this.sendUsers(sorted);
+        firstLoad = false;
+      }
+      setTimeout(() => {
+        firstLoad = true;
+      }, 1000);
+    };
   }
 
   static fallbackFilters() {
-    return ["last", "first", "department"];
+    return ["lastName", "firstName", "department"];
   }
 
   static editUser(user) {
