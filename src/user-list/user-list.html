@@ -408,7 +408,9 @@
       }
 
       firstLetterOf(wordToSlice) {
-        return wordToSlice.slice(0, 1);
+        if (wordToSlice) {
+          return wordToSlice.slice(0, 1);
+        }
       }
 
       sortIs(expectedSortCategory, currentSortCategory) {
