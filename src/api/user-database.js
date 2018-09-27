@@ -53,13 +53,27 @@ export class Database {
     return ["department", "firstName", "lastName"];
   }
 
+  static sendRequest(method, user, _id) {}
+
   static editUser(user) {
-    let users = this.getUsers();
-    let popupMessage = "Save";
+    console.log(user._id);
 
-    users.splice(this.getIdIndex(user.id), 1, this.formatUserData(user));
+    let databaseUrl = `http://iop-db.herokuapp.com/users/${user._id}`;
+    let formatted = this.formatUserData(user);
+    console.log(formatted);
 
-    this.updateLocalStorage(users, popupMessage);
+    let xhr = new XMLHttpRequest();
+    xhr.open("PUT", databaseUrl, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(formatted);
+    xhr.onreadystatechange = responseText => {
+      if (firstLoad) {
+        firstLoad = false;
+      }
+      setTimeout(() => {
+        firstLoad = true;
+      }, 1000);
+    };
   }
 
   static saveUser(user) {
@@ -106,12 +120,15 @@ export class Database {
   }
 
   static formatUserData(user) {
-    user.first = this.titleCaseName(user.first);
-    user.last = this.titleCaseName(user.last);
-    user.id = user.id || this.createNewUserId();
-    user.phone = this.getOnlyPhoneDigits(user.phone);
+    let formatted = `{
+      "firstName": "${this.titleCaseName(user.firstName)}",
+      "lastName": "${this.titleCaseName(user.lastName)}",
+      "phone": "${this.getOnlyPhoneDigits(user.phone)}",
+      "email": "${user.email}",
+      "department": "${user.department}"
+    }`;
 
-    return user;
+    return formatted;
   }
 
   static getOnlyPhoneDigits(userPhoneInput) {
