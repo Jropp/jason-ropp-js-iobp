@@ -35,19 +35,36 @@ export class Database {
     xhr.send();
     xhr.onreadystatechange = responseText => {
       if (xhr.readyState === 4 && xhr.status === 200) {
-        let sortFilters = filters ? filters : this.fallbackFilters();
-        let sorted = JSON.parse(xhr.response).sort((a, b) => {
-          return this.compareTwoUsers(a, b, sortFilters);
-        });
-
+        let sorted = this.sortUsers(filters, JSON.parse(xhr.response));
         this.sendUsers(sorted);
       }
     };
   }
 
+  static sortUsers(filters, users) {
+    let sortFilters = filters ? filters : this.fallbackFilters();
+    let sorted = users.sort((a, b) => {
+      return this.compareTwoUsers(a, b, sortFilters);
+    });
+    return sorted;
+  }
+
   static fallbackFilters() {
     // priority from right to left
     return ["department", "firstName", "lastName"];
+  }
+
+  static compareTwoUsers(a, b, filters) {
+    let compared = 0;
+
+    filters.forEach(filter => {
+      if (a[filter] !== b[filter]) {
+        compared = a[filter] > b[filter] ? 1 : -1;
+        return;
+      }
+    });
+
+    return compared;
   }
 
   static editUser(user) {
@@ -69,23 +86,9 @@ export class Database {
     xhr.send(formatted);
     xhr.onreadystatechange = responseText => {
       if (xhr.readyState === 4 && xhr.status === 200) {
-        console.log(xhr.responseText);
         this.getUsersSortedBy(lastSort);
       }
     };
-  }
-
-  static compareTwoUsers(a, b, filters) {
-    let compared = 0;
-
-    filters.forEach(filter => {
-      if (a[filter] !== b[filter]) {
-        compared = a[filter] > b[filter] ? 1 : -1;
-        return;
-      }
-    });
-
-    return compared;
   }
 
   static deleteUser(user) {
