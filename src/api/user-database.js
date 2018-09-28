@@ -103,18 +103,6 @@ export class Database {
     };
   }
 
-  static deleteAllUsers() {
-    let popupMessage = "Delete All Users";
-    this.updateLocalStorage([], popupMessage);
-  }
-
-  static getIdIndex(userId) {
-    let users = this.getUsers();
-    let userIndex = users ? users.findIndex(user => user.id === userId) : -1;
-
-    return userIndex;
-  }
-
   static formatUserData(user) {
     let formatted = `{
       "firstName": "${this.titleCaseName(user.firstName)}",
