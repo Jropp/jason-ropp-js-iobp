@@ -18,6 +18,7 @@ export class Database {
         }
       })
     );
+
     popupMessage = null;
   }
 
@@ -31,26 +32,31 @@ export class Database {
     return match;
   }
 
-  static getUsersSortedBy(filters) {
-    lastSort = filters;
+  static getUsersSortedBy(sortFilterArray) {
+    lastSort = sortFilterArray;
     let databaseUrl = `http://iop-db.herokuapp.com/users`;
     let xhr = new XMLHttpRequest();
+
     xhr.open("GET", databaseUrl, true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send();
+
     xhr.onreadystatechange = responseText => {
       if (xhr.readyState === 4 && xhr.status === 200) {
-        let sorted = this.sortUsers(filters, JSON.parse(xhr.response));
+        let users = JSON.parse(xhr.response);
+        let sorted = this.sortUsers(sortFilterArray, users);
         this.sendUsers(sorted);
       }
     };
   }
 
-  static sortUsers(filters, users) {
-    let sortFilters = filters ? filters : this.fallbackFilters();
+  static sortUsers(sortFilterArray, users) {
+    let sortFiltersArray = sortFilterArray || this.fallbackFilters();
+
     let sorted = users.sort((a, b) => {
-      return this.compareTwoUsers(a, b, sortFilters);
+      return this.compareTwoUsers(a, b, sortFiltersArray);
     });
+
     return sorted;
   }
 
@@ -59,10 +65,10 @@ export class Database {
     return ["department", "firstName", "lastName"];
   }
 
-  static compareTwoUsers(a, b, filters) {
+  static compareTwoUsers(a, b, sortFilterArray) {
     let compared = 0;
 
-    filters.forEach(filter => {
+    sortFilterArray.forEach(filter => {
       if (a[filter] !== b[filter]) {
         compared = a[filter] > b[filter] ? 1 : -1;
         return;
@@ -90,12 +96,13 @@ export class Database {
   static sendRequest(method, user) {
     let databaseUrl = `http://iop-db.herokuapp.com/users`;
     let requestUrl = user._id ? `${databaseUrl}/${user._id}` : `${databaseUrl}`;
-    let formatted = this.formatUserData(user);
-
+    let formattedForDatabase = this.formatUserData(user);
     let xhr = new XMLHttpRequest();
+
     xhr.open(method, requestUrl, true);
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(formatted);
+    xhr.send(formattedForDatabase);
+
     xhr.onreadystatechange = responseText => {
       if (xhr.readyState === 4 && xhr.status === 200) {
         this.getUsersSortedBy(lastSort);
@@ -104,7 +111,7 @@ export class Database {
   }
 
   static formatUserData(user) {
-    let formatted = `{
+    let formattedForDatabase = `{
       "firstName": "${this.titleCaseName(user.firstName)}",
       "lastName": "${this.titleCaseName(user.lastName)}",
       "phone": "${this.getOnlyPhoneDigits(user.phone)}",
@@ -112,7 +119,7 @@ export class Database {
       "department": "${user.department}"
     }`;
 
-    return formatted;
+    return formattedForDatabase;
   }
 
   static getOnlyPhoneDigits(userPhoneInput) {
