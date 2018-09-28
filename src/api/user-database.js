@@ -75,6 +75,10 @@ export class Database {
     this.sendRequest("POST", user);
   }
 
+  static deleteUser(user) {
+    this.sendRequest("DELETE", user);
+  }
+
   static sendRequest(method, user) {
     let databaseUrl = `http://iop-db.herokuapp.com/users`;
     let requestUrl = user._id ? `${databaseUrl}/${user._id}` : `${databaseUrl}`;
@@ -89,15 +93,6 @@ export class Database {
         this.getUsersSortedBy(lastSort);
       }
     };
-  }
-
-  static deleteUser(user) {
-    let users = this.getUsers();
-    let popupMessage = "Delete";
-
-    users.splice(this.getIdIndex(user.id, users), 1);
-
-    this.updateLocalStorage(users, popupMessage);
   }
 
   static deleteAllUsers() {
