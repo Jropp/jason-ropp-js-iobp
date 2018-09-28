@@ -172,12 +172,12 @@
               </div>
               <hr>
               <div class="dropdown-options">
-                <li id="last" on-click="dropdownSort">Last
+                <li id="lastName" on-click="dropdownSort">Last
                   <template is="dom-if" if="[[sortIs(sortCategories.LAST_NAME, currentSortCategory)]]">
                     ✓
                   </template>
                 </li>
-                <li id="first" on-click="dropdownSort">First
+                <li id="firstName" on-click="dropdownSort">First
                   <template is="dom-if" if="[[sortIs(sortCategories.FIRST_NAME, currentSortCategory)]]">
                     ✓
                   </template>
@@ -238,8 +238,7 @@
       static get properties() {
         return {
           users: {
-            type: Array,
-            value: () => Database.getUsersSortedBy(['last', 'first', 'department'])
+            type: Array
           },
           editInProgress: {
             type: Boolean,
@@ -253,15 +252,15 @@
             type: Object,
             value: () => {
               return {
-                LAST_NAME: 'last',
-                FIRST_NAME: 'first',
+                LAST_NAME: 'lastName',
+                FIRST_NAME: 'firstName',
                 DEPARTMENT: 'department'
               };
             }
           },
           currentSortCategory: {
             type: String,
-            value: 'last'
+            value: 'lastName'
           },
           sortDirectionIsReversed: {
             type: Boolean,
@@ -271,6 +270,12 @@
       }
       connectedCallback() {
         super.connectedCallback();
+
+        Database.getUsers();
+
+        document.addEventListener('usersLoaded', (response) => {
+          this.onUsersLoaded(response.detail);
+        });
 
         document.addEventListener('cancel', () => {
           this.toggleMode();
@@ -292,6 +297,17 @@
         });
       }
 
+      onUsersLoaded(response) {
+        let users = response.users;
+        this.users = this.sortDirectionIsReversed ? users.reverse() : users;
+
+        if (response.message) {
+          this.popupMessage(response.message);
+        }
+
+        this.resetExpandedCardIds(response.message === 'Edit Save');
+      }
+
       dropdownSort(e) {
         let primarySortBy = e.target.id;
 
@@ -302,9 +318,8 @@
       setSortedUsersBy(sortFirstBy) {
         let sortBy = this.getSortArray(sortFirstBy);
         this.currentSortCategory = sortFirstBy;
-        let reversedSort = this.sortDirectionIsReversed;
 
-        this.users = reversedSort ? Database.getUsersSortedBy(sortBy).reverse() : Database.getUsersSortedBy(sortBy);
+        Database.getUsersSortedBy(sortBy);
       }
 
       getSortArray(sortFirstBy) {
@@ -312,14 +327,15 @@
         let lastName = this.sortCategories.LAST_NAME;
         let department = this.sortCategories.DEPARTMENT;
 
+        // sort priority goes right to left
         if (sortFirstBy === lastName) {
-          return [lastName, firstName, department];
+          return [department, firstName, lastName];
         }
         if (sortFirstBy === firstName) {
-          return [firstName, lastName, department];
+          return [department, lastName, firstName];
         }
         if (sortFirstBy === department) {
-          return [department, firstName, lastName];
+          return [lastName, firstName, department];
         }
       }
 
@@ -402,7 +418,9 @@
       }
 
       firstLetterOf(wordToSlice) {
-        return wordToSlice.slice(0, 1);
+        if (wordToSlice) {
+          return wordToSlice.slice(0, 1);
+        }
       }
 
       sortIs(expectedSortCategory, currentSortCategory) {

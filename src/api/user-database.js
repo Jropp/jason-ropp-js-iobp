@@ -1,6 +1,24 @@
+let lastSort = ["department", "firstName", "lastName"];
+let popupMessage = null;
+
 export class Database {
   static getUsers() {
-    return JSON.parse(localStorage.getItem("onboardProjectUsers")) || [];
+    // priority from right to left
+    this.getUsersSortedBy(["department", "firstName", "lastName"]);
+  }
+
+  static sendUsers(users) {
+    document.dispatchEvent(
+      new CustomEvent("usersLoaded", {
+        bubbles: true,
+        composed: true,
+        detail: {
+          users: users,
+          message: popupMessage
+        }
+      })
+    );
+    popupMessage = null;
   }
 
   static getUserById(userId) {
@@ -14,37 +32,31 @@ export class Database {
   }
 
   static getUsersSortedBy(filters) {
-    let users = JSON.parse(localStorage.getItem("onboardProjectUsers")) || [];
-    let sortFilters = filters.length ? filters : this.fallbackFilters();
-    sortFilters.reverse();
+    lastSort = filters;
+    let databaseUrl = `http://iop-db.herokuapp.com/users`;
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", databaseUrl, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send();
+    xhr.onreadystatechange = responseText => {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        let sorted = this.sortUsers(filters, JSON.parse(xhr.response));
+        this.sendUsers(sorted);
+      }
+    };
+  }
 
+  static sortUsers(filters, users) {
+    let sortFilters = filters ? filters : this.fallbackFilters();
     let sorted = users.sort((a, b) => {
       return this.compareTwoUsers(a, b, sortFilters);
     });
-
     return sorted;
   }
 
   static fallbackFilters() {
-    return ["last", "first", "department"];
-  }
-
-  static editUser(user) {
-    let users = this.getUsers();
-    let popupMessage = "Save";
-
-    users.splice(this.getIdIndex(user.id), 1, this.formatUserData(user));
-
-    this.updateLocalStorage(users, popupMessage);
-  }
-
-  static saveUser(user) {
-    let users = this.getUsers();
-    let popupMessage = "Save";
-
-    users.splice(0, 0, this.formatUserData(user));
-
-    this.updateLocalStorage(users, popupMessage);
+    // priority from right to left
+    return ["department", "firstName", "lastName"];
   }
 
   static compareTwoUsers(a, b, filters) {
@@ -60,13 +72,35 @@ export class Database {
     return compared;
   }
 
+  static editUser(user) {
+    popupMessage = "Edit Save";
+    this.sendRequest("PUT", user);
+  }
+
+  static saveUser(user) {
+    popupMessage = "Save New User";
+    this.sendRequest("POST", user);
+  }
+
   static deleteUser(user) {
-    let users = this.getUsers();
-    let popupMessage = "Delete";
+    popupMessage = "Delete User";
+    this.sendRequest("DELETE", user);
+  }
 
-    users.splice(this.getIdIndex(user.id, users), 1);
+  static sendRequest(method, user) {
+    let databaseUrl = `http://iop-db.herokuapp.com/users`;
+    let requestUrl = user._id ? `${databaseUrl}/${user._id}` : `${databaseUrl}`;
+    let formatted = this.formatUserData(user);
 
-    this.updateLocalStorage(users, popupMessage);
+    let xhr = new XMLHttpRequest();
+    xhr.open(method, requestUrl, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(formatted);
+    xhr.onreadystatechange = responseText => {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        this.getUsersSortedBy(lastSort);
+      }
+    };
   }
 
   static deleteAllUsers() {
@@ -82,12 +116,15 @@ export class Database {
   }
 
   static formatUserData(user) {
-    user.first = this.titleCaseName(user.first);
-    user.last = this.titleCaseName(user.last);
-    user.id = user.id || this.createNewUserId();
-    user.phone = this.getOnlyPhoneDigits(user.phone);
+    let formatted = `{
+      "firstName": "${this.titleCaseName(user.firstName)}",
+      "lastName": "${this.titleCaseName(user.lastName)}",
+      "phone": "${this.getOnlyPhoneDigits(user.phone)}",
+      "email": "${user.email}",
+      "department": "${user.department}"
+    }`;
 
-    return user;
+    return formatted;
   }
 
   static getOnlyPhoneDigits(userPhoneInput) {
@@ -99,35 +136,5 @@ export class Database {
     let restOfName = name.slice(1).toLowerCase();
 
     return `${firstLetter}${restOfName}`;
-  }
-
-  static updateLocalStorage(users, popupMessage) {
-    localStorage.setItem("onboardProjectUsers", JSON.stringify(users));
-
-    document.dispatchEvent(
-      new CustomEvent("databaseUpdated", {
-        bubbles: true,
-        composed: true,
-        detail: { message: popupMessage }
-      })
-    );
-  }
-
-  static createNewUserId() {
-    const asciiCharsLowest = 33;
-    const asciiCharsHighest = 123;
-    const idLength = 9;
-    let id = "";
-
-    for (let i = 0; i < idLength; i++) {
-      let charCode =
-        Math.floor(Math.random() * (asciiCharsHighest - asciiCharsLowest)) +
-        asciiCharsLowest;
-      id += String.fromCharCode(charCode);
-    }
-
-    let idAlreadyExists = this.getIdIndex(id) !== -1;
-
-    return idAlreadyExists ? this.createNewUserId() : id;
   }
 }
