@@ -276,6 +276,8 @@
         document.addEventListener('usersLoaded', (e) => {
           let users = e.detail;
           this.users = this.sortDirectionIsReversed ? users.reverse() : users;
+          this.popupMessage(e.detail.message);
+          this.resetExpandedCardIds(e.detail.message === 'Edit Save');
         });
 
         document.addEventListener('cancel', () => {
