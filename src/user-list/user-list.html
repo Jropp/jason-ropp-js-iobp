@@ -273,11 +273,8 @@
 
         Database.getUsers();
 
-        document.addEventListener('usersLoaded', (e) => {
-          let users = e.detail;
-          this.users = this.sortDirectionIsReversed ? users.reverse() : users;
-          this.popupMessage(e.detail.message);
-          this.resetExpandedCardIds(e.detail.message === 'Edit Save');
+        document.addEventListener('usersLoaded', (response) => {
+          this.onUsersLoaded(response.detail);
         });
 
         document.addEventListener('cancel', () => {
@@ -298,6 +295,17 @@
           let cardIsExpanded = e.detail.expanded;
           return cardIsExpanded ? this.addIdToExpandedList(e.detail.id) : this.removeIdFromExpandedList(e.detail.id);
         });
+      }
+
+      onUsersLoaded(response) {
+        let users = response.users;
+        this.users = this.sortDirectionIsReversed ? users.reverse() : users;
+
+        if (response.message) {
+          this.popupMessage(response.message);
+        }
+
+        this.resetExpandedCardIds(response.message === 'Edit Save');
       }
 
       dropdownSort(e) {

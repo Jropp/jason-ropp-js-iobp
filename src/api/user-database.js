@@ -1,4 +1,5 @@
 let lastSort = ["department", "firstName", "lastName"];
+let popupMessage = null;
 
 export class Database {
   static getUsers() {
@@ -11,9 +12,13 @@ export class Database {
       new CustomEvent("usersLoaded", {
         bubbles: true,
         composed: true,
-        detail: users
+        detail: {
+          users: users,
+          message: popupMessage
+        }
       })
     );
+    popupMessage = null;
   }
 
   static getUserById(userId) {
@@ -68,14 +73,17 @@ export class Database {
   }
 
   static editUser(user) {
+    popupMessage = "Edit Save";
     this.sendRequest("PUT", user);
   }
 
   static saveUser(user) {
+    popupMessage = "Save New User";
     this.sendRequest("POST", user);
   }
 
   static deleteUser(user) {
+    popupMessage = "Delete User";
     this.sendRequest("DELETE", user);
   }
 
