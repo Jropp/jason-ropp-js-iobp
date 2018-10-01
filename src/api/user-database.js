@@ -71,12 +71,20 @@ export class Database {
 
   static compareTwoUsers(a, b, sortFilterArray) {
     let compared = 0;
+    let reverseFirstFilterSort = Boolean(isReversedSort);
 
     sortFilterArray.forEach(filter => {
       if (a[filter] !== b[filter]) {
+        if (reverseFirstFilterSort) {
+          compared = a[filter] < b[filter] ? 1 : -1;
+          reverseFirstFilterSort = false;
+          return;
+        }
+
         compared = a[filter] > b[filter] ? 1 : -1;
         return;
       }
+      reverseFirstFilterSort = false;
     });
 
     return compared;
