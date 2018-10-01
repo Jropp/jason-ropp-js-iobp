@@ -1,4 +1,5 @@
 let lastSort = ["department", "firstName", "lastName"];
+let isReversedSort = false;
 let popupMessage = null;
 
 export class Database {
