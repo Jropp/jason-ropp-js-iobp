@@ -271,6 +271,7 @@
       connectedCallback() {
         super.connectedCallback();
 
+        Database.setReversedSort(this.sortDirectionIsReversed);
         Database.getUsers();
 
         document.addEventListener('usersLoaded', (response) => {
@@ -341,6 +342,8 @@
 
       sortByDirection(e) {
         this.sortDirectionIsReversed = e.target.id === 'sortReversedAlphabetical';
+        Database.setReversedSort(this.sortDirectionIsReversed);
+
         this.setSortedUsersBy(this.currentSortCategory);
         this.resetExpandedCardIds(true);
       }

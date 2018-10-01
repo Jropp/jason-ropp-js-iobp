@@ -60,6 +60,10 @@ export class Database {
     return sorted;
   }
 
+  static setReversedSort(bool) {
+    isReversedSort = bool;
+  }
+
   static fallbackFilters() {
     // priority from right to left
     return ["department", "firstName", "lastName"];
