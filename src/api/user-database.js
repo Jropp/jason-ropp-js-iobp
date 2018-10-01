@@ -1,11 +1,14 @@
-let lastSort = ["department", "firstName", "lastName"];
-let isReversedSort = false;
+let sortSettings = {
+  lastSort: ["firstName", "lastName"],
+  isReversedSort: false
+};
+
 let popupMessage = null;
 
 export class Database {
   static getUsers() {
     // priority from right to left
-    this.getUsersSortedBy(["department", "firstName", "lastName"]);
+    this.getUsersSortedBy(sortSettings.lastSort);
   }
 
   static sendUsers(users) {
@@ -34,7 +37,7 @@ export class Database {
   }
 
   static getUsersSortedBy(sortFilterArray) {
-    lastSort = sortFilterArray;
+    sortSettings.lastSort = sortFilterArray;
     let databaseUrl = `http://iop-db.herokuapp.com/users`;
     let xhr = new XMLHttpRequest();
 
@@ -62,32 +65,28 @@ export class Database {
   }
 
   static setReversedSort(bool) {
-    isReversedSort = bool;
+    sortSettings.isReversedSort = bool;
   }
 
   static fallbackFilters() {
     // priority from right to left
-    return ["department", "firstName", "lastName"];
+    return ["firstName", "lastName"];
   }
 
   static compareTwoUsers(a, b, sortFilterArray) {
     let compared = 0;
-    let reverseFirstFilterSort = Boolean(isReversedSort);
+    let primarySortFilter = sortFilterArray[sortFilterArray.length - 1];
 
     sortFilterArray.forEach(filter => {
-      if (a[filter] !== b[filter]) {
-        if (reverseFirstFilterSort) {
-          compared = a[filter] < b[filter] ? 1 : -1;
-          reverseFirstFilterSort = false;
-          return;
-        }
+      let categoryIsDifferent = a[filter] !== b[filter];
+      let reverseSort = sortSettings.isReversedSort && filter === primarySortFilter;
+      let aFirst = a[filter] > b[filter] ? 1 : -1;
+      let bFirst = a[filter] < b[filter] ? 1 : -1;
 
-        compared = a[filter] > b[filter] ? 1 : -1;
-        return;
+      if (categoryIsDifferent) {
+        compared = reverseSort ? bFirst : aFirst;
       }
-      reverseFirstFilterSort = false;
     });
-
     return compared;
   }
 
@@ -118,7 +117,7 @@ export class Database {
 
     xhr.onreadystatechange = responseText => {
       if (xhr.readyState === 4 && xhr.status === 200) {
-        this.getUsersSortedBy(lastSort);
+        this.getUsersSortedBy(sortSettings.lastSort);
       }
     };
   }
