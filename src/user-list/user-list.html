@@ -282,12 +282,6 @@
           this.toggleMode();
         });
 
-        document.addEventListener('databaseUpdated', e => {
-          this.setSortedUsersBy(this.currentSortCategory);
-          this.popupMessage(e.detail.message);
-          this.resetExpandedCardIds(e.detail.message === 'Edit Save');
-        });
-
         document.addEventListener('editInProgress', e => {
           this.editInProgress = e.detail;
         });
