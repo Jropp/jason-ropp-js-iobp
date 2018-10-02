@@ -1,15 +1,19 @@
-let lastSort = ["department", "firstName", "lastName"];
+let sortSettings = {
+  lastSort: ['firstName', 'lastName'],
+  isReversedSort: false
+};
+
 let popupMessage = null;
 
 export class Database {
   static getUsers() {
     // priority from right to left
-    this.getUsersSortedBy(["department", "firstName", "lastName"]);
+    this.getUsersSortedBy(sortSettings.lastSort);
   }
 
   static sendUsers(users) {
     document.dispatchEvent(
-      new CustomEvent("usersLoaded", {
+      new CustomEvent('usersLoaded', {
         bubbles: true,
         composed: true,
         detail: {
@@ -33,12 +37,12 @@ export class Database {
   }
 
   static getUsersSortedBy(sortFilterArray) {
-    lastSort = sortFilterArray;
+    sortSettings.lastSort = sortFilterArray;
     let databaseUrl = `http://iop-db.herokuapp.com/users`;
     let xhr = new XMLHttpRequest();
 
-    xhr.open("GET", databaseUrl, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.open('GET', databaseUrl, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send();
 
     xhr.onreadystatechange = responseText => {
@@ -60,37 +64,45 @@ export class Database {
     return sorted;
   }
 
+  static setReversedSort(bool) {
+    sortSettings.isReversedSort = bool;
+  }
+
   static fallbackFilters() {
     // priority from right to left
-    return ["department", "firstName", "lastName"];
+    return ['firstName', 'lastName'];
   }
 
   static compareTwoUsers(a, b, sortFilterArray) {
     let compared = 0;
+    let primarySortFilter = sortFilterArray[sortFilterArray.length - 1];
 
     sortFilterArray.forEach(filter => {
-      if (a[filter] !== b[filter]) {
-        compared = a[filter] > b[filter] ? 1 : -1;
-        return;
+      let categoryIsDifferent = a[filter] !== b[filter];
+      let reverseSort = sortSettings.isReversedSort && filter === primarySortFilter;
+      let aFirst = a[filter] > b[filter] ? 1 : -1;
+      let bFirst = a[filter] < b[filter] ? 1 : -1;
+
+      if (categoryIsDifferent) {
+        compared = reverseSort ? bFirst : aFirst;
       }
     });
-
     return compared;
   }
 
   static editUser(user) {
-    popupMessage = "Edit Save";
-    this.sendRequest("PUT", user);
+    popupMessage = 'Edit Save';
+    this.sendRequest('PUT', user);
   }
 
   static saveUser(user) {
-    popupMessage = "Save New User";
-    this.sendRequest("POST", user);
+    popupMessage = 'Save New User';
+    this.sendRequest('POST', user);
   }
 
   static deleteUser(user) {
-    popupMessage = "Delete User";
-    this.sendRequest("DELETE", user);
+    popupMessage = 'Delete User';
+    this.sendRequest('DELETE', user);
   }
 
   static sendRequest(method, user) {
@@ -100,12 +112,12 @@ export class Database {
     let xhr = new XMLHttpRequest();
 
     xhr.open(method, requestUrl, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(formattedForDatabase);
 
     xhr.onreadystatechange = responseText => {
       if (xhr.readyState === 4 && xhr.status === 200) {
-        this.getUsersSortedBy(lastSort);
+        this.getUsersSortedBy(sortSettings.lastSort);
       }
     };
   }
@@ -123,7 +135,7 @@ export class Database {
   }
 
   static getOnlyPhoneDigits(userPhoneInput) {
-    return userPhoneInput.replace(/\D/g, "");
+    return userPhoneInput.replace(/\D/g, '');
   }
 
   static titleCaseName(name) {

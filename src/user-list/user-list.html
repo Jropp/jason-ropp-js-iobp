@@ -271,6 +271,7 @@
       connectedCallback() {
         super.connectedCallback();
 
+        Database.setReversedSort(this.sortDirectionIsReversed);
         Database.getUsers();
 
         document.addEventListener('usersLoaded', (response) => {
@@ -298,8 +299,7 @@
       }
 
       onUsersLoaded(response) {
-        let users = response.users;
-        this.users = this.sortDirectionIsReversed ? users.reverse() : users;
+        this.users = response.users;
 
         if (response.message) {
           this.popupMessage(response.message);
@@ -329,18 +329,20 @@
 
         // sort priority goes right to left
         if (sortFirstBy === lastName) {
-          return [department, firstName, lastName];
+          return [firstName, lastName];
         }
         if (sortFirstBy === firstName) {
-          return [department, lastName, firstName];
+          return [lastName, firstName];
         }
         if (sortFirstBy === department) {
-          return [lastName, firstName, department];
+          return [firstName, lastName, department];
         }
       }
 
       sortByDirection(e) {
         this.sortDirectionIsReversed = e.target.id === 'sortReversedAlphabetical';
+        Database.setReversedSort(this.sortDirectionIsReversed);
+
         this.setSortedUsersBy(this.currentSortCategory);
         this.resetExpandedCardIds(true);
       }
