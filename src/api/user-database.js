@@ -1,5 +1,5 @@
 let sortSettings = {
-  lastSort: ["firstName", "lastName"],
+  lastSort: ['firstName', 'lastName'],
   isReversedSort: false
 };
 
@@ -13,7 +13,7 @@ export class Database {
 
   static sendUsers(users) {
     document.dispatchEvent(
-      new CustomEvent("usersLoaded", {
+      new CustomEvent('usersLoaded', {
         bubbles: true,
         composed: true,
         detail: {
@@ -41,8 +41,8 @@ export class Database {
     let databaseUrl = `http://iop-db.herokuapp.com/users`;
     let xhr = new XMLHttpRequest();
 
-    xhr.open("GET", databaseUrl, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.open('GET', databaseUrl, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send();
 
     xhr.onreadystatechange = responseText => {
@@ -70,7 +70,7 @@ export class Database {
 
   static fallbackFilters() {
     // priority from right to left
-    return ["firstName", "lastName"];
+    return ['firstName', 'lastName'];
   }
 
   static compareTwoUsers(a, b, sortFilterArray) {
@@ -91,18 +91,18 @@ export class Database {
   }
 
   static editUser(user) {
-    popupMessage = "Edit Save";
-    this.sendRequest("PUT", user);
+    popupMessage = 'Edit Save';
+    this.sendRequest('PUT', user);
   }
 
   static saveUser(user) {
-    popupMessage = "Save New User";
-    this.sendRequest("POST", user);
+    popupMessage = 'Save New User';
+    this.sendRequest('POST', user);
   }
 
   static deleteUser(user) {
-    popupMessage = "Delete User";
-    this.sendRequest("DELETE", user);
+    popupMessage = 'Delete User';
+    this.sendRequest('DELETE', user);
   }
 
   static sendRequest(method, user) {
@@ -112,7 +112,7 @@ export class Database {
     let xhr = new XMLHttpRequest();
 
     xhr.open(method, requestUrl, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(formattedForDatabase);
 
     xhr.onreadystatechange = responseText => {
@@ -135,7 +135,7 @@ export class Database {
   }
 
   static getOnlyPhoneDigits(userPhoneInput) {
-    return userPhoneInput.replace(/\D/g, "");
+    return userPhoneInput.replace(/\D/g, '');
   }
 
   static titleCaseName(name) {
