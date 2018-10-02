@@ -219,7 +219,7 @@
                 <div class="category-text">[[setNewGroupHeader(user, index, users)]]</div>
               </div>
             </template>
-            <user-component edit-open="[[editInProgress]]" is-expanded="[[isUserCardDisplayExpanded(user.id, users, expandedCardIds)]]"
+            <user-component edit-open="[[editInProgress]]" is-expanded="[[isUserCardDisplayExpanded(user._id, users, expandedCardIds)]]"
               user-to-display="[[user]]"></user-component>
           </template>
         </div>
@@ -294,12 +294,15 @@
 
       onUsersLoaded(response) {
         this.users = response.users;
+        let isEditSave = false;
 
         if (response.message) {
           this.popupMessage(response.message);
+          const editInMessage = /edit/gi;
+          isEditSave = editInMessage.test(response.message);
         }
 
-        this.resetExpandedCardIds(response.message === 'Edit Save');
+        this.resetExpandedCardIds(isEditSave);
       }
 
       dropdownSort(e) {
@@ -379,9 +382,9 @@
 
       isUserCardDisplayExpanded(userId) {
         let isExpanded = false;
+        
         this.expandedCardIds.forEach(id => {
           if (id === userId) {
-
             isExpanded = true;
           }
         });
