@@ -435,9 +435,10 @@
 
       disconnectedCallback() {
         super.disconnectedCallback();
-        document.removeEventListener('editInProgress');
-        document.removeEventListener('databaseUpdated');
+        document.removeEventListener('usersLoaded');
         document.removeEventListener('cancel');
+        document.removeEventListener('editInProgress');
+        document.removeEventListener('cardDetailDisplayChanged');
       }
     }
 
