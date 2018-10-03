@@ -94,14 +94,15 @@ export class Database {
 
   // not currently connected to user-list
   static sendUserById(user) {
-    new CustomEvent('userByIdLoaded', {
+    document.dispatchEvent(
+      new CustomEvent('userByIdLoaded', {
       bubbles: true,
       composed: true,
       detail: {
-        users: users,
-        message: user
+          user: user
       }
     })
+    );
   }
 
   static sortUsers(sortFilterArray, users) {
