@@ -8,7 +8,6 @@ let popupMessage = null;
 
 export class Database {
   static getUsers() {
-    // priority from right to left
     this.getUsersSortedBy(sortSettings.lastSort);
   }
 
@@ -28,13 +27,19 @@ export class Database {
   }
 
   static getUserById(userId) {
-    let users = this.getUsers();
+    const requestUrl = `http://iop-db.herokuapp.com/users/${userId}`;
+    const xhr = new XMLHttpRequest();
 
-    let match = users.find(user => {
-      return user.id === userId;
-    });
+    xhr.open('GET', requestUrl, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send();
 
-    return match;
+    xhr.onreadystatechange = responseText => {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        const user = xhr.responseText;
+        this.sendUserById(JSON.parse(user));
+      }
+    };
   }
 
   static getUsersSortedBy(sortFilterArray) {
@@ -85,6 +90,18 @@ export class Database {
     );
 
     popupMessage = null;
+  }
+
+  // not currently connected to user-list
+  static sendUserById(user) {
+    new CustomEvent('userByIdLoaded', {
+      bubbles: true,
+      composed: true,
+      detail: {
+        users: users,
+        message: user
+      }
+    })
   }
 
   static sortUsers(sortFilterArray, users) {
