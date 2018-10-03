@@ -1,4 +1,5 @@
-let sortSettings = {
+const sortSettings = {
+  // priority from right to left
   lastSort: ['firstName', 'lastName'],
   isReversedSort: false
 };
@@ -14,7 +15,7 @@ export class Database {
   static editUser(user) {
     popupMessage = 'Edit Save';
     this.sendRequest('PUT', user);
-        }
+  }
 
   static saveUser(user) {
     popupMessage = 'Save New User';
@@ -38,8 +39,8 @@ export class Database {
 
   static getUsersSortedBy(sortFilterArray) {
     sortSettings.lastSort = sortFilterArray;
-    let databaseUrl = `http://iop-db.herokuapp.com/users`;
-    let xhr = new XMLHttpRequest();
+    const databaseUrl = `http://iop-db.herokuapp.com/users`;
+    const xhr = new XMLHttpRequest();
 
     xhr.open('GET', databaseUrl, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -47,8 +48,8 @@ export class Database {
 
     xhr.onreadystatechange = responseText => {
       if (xhr.readyState === 4 && xhr.status === 200) {
-        let users = JSON.parse(xhr.response);
-        let sorted = this.sortUsers(sortFilterArray, users);
+        const users = JSON.parse(xhr.response);
+        const sorted = this.sortUsers(sortFilterArray, users);
         this.sendUsers(sorted);
       }
     };
@@ -87,9 +88,9 @@ export class Database {
   }
 
   static sortUsers(sortFilterArray, users) {
-    let sortFiltersArray = sortFilterArray || this.fallbackFilters();
+    const sortFiltersArray = sortFilterArray || this.fallbackFilters();
 
-    let sorted = users.sort((a, b) => {
+    const sorted = users.sort((a, b) => {
       return this.compareTwoUsers(a, b, sortFiltersArray);
     });
 
@@ -102,14 +103,14 @@ export class Database {
   }
 
   static compareTwoUsers(a, b, sortFilterArray) {
-    let compared = 0;
-    let primarySortFilter = sortFilterArray[sortFilterArray.length - 1];
+    const compared = 0;
+    const primarySortFilter = sortFilterArray[sortFilterArray.length - 1];
 
     sortFilterArray.forEach(filter => {
-      let categoryIsDifferent = a[filter] !== b[filter];
-      let reverseSort = sortSettings.isReversedSort && filter === primarySortFilter;
-      let aFirst = a[filter] > b[filter] ? 1 : -1;
-      let bFirst = a[filter] < b[filter] ? 1 : -1;
+      const categoryIsDifferent = a[filter] !== b[filter];
+      const reverseSort = sortSettings.isReversedSort && filter === primarySortFilter;
+      const aFirst = a[filter] > b[filter] ? 1 : -1;
+      const bFirst = a[filter] < b[filter] ? 1 : -1;
 
       if (categoryIsDifferent) {
         compared = reverseSort ? bFirst : aFirst;
@@ -123,7 +124,7 @@ export class Database {
   }
 
   static formatUserData(user) {
-    let formattedForDatabase = `{
+    const formattedForDatabase = `{
       "firstName": "${this.titleCaseName(user.firstName)}",
       "lastName": "${this.titleCaseName(user.lastName)}",
       "phone": "${this.getOnlyPhoneDigits(user.phone)}",
@@ -139,8 +140,8 @@ export class Database {
   }
 
   static titleCaseName(name) {
-    let firstLetter = name.charAt(0).toUpperCase();
-    let restOfName = name.slice(1).toLowerCase();
+    const firstLetter = name.charAt(0).toUpperCase();
+    const restOfName = name.slice(1).toLowerCase();
 
     return `${firstLetter}${restOfName}`;
   }
