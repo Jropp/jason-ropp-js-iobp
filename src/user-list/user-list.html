@@ -425,7 +425,7 @@
         return expectedSortCategory === currentSortCategory;
       }
 
-      setNewGroupHeader(user, index, users) {
+      setNewGroupHeader(user) {
         let category = this.currentSortCategory || this.sortCategories.LAST_NAME;
         let firstLetter = `${this.firstLetterOf(user[category])}`;
         let wholeCategory = `${user[category]}`;
