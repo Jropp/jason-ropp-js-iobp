@@ -1,4 +1,5 @@
-let sortSettings = {
+const sortSettings = {
+  // priority from right to left
   lastSort: ['firstName', 'lastName'],
   isReversedSort: false
 };
@@ -9,85 +10,6 @@ export class Database {
   static getUsers() {
     // priority from right to left
     this.getUsersSortedBy(sortSettings.lastSort);
-  }
-
-  static sendUsers(users) {
-    document.dispatchEvent(
-      new CustomEvent('usersLoaded', {
-        bubbles: true,
-        composed: true,
-        detail: {
-          users: users,
-          message: popupMessage
-        }
-      })
-    );
-
-    popupMessage = null;
-  }
-
-  static getUserById(userId) {
-    let users = this.getUsers();
-
-    let match = users.find(user => {
-      return user.id === userId;
-    });
-
-    return match;
-  }
-
-  static getUsersSortedBy(sortFilterArray) {
-    sortSettings.lastSort = sortFilterArray;
-    let databaseUrl = `http://iop-db.herokuapp.com/users`;
-    let xhr = new XMLHttpRequest();
-
-    xhr.open('GET', databaseUrl, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send();
-
-    xhr.onreadystatechange = responseText => {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        let users = JSON.parse(xhr.response);
-        let sorted = this.sortUsers(sortFilterArray, users);
-        this.sendUsers(sorted);
-      }
-    };
-  }
-
-  static sortUsers(sortFilterArray, users) {
-    let sortFiltersArray = sortFilterArray || this.fallbackFilters();
-
-    let sorted = users.sort((a, b) => {
-      return this.compareTwoUsers(a, b, sortFiltersArray);
-    });
-
-    return sorted;
-  }
-
-  static setReversedSort(bool) {
-    sortSettings.isReversedSort = bool;
-  }
-
-  static fallbackFilters() {
-    // priority from right to left
-    return ['firstName', 'lastName'];
-  }
-
-  static compareTwoUsers(a, b, sortFilterArray) {
-    let compared = 0;
-    let primarySortFilter = sortFilterArray[sortFilterArray.length - 1];
-
-    sortFilterArray.forEach(filter => {
-      let categoryIsDifferent = a[filter] !== b[filter];
-      let reverseSort = sortSettings.isReversedSort && filter === primarySortFilter;
-      let aFirst = a[filter] > b[filter] ? 1 : -1;
-      let bFirst = a[filter] < b[filter] ? 1 : -1;
-
-      if (categoryIsDifferent) {
-        compared = reverseSort ? bFirst : aFirst;
-      }
-    });
-    return compared;
   }
 
   static editUser(user) {
@@ -105,11 +27,39 @@ export class Database {
     this.sendRequest('DELETE', user);
   }
 
+  static getUserById(userId) {
+    let users = this.getUsers();
+
+    let match = users.find(user => {
+      return user.id === userId;
+    });
+
+    return match;
+  }
+
+  static getUsersSortedBy(sortFilterArray) {
+    sortSettings.lastSort = sortFilterArray;
+    const databaseUrl = `http://iop-db.herokuapp.com/users`;
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('GET', databaseUrl, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send();
+
+    xhr.onreadystatechange = responseText => {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        const users = JSON.parse(xhr.response);
+        const sorted = this.sortUsers(sortFilterArray, users);
+        this.sendUsers(sorted);
+      }
+    };
+  }
+
   static sendRequest(method, user) {
-    let databaseUrl = `http://iop-db.herokuapp.com/users`;
-    let requestUrl = user._id ? `${databaseUrl}/${user._id}` : `${databaseUrl}`;
-    let formattedForDatabase = this.formatUserData(user);
-    let xhr = new XMLHttpRequest();
+    const databaseUrl = `http://iop-db.herokuapp.com/users`;
+    const requestUrl = user._id ? `${databaseUrl}/${user._id}` : `${databaseUrl}`;
+    const formattedForDatabase = this.formatUserData(user);
+    const xhr = new XMLHttpRequest();
 
     xhr.open(method, requestUrl, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -122,8 +72,59 @@ export class Database {
     };
   }
 
+  static sendUsers(users) {
+    document.dispatchEvent(
+      new CustomEvent('usersLoaded', {
+        bubbles: true,
+        composed: true,
+        detail: {
+          users: users,
+          message: popupMessage
+        }
+      })
+    );
+
+    popupMessage = null;
+  }
+
+  static sortUsers(sortFilterArray, users) {
+    const sortFiltersArray = sortFilterArray || this.fallbackFilters();
+
+    const sorted = users.sort((a, b) => {
+      return this.compareTwoUsers(a, b, sortFiltersArray);
+    });
+
+    return sorted;
+  }
+
+  static fallbackFilters() {
+    // priority from right to left
+    return ['firstName', 'lastName'];
+  }
+
+  static compareTwoUsers(a, b, sortFilterArray) {
+    const compared = 0;
+    const primarySortFilter = sortFilterArray[sortFilterArray.length - 1];
+
+    sortFilterArray.forEach(filter => {
+      const categoryIsDifferent = a[filter] !== b[filter];
+      const reverseSort = sortSettings.isReversedSort && filter === primarySortFilter;
+      const aFirst = a[filter] > b[filter] ? 1 : -1;
+      const bFirst = a[filter] < b[filter] ? 1 : -1;
+
+      if (categoryIsDifferent) {
+        compared = reverseSort ? bFirst : aFirst;
+      }
+    });
+    return compared;
+  }
+
+  static setReversedSort(bool) {
+    sortSettings.isReversedSort = bool;
+  }
+
   static formatUserData(user) {
-    let formattedForDatabase = `{
+    const formattedForDatabase = `{
       "firstName": "${this.titleCaseName(user.firstName)}",
       "lastName": "${this.titleCaseName(user.lastName)}",
       "phone": "${this.getOnlyPhoneDigits(user.phone)}",
@@ -139,8 +140,8 @@ export class Database {
   }
 
   static titleCaseName(name) {
-    let firstLetter = name.charAt(0).toUpperCase();
-    let restOfName = name.slice(1).toLowerCase();
+    const firstLetter = name.charAt(0).toUpperCase();
+    const restOfName = name.slice(1).toLowerCase();
 
     return `${firstLetter}${restOfName}`;
   }

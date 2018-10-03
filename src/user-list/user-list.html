@@ -306,26 +306,26 @@
       }
 
       dropdownSort(e) {
-        let primarySortBy = e.target.id;
+        const primarySortBy = e.target.id;
 
         this.setSortedUsersBy(primarySortBy);
         this.resetExpandedCardIds(true);
       }
 
       setSortedUsersBy(sortFirstBy) {
-        let sortBy = this.getSortArray(sortFirstBy);
+        const sortBy = this.getSortArray(sortFirstBy);
         this.currentSortCategory = sortFirstBy;
 
         Database.getUsersSortedBy(sortBy);
       }
 
       getSortArray(sortFirstBy) {
-        let firstName = this.sortCategories.FIRST_NAME;
-        let lastName = this.sortCategories.LAST_NAME;
-        let department = this.sortCategories.DEPARTMENT;
+        const firstName = this.sortCategories.FIRST_NAME;
+        const lastName = this.sortCategories.LAST_NAME;
+        const department = this.sortCategories.DEPARTMENT;
 
-        // sort priority goes right to left
         if (sortFirstBy === lastName) {
+        // sort priority goes right to left
           return [firstName, lastName];
         }
         if (sortFirstBy === firstName) {
@@ -357,7 +357,7 @@
       }
 
       removeIdFromExpandedList(idToDelete) {
-        let idIndex = this.expandedCardIds.findIndex(id => {
+        const idIndex = this.expandedCardIds.findIndex(id => {
           return id === idToDelete;
         });
 
@@ -369,8 +369,8 @@
       }
 
       popupMessage(action) {
-        let animationTime = 3000;
-        let messageBox = this.$.popupBox;
+        const animationTime = 3000;
+        const messageBox = this.$.popupBox;
 
         messageBox.textContent = `${action} Successful`;
         messageBox.className = 'message-box show-message';
@@ -392,25 +392,25 @@
       }
 
       setDisplayOfSortHeader(users, index) {
-        let isFirstUser = index === 0;
-        let deletedLastUser = index === users.length;
+        const isFirstUser = index === 0;
+        const deletedLastUser = index === users.length;
 
         if (isFirstUser || deletedLastUser) {
           return true;
         }
 
-        let prevUserCat = users[index - 1][this.currentSortCategory];
-        let curUserCat = users[index][this.currentSortCategory];
+        const prevUserCat = users[index - 1][this.currentSortCategory];
+        const curUserCat = users[index][this.currentSortCategory];
 
-        let firstLetterDifferent = this.firstLetterOf(prevUserCat) !== this.firstLetterOf(curUserCat);
-        let wholeWordDifferent = prevUserCat !== curUserCat;
+        const firstLetterDifferent = this.firstLetterOf(prevUserCat) !== this.firstLetterOf(curUserCat);
+        const wholeWordDifferent = prevUserCat !== curUserCat;
 
         return this.categoryIsFirstOrLastName() ? firstLetterDifferent : wholeWordDifferent;
       }
 
       categoryIsFirstOrLastName() {
-        let isFirstName = this.sortIs(this.sortCategories.FIRST_NAME, this.currentSortCategory);
-        let isLastName = this.sortIs(this.sortCategories.LAST_NAME, this.currentSortCategory);
+        const isFirstName = this.sortIs(this.sortCategories.FIRST_NAME, this.currentSortCategory);
+        const isLastName = this.sortIs(this.sortCategories.LAST_NAME, this.currentSortCategory);
 
         return isFirstName || isLastName;
       }
@@ -425,19 +425,20 @@
         return expectedSortCategory === currentSortCategory;
       }
 
-      setNewGroupHeader(user, index, users) {
-        let category = this.currentSortCategory || this.sortCategories.LAST_NAME;
-        let firstLetter = `${this.firstLetterOf(user[category])}`;
-        let wholeCategory = `${user[category]}`;
+      setNewGroupHeader(user) {
+        const category = this.currentSortCategory || this.sortCategories.LAST_NAME;
+        const firstLetter = `${this.firstLetterOf(user[category])}`;
+        const wholeCategory = `${user[category]}`;
 
         return this.categoryIsFirstOrLastName() ? firstLetter : wholeCategory;
       }
 
       disconnectedCallback() {
         super.disconnectedCallback();
-        document.removeEventListener('editInProgress');
-        document.removeEventListener('databaseUpdated');
+        document.removeEventListener('usersLoaded');
         document.removeEventListener('cancel');
+        document.removeEventListener('editInProgress');
+        document.removeEventListener('cardDetailDisplayChanged');
       }
     }
 
