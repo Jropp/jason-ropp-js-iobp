@@ -121,7 +121,7 @@ export class Database {
   }
 
   static compareTwoUsers(a, b, sortFilterArray) {
-    const compared = 0;
+    let compared = 0;
     const primarySortFilter = sortFilterArray[sortFilterArray.length - 1];
 
     sortFilterArray.forEach(filter => {
