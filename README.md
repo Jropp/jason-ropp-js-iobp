@@ -70,7 +70,7 @@ User component has three mode settings:
   }
 ```
 
-2. **Edit:** Edit is availably in an existing user display card when you click edit.
+2. **Edit:** Edit is available in an existing user display card when you click edit.
 3. **Create New:** If there is not a `user` object with an `_id` property passed into the `<user-component>` the card will init as a 'create new user' button that expands to display the new user form when you click it.
 
 #### Disable Functionality: edit-open attribute
