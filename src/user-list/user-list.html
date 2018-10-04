@@ -172,12 +172,12 @@
               </div>
               <hr>
               <div class="dropdown-options">
-                <li id="last" on-click="dropdownSort">Last
+                <li id="lastName" on-click="dropdownSort">Last
                   <template is="dom-if" if="[[sortIs(sortCategories.LAST_NAME, currentSortCategory)]]">
                     ✓
                   </template>
                 </li>
-                <li id="first" on-click="dropdownSort">First
+                <li id="firstName" on-click="dropdownSort">First
                   <template is="dom-if" if="[[sortIs(sortCategories.FIRST_NAME, currentSortCategory)]]">
                     ✓
                   </template>
@@ -219,7 +219,7 @@
                 <div class="category-text">[[setNewGroupHeader(user, index, users)]]</div>
               </div>
             </template>
-            <user-component edit-open="[[editInProgress]]" is-expanded="[[isUserCardDisplayExpanded(user.id, users, expandedCardIds)]]"
+            <user-component edit-open="[[editInProgress]]" is-expanded="[[isUserCardDisplayExpanded(user._id, users, expandedCardIds)]]"
               user-to-display="[[user]]"></user-component>
           </template>
         </div>
@@ -238,8 +238,7 @@
       static get properties() {
         return {
           users: {
-            type: Array,
-            value: () => Database.getUsersSortedBy(['last', 'first', 'department'])
+            type: Array
           },
           editInProgress: {
             type: Boolean,
@@ -253,15 +252,15 @@
             type: Object,
             value: () => {
               return {
-                LAST_NAME: 'last',
-                FIRST_NAME: 'first',
+                LAST_NAME: 'lastName',
+                FIRST_NAME: 'firstName',
                 DEPARTMENT: 'department'
               };
             }
           },
           currentSortCategory: {
             type: String,
-            value: 'last'
+            value: 'lastName'
           },
           sortDirectionIsReversed: {
             type: Boolean,
@@ -272,14 +271,15 @@
       connectedCallback() {
         super.connectedCallback();
 
-        document.addEventListener('cancel', () => {
-          this.toggleMode();
+        Database.setReversedSort(this.sortDirectionIsReversed);
+        Database.getUsers();
+
+        document.addEventListener('usersLoaded', (response) => {
+          this.onUsersLoaded(response.detail);
         });
 
-        document.addEventListener('databaseUpdated', e => {
-          this.setSortedUsersBy(this.currentSortCategory);
-          this.popupMessage(e.detail.message);
-          this.resetExpandedCardIds(e.detail.message === 'Edit Save');
+        document.addEventListener('cancel', () => {
+          this.toggleMode();
         });
 
         document.addEventListener('editInProgress', e => {
@@ -292,39 +292,54 @@
         });
       }
 
+      onUsersLoaded(response) {
+        this.users = response.users;
+        let isEditSave = false;
+
+        if (response.message) {
+          this.popupMessage(response.message);
+          const editInMessage = /edit/gi;
+          isEditSave = editInMessage.test(response.message);
+        }
+
+        this.resetExpandedCardIds(isEditSave);
+      }
+
       dropdownSort(e) {
-        let primarySortBy = e.target.id;
+        const primarySortBy = e.target.id;
 
         this.setSortedUsersBy(primarySortBy);
         this.resetExpandedCardIds(true);
       }
 
       setSortedUsersBy(sortFirstBy) {
-        let sortBy = this.getSortArray(sortFirstBy);
+        const sortBy = this.getSortArray(sortFirstBy);
         this.currentSortCategory = sortFirstBy;
-        let reversedSort = this.sortDirectionIsReversed;
 
-        this.users = reversedSort ? Database.getUsersSortedBy(sortBy).reverse() : Database.getUsersSortedBy(sortBy);
+        Database.getUsersSortedBy(sortBy);
       }
 
       getSortArray(sortFirstBy) {
-        let firstName = this.sortCategories.FIRST_NAME;
-        let lastName = this.sortCategories.LAST_NAME;
-        let department = this.sortCategories.DEPARTMENT;
+        const firstName = this.sortCategories.FIRST_NAME;
+        const lastName = this.sortCategories.LAST_NAME;
+        const department = this.sortCategories.DEPARTMENT;
 
         if (sortFirstBy === lastName) {
-          return [lastName, firstName, department];
+        // sort priority goes right to left
+          return [firstName, lastName];
         }
         if (sortFirstBy === firstName) {
-          return [firstName, lastName, department];
+          return [lastName, firstName];
         }
         if (sortFirstBy === department) {
-          return [department, firstName, lastName];
+          return [firstName, lastName, department];
         }
       }
 
       sortByDirection(e) {
         this.sortDirectionIsReversed = e.target.id === 'sortReversedAlphabetical';
+        Database.setReversedSort(this.sortDirectionIsReversed);
+
         this.setSortedUsersBy(this.currentSortCategory);
         this.resetExpandedCardIds(true);
       }
@@ -342,7 +357,7 @@
       }
 
       removeIdFromExpandedList(idToDelete) {
-        let idIndex = this.expandedCardIds.findIndex(id => {
+        const idIndex = this.expandedCardIds.findIndex(id => {
           return id === idToDelete;
         });
 
@@ -354,8 +369,8 @@
       }
 
       popupMessage(action) {
-        let animationTime = 3000;
-        let messageBox = this.$.popupBox;
+        const animationTime = 3000;
+        const messageBox = this.$.popupBox;
 
         messageBox.textContent = `${action} Successful`;
         messageBox.className = 'message-box show-message';
@@ -369,7 +384,6 @@
         let isExpanded = false;
         this.expandedCardIds.forEach(id => {
           if (id === userId) {
-
             isExpanded = true;
           }
         });
@@ -378,50 +392,53 @@
       }
 
       setDisplayOfSortHeader(users, index) {
-        let isFirstUser = index === 0;
-        let deletedLastUser = index === users.length;
+        const isFirstUser = index === 0;
+        const deletedLastUser = index === users.length;
 
         if (isFirstUser || deletedLastUser) {
           return true;
         }
 
-        let prevUserCat = users[index - 1][this.currentSortCategory];
-        let curUserCat = users[index][this.currentSortCategory];
+        const prevUserCat = users[index - 1][this.currentSortCategory];
+        const curUserCat = users[index][this.currentSortCategory];
 
-        let firstLetterDifferent = this.firstLetterOf(prevUserCat) !== this.firstLetterOf(curUserCat);
-        let wholeWordDifferent = prevUserCat !== curUserCat;
+        const firstLetterDifferent = this.firstLetterOf(prevUserCat) !== this.firstLetterOf(curUserCat);
+        const wholeWordDifferent = prevUserCat !== curUserCat;
 
         return this.categoryIsFirstOrLastName() ? firstLetterDifferent : wholeWordDifferent;
       }
 
       categoryIsFirstOrLastName() {
-        let isFirstName = this.sortIs(this.sortCategories.FIRST_NAME, this.currentSortCategory);
-        let isLastName = this.sortIs(this.sortCategories.LAST_NAME, this.currentSortCategory);
+        const isFirstName = this.sortIs(this.sortCategories.FIRST_NAME, this.currentSortCategory);
+        const isLastName = this.sortIs(this.sortCategories.LAST_NAME, this.currentSortCategory);
 
         return isFirstName || isLastName;
       }
 
       firstLetterOf(wordToSlice) {
-        return wordToSlice.slice(0, 1);
+        if (wordToSlice) {
+          return wordToSlice.slice(0, 1);
+        }
       }
 
       sortIs(expectedSortCategory, currentSortCategory) {
         return expectedSortCategory === currentSortCategory;
       }
 
-      setNewGroupHeader(user, index, users) {
-        let category = this.currentSortCategory || this.sortCategories.LAST_NAME;
-        let firstLetter = `${this.firstLetterOf(user[category])}`;
-        let wholeCategory = `${user[category]}`;
+      setNewGroupHeader(user) {
+        const category = this.currentSortCategory || this.sortCategories.LAST_NAME;
+        const firstLetter = `${this.firstLetterOf(user[category])}`;
+        const wholeCategory = `${user[category]}`;
 
         return this.categoryIsFirstOrLastName() ? firstLetter : wholeCategory;
       }
 
       disconnectedCallback() {
         super.disconnectedCallback();
-        document.removeEventListener('editInProgress');
-        document.removeEventListener('databaseUpdated');
+        document.removeEventListener('usersLoaded');
         document.removeEventListener('cancel');
+        document.removeEventListener('editInProgress');
+        document.removeEventListener('cardDetailDisplayChanged');
       }
     }
 

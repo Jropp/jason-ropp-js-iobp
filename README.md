@@ -126,9 +126,15 @@ Because of the dom-recycling feature of Polymer, the display state of each compo
 
 ## dependencies
 
-### Local Storage / API
+### Live Database
 
-The app database API uses your browsers local storage. Clearing your browsers cache will delete that database of users.
+The app database API uses a live database from `http://iop-db.herokuapp.com/users` that accepts:
+
+    - POST: For saving a user in the database.
+    - PUT: For updating a user in the database by id.
+    - GET: For getting an individual user by id or getting all of the users.
+    - DELETE: For deleting a user by its id.
+
 
 ### @Banno/Polymer
 

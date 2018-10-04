@@ -262,10 +262,10 @@
     <div id="userCard" class$="[[userCardClass]]">
       <header class="card_header">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-          <h1>[[user.last]], [[user.first]]</h1>
+          <h1>[[user.lastName]], [[user.firstName]]</h1>
           <div class="user-id" id="id">
             <h3>ID:</h3>
-            <span>[[user.id]]</span>
+            <span>[[user._id]]</span>
           </div>
         </template>
         <template is="dom-if" if="[[isMode(modes.EDIT_USER, mode)]]">
@@ -290,21 +290,21 @@
           <template is="dom-if" if="[[!isMode(modes.DISPLAY, mode)]]">
             <label for="firstName">
               <jha-person-icon></jha-person-icon>
-              <input id="firstName" type="text" class="first-name name" placeholder="First" autocomplete="given-name" value="{{user.first::change}}"
-                required>
+              <input id="firstName" type="text" class="first-name name" placeholder="First" autocomplete="given-name"
+                value="{{user.firstName::change}}" required>
             </label>
 
             <label for="lastName">
-              <input id="lastName" type="text" class="last-name name" placeholder="Last" autocomplete="family-name" value="{{user.last::change}}"
-                required>
+              <input id="lastName" type="text" class="last-name name" placeholder="Last" autocomplete="family-name"
+                value="{{user.lastName::change}}" required>
             </label>
             <br>
           </template>
 
           <label for="email">
             <jha-email-icon></jha-email-icon>
-            <input id="email" type="email" on-blur="onInputChanged" class="email" placeholder="Email" autocomplete="email" value="{{user.email::change}}"
-              name="email" required>
+            <input id="email" type="email" on-blur="onInputChanged" class="email" placeholder="Email" autocomplete="email"
+              value="{{user.email::change}}" name="email" required>
           </label>
           <br>
 
@@ -314,8 +314,8 @@
 
           <label for="phone">
             <jha-phone-icon></jha-phone-icon>
-            <input id="phone" type="tel" on-blur="onInputChanged" class="phone" placeholder="Phone" autocomplete="tel" value="{{user.phone::change}}"
-              required>
+            <input id="phone" type="tel" on-blur="onInputChanged" class="phone" placeholder="Phone" autocomplete="tel"
+              value="{{user.phone::change}}" required>
           </label>
           <br>
 
@@ -325,7 +325,8 @@
 
           <label for="department">
             <jha-department-icon></jha-department-icon>
-            <input id="department" class="department" placeholder="Department" value="{{user.department::change}}" required/>
+            <input id="department" class="department" placeholder="Department" value="{{user.department::change}}"
+              required />
           </label>
 
           <!-- bplint-enable no-auto-binding -->
@@ -463,7 +464,7 @@
       }
 
       initCardState() {
-        let isExistingUser = Boolean(this.user.id);
+        let isExistingUser = Boolean(this.user._id);
 
         if (isExistingUser) {
           this.mode = this.modes.DISPLAY;
@@ -498,12 +499,11 @@
       userUpdated(newUser) {
         this.formatUserData(newUser);
         this.user = newUser;
-
       }
 
       formatUserData(newUser) {
         let user = newUser ? newUser : Object.assign({}, this.user);
-        let isExistingUser = this.user.id;
+        let isExistingUser = this.user._id;
 
         if (!user.phone.match(/\D/) && isExistingUser) {
           user.phone = ValidateUtil.formatPhoneNumber(user.phone); // eslint-disable-line no-undef
@@ -532,6 +532,7 @@
 
         Database.deleteUser(this.user); // eslint-disable-line no-undef
         this.toggleEditDisplayMode();
+        this.toggleDetailsVisibility();
         this.clearInputFormatWarnings();
       }
 
@@ -610,7 +611,7 @@
         this.dispatchEvent(new CustomEvent('cardDetailDisplayChanged', {
           bubbles: true,
           composed: true,
-          detail: { id: this.user.id, expanded: this.isExpanded }
+          detail: { id: this.user._id, expanded: this.isExpanded }
         }));
       }
 
@@ -630,7 +631,7 @@
       }
 
       setEditUserHeader() {
-        return `Edit: ${this.user.last}, ${this.user.first}`;
+        return `Edit: ${this.user.lastName}, ${this.user.firstName}`;
       }
 
       editInProgress(bool) {
