@@ -502,8 +502,8 @@
       }
 
       formatUserData(newUser) {
-        let user = newUser ? newUser : Object.assign({}, this.user);
-        let isExistingUser = this.user._id;
+        const user = newUser ? newUser : Object.assign({}, this.user);
+        const isExistingUser = this.user._id;
 
         if (!user.phone.match(/\D/) && isExistingUser) {
           user.phone = ValidateUtil.formatPhoneNumber(user.phone); // eslint-disable-line no-undef
@@ -515,7 +515,7 @@
       save(e) {
         e.preventDefault();
 
-        let user = Object.assign({}, this.user);
+        const user = Object.assign({}, this.user);
 
         if (this.isMode(this.modes.CREATE_NEW)) {
           Database.saveUser(user); // eslint-disable-line no-undef
@@ -552,21 +552,21 @@
 
       updateDisableSaveButton() {
         if (!this.isFirstLoad) {
-          let editOpenAndNewUser = this.editOpen && this.isMode(this.modes.CREATE_NEW);
-          let emptyFields = !this.areFieldsFilled();
+          const editOpenAndNewUser = this.editOpen && this.isMode(this.modes.CREATE_NEW);
+          const emptyFields = !this.areFieldsFilled();
           // eslint-disable-next-line no-undef
-          let improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
+          const improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
           // eslint-disable-next-line no-undef
-          let improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
+          const improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
 
           this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
         }
       }
 
       updateWarningMessageDisplay() {
-        let isNewUserCard = this.isMode(this.modes.CREATE_NEW);
-        let emailInProgress = this.user.email;
-        let phoneInProgress = this.user.phone;
+        const isNewUserCard = this.isMode(this.modes.CREATE_NEW);
+        const emailInProgress = this.user.email;
+        const phoneInProgress = this.user.phone;
 
         // eslint-disable-next-line no-undef
         this.displayEmailWarning = emailInProgress && !ValidateUtil.checkEmailInput(this.user.email);
@@ -574,7 +574,7 @@
         this.displayPhoneWarning = phoneInProgress && !ValidateUtil.checkPhoneInput(this.user.phone);
         this.displayOpenEditMessage = isNewUserCard && this.editOpen;
 
-        let errorMessageDisplayed = this.displayEmailWarning || this.displayPhoneWarning || this.displayOpenEditMessage;
+        const errorMessageDisplayed = this.displayEmailWarning || this.displayPhoneWarning || this.displayOpenEditMessage;
 
         if (errorMessageDisplayed) {
           this.resizeCardForWarningMessages(true);
@@ -588,7 +588,7 @@
       }
 
       areFieldsFilled() {
-        let fields = this.shadowRoot.querySelectorAll('input');
+        const fields = this.shadowRoot.querySelectorAll('input');
         let fieldsFilled = true;
 
         fields.forEach(field => {
@@ -616,17 +616,17 @@
       }
 
       setUserDetailsDisplay(event) {
-        let eventIsUserListUpdate = (typeof event === 'boolean');
-        let animationStyle = eventIsUserListUpdate ? 'IMMEDIATELY' : 'ANIMATE';
+        const eventIsUserListUpdate = (typeof event === 'boolean');
+        const animationStyle = eventIsUserListUpdate ? 'IMMEDIATELY' : 'ANIMATE';
 
-        let expand = this.classes[`${animationStyle}_EXPAND_USER`];
-        let collapse = this.classes[`${animationStyle}_COLLAPSE_USER`];
+        const expand = this.classes[`${animationStyle}_EXPAND_USER`];
+        const collapse = this.classes[`${animationStyle}_COLLAPSE_USER`];
 
         this.userCardClass = this.isExpanded ? expand : collapse;
       }
 
       setDetailsArrowDirection() {
-        let arrowIsDown = this.userCardClass.match(/collapse/g);
+        const arrowIsDown = this.userCardClass.match(/collapse/g);
         return arrowIsDown;
       }
 
@@ -671,8 +671,8 @@
       }
 
       toggleNewUserFormDisplay() {
-        let collapsed = this.classes.COLLAPSE_NEW;
-        let expanded = this.classes.EXPAND_NEW;
+        const collapsed = this.classes.COLLAPSE_NEW;
+        const expanded = this.classes.EXPAND_NEW;
 
         this.userCardClass = this.isClass(collapsed) ? expanded : collapsed;
 

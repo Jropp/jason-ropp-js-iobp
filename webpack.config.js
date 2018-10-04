@@ -11,7 +11,7 @@ const modeConfig = env => require(`./build-tools/webpack.${env}.js`)(env);
 
 module.exports = env => {
   env = env || {};
-  let mode = Object.keys(env)[0];
+  const mode = Object.keys(env)[0];
 
   return webpackMerge(
     {

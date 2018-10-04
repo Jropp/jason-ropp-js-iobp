@@ -1,14 +1,14 @@
 export class ValidateUtil {
   static formatPhoneNumber(phoneNumber) {
-    let domesticPhoneLength = 10;
-    let isInternationalNumber = phoneNumber.length > domesticPhoneLength;
-    let reversedPhoneArray = phoneNumber.split("").reverse();
+    const domesticPhoneLength = 10;
+    const isInternationalNumber = phoneNumber.length > domesticPhoneLength;
+    const reversedPhoneArray = phoneNumber.split("").reverse();
 
-    let domFormatted = this.insertDomesticSymbols(reversedPhoneArray);
+    const domFormatted = this.insertDomesticSymbols(reversedPhoneArray);
     let displayFormat;
 
     if (isInternationalNumber) {
-      let intFormatted = this.insertInternationalSymbols(domFormatted);
+      const intFormatted = this.insertInternationalSymbols(domFormatted);
       displayFormat = intFormatted.reverse().join("");
     } else {
       displayFormat = domFormatted.reverse().join("");
@@ -18,7 +18,7 @@ export class ValidateUtil {
   }
 
   static insertDomesticSymbols(reversedPhoneArray) {
-    let domesticSymbols = [
+    const domesticSymbols = [
       { name: "dash", loc: 4, text: "-" },
       { name: "spaceLoc", loc: 8, text: " " },
       { name: "leftParLoc", loc: 9, text: ")" },
@@ -33,7 +33,7 @@ export class ValidateUtil {
   }
 
   static insertInternationalSymbols(reversedPhoneArray) {
-    let internationalSymbols = [
+    const internationalSymbols = [
       { name: "intPre", loc: reversedPhoneArray.length, text: "+" },
       { name: "intSpace", loc: 14, text: " " }
     ];
@@ -46,10 +46,10 @@ export class ValidateUtil {
   }
 
   static checkPhoneInput(phone) {
-    let phoneDigits = phone.replace(/\D/g, "");
-    let internationalDigitMax = 13;
-    let domesticDigitLength = 10;
-    let validNumberLength =
+    const phoneDigits = phone.replace(/\D/g, "");
+    const internationalDigitMax = 13;
+    const domesticDigitLength = 10;
+    const validNumberLength =
       phoneDigits.length >= domesticDigitLength &&
       phoneDigits.length <= internationalDigitMax;
 
@@ -57,7 +57,7 @@ export class ValidateUtil {
   }
 
   static checkEmailInput(email) {
-    let emailFormat = /^\S+@\S+\.\S+$/;
+    const emailFormat = /^\S+@\S+\.\S+$/;
     return emailFormat.test(email);
   }
 }
