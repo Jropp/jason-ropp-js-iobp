@@ -32,7 +32,7 @@
   <div id="ce-es5-shim">
     <script type="text/javascript">
       if (!window.customElements) {
-        const ceShimContainer = document.querySelector('#ce-es5-shim');
+        var ceShimContainer = document.querySelector('#ce-es5-shim');
         ceShimContainer.parentElement.removeChild(ceShimContainer);
       }
       if ('serviceWorker' in navigator) {
@@ -55,9 +55,9 @@
     (function () {
       document.addEventListener('WebComponentsReady', function componentsReady() {
         document.removeEventListener('WebComponentsReady', componentsReady, false);
-        const script = document.createElement('script');
+        var script = document.createElement('script');
         script.src = '<%= htmlWebpackPlugin.files.js[0] %>';
-        const refScript = document.getElementsByTagName('script')[0];
+        var refScript = document.getElementsByTagName('script')[0];
         refScript.parentNode.insertBefore(script, refScript);
       }, false);
     })();
