@@ -108,7 +108,7 @@ Because of the dom-recycling feature of Polymer, the display state of each compo
 
         `$ yarn start` then open https://localhost:1820 in the browser.
 
-        This lints, builds, and serves the project using webpack-dev-server
+        This lints, builds, and serves the project using webpack-dev-server. It also includes settings defined in webpack.development.js, including the dev server settings and a source map for tracking code issues in dev-tools.
 
 #### To see a list of available scripts [or a single script]:
 
@@ -122,7 +122,7 @@ Because of the dom-recycling feature of Polymer, the display state of each compo
 
 #### To bundle the code for production. It gets built into the dist folder in the root.
 
-        `$ yarn build`
+        `$ yarn build` uses the normal webpack config, but also adds on webpack.production.js which minifies the code and generates a service worker with a list of files to be cached by the end-user.
 
 ## dependencies
 
