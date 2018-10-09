@@ -16,9 +16,9 @@ Users are by default displayed as collapsed cards that can be expanded to show t
 
 ### Create User
 
-- Clicking the add new user icon expands the create new user card.
+- Clicking the add new user button at the top of user list expands the new user form.
 
-- To cancel a new entry, the end user can click the cancel new user button at the top of the card.
+- To cancel a new entry, click the same button you clicked to expand the user card. It will collapse it and clear the form.
 
 - Appropriate warnings will notify the end user of improper email or phone formats.
 
@@ -26,7 +26,7 @@ Users are by default displayed as collapsed cards that can be expanded to show t
 
 ### Edit/Delete User
 
-- Clicking the edit button on an existing user card allows the end user to edit the fields for that user. Clicking save locks in the changes. Updated information will be displayed immediately on save.
+- In case missing the obvious is one of your favorite hobbies, clicking the edit button on an expanded user card will allow you to in fact edit that user. Just as obvious is the fact that clicking the save button will save those changes.
 
 - If you already have an edit in process, all edit and save buttons in other cards will be disabled.
 
@@ -45,7 +45,7 @@ Users are by default displayed as collapsed cards that can be expanded to show t
 
 User component has three mode settings:
 
-1. **Display:** If you pass a `user` object with an `id` property in to the `user-to-display` attribute, then the card will default to a collapsed display mode that only shows the first and last name and the expand for details button.
+1. **Display:** If you pass a `user` object with an `_id` property in to the `<user-component user-to-display="[[user]]"` attribute, then the card will default to a collapsed display mode that only shows the first and last name and the expand for details button.
 
 ```html
  <user-component user-to-display="[[userToDisplay]]"></user-component>
@@ -59,9 +59,9 @@ User component has three mode settings:
       userToDisplay: {
         type: Object,
         value: {
-          first: "Jane",
-          last: "Doe",
-          id: "827104937",
+          firstName: "Jane",
+          lastName: "Doe",
+          _id: "827104937",
           email: "something@gmail.com",
           phone: "(345) 435-9875"
         }
@@ -70,8 +70,8 @@ User component has three mode settings:
   }
 ```
 
-2. **Edit:** Edit is availably in an existing user display card when you click edit.
-3. **Create New:** If there is not a `user` object with an `id` property passed in, the card will init as a 'create new user' button that expands to display the new user form when you click it.
+2. **Edit:** Edit is available in an existing user display card when you click edit.
+3. **Create New:** If there is not a `user` object with an `_id` property passed into the `<user-component>` the card will init as a 'create new user' button that expands to display the new user form when you click it.
 
 #### Disable Functionality: edit-open attribute
 
@@ -85,7 +85,7 @@ Because of polymer's dom-repeat information recycling, class changes are re-used
 
 For this app, if a user card is added or deleted, other user cards are at a different index in the dom-repeat and take on whatever class that item in that index had before the list update. This causes cards to display as collapsed or expanded when they should not.
 
-Because of the dom-recycling feature of Polymer, the display state of each component is checked and its state is set using its id.
+Because of the dom-recycling feature of Polymer, the display state of each component is checked and its state is set using its _id property.
 
 `<user-component is-expanded="[[isUserCardDisplayExpanded(user.id, users)]]"><user-component>`
 
@@ -131,16 +131,16 @@ Because of the dom-recycling feature of Polymer, the display state of each compo
 The app database API uses a live database from `http://iop-db.herokuapp.com/users` that accepts:
 
     - POST: For saving a user in the database.
-    - PUT: For updating a user in the database by id.
+    - PUT: For updating a user in the database by _id.
     - GET: For getting an individual user by id or getting all of the users.
-    - DELETE: For deleting a user by its id.
+    - DELETE: For deleting a user by its _id.
 
 
 ### @Banno/Polymer
 
 ### Webpack
 
-For building production code `$yarn build` bundles code into the dist folder.
+For building production code `$yarn build` bundles compressed into the dist folder.
 
 ### Webpack-Dev-Server
 
