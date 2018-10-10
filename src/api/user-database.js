@@ -1,10 +1,12 @@
+const databaseUrl = `http://iop-db.herokuapp.com/users`;
+let popupMessage = null;
 const sortSettings = {
   // priority from right to left
   lastSort: ['firstName', 'lastName'],
   isReversedSort: false
 };
 
-let popupMessage = null;
+
 
 export class Database {
   static getUsers() {
@@ -27,7 +29,7 @@ export class Database {
   }
 
   static async getUserById(userId) {
-    const requestUrl = `http://iop-db.herokuapp.com/users/${userId}`;
+    const requestUrl = `${databaseUrl}/${userId}`;
     const settings = {
       method: "GET"
     }
@@ -40,7 +42,6 @@ export class Database {
 
   static async getUsersSortedBy(sortFilterArray) {
     sortSettings.lastSort = sortFilterArray;
-    const databaseUrl = `http://iop-db.herokuapp.com/users`;
 
     const response = await fetch(databaseUrl);
     const users = await response.json();
@@ -50,7 +51,6 @@ export class Database {
   }
 
   static async sendRequest(method, user) {
-    const databaseUrl = `http://iop-db.herokuapp.com/users`;
     const requestUrl = user._id ? `${databaseUrl}/${user._id}` : `${databaseUrl}`;
     const formattedForDatabase = this.formatUserData(user);
 
@@ -63,7 +63,6 @@ export class Database {
     }
 
     await fetch(requestUrl, settings);
-
     this.getUsersSortedBy(sortSettings.lastSort);
   }
 
