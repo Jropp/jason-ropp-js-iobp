@@ -85,7 +85,7 @@
         font-size: 14px;
       }
 
-      .submit-button-box {
+      .button-box {
         margin: auto;
       }
 
@@ -111,7 +111,6 @@
 
       .expand-new-user .create-user-button {
         background-color: #0070b7;
-        font-size: 20px;
         transition: all .5s;
         padding: 0px;
         border-bottom-left-radius: 0px;
@@ -317,7 +316,7 @@
           </label>
 
           <!-- bplint-enable no-auto-binding -->
-          <div class="submit-button-box">
+          <div class="button-box">
 
             <template is="dom-if" if="[[!isMode(modes.DISPLAY, mode)]]">
               <button class="save-button" on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
