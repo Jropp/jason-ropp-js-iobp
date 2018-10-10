@@ -76,11 +76,11 @@
         margin-bottom: 0px;
       }
 
-      .user-id {
+      .user-id-container {
         margin-top: -25px;
       }
 
-      .user-id>* {
+      .user-id-container * {
         display: inline-block;
         font-size: 14px;
       }
@@ -109,7 +109,7 @@
         transition: max-height .6s ease-in;
       }
 
-      .expand-new-user .card_header .create-user-button {
+      .expand-new-user .create-user-button {
         background-color: #0070b7;
         font-size: 20px;
         transition: all .5s;
@@ -119,7 +119,7 @@
         transition: background-color .6s;
       }
 
-      .expand-new-user .create-user-button>jha-add-person-icon {
+      .expand-new-user jha-add-person-icon {
         fill: white;
       }
 
@@ -146,7 +146,7 @@
       }
 
 
-      .collapse-new-user.card_content form * {
+      .collapse-new-user form * {
         visibility: hidden;
         opacity: 0;
         transition: all .2s;
@@ -165,7 +165,7 @@
         visibility: hidden;
       }
 
-      .collapse-existing-user .card_header .user-id {
+      .collapse-existing-user .user-id-container {
         visibility: hidden;
       }
 
@@ -180,11 +180,11 @@
         animation: fade-in .7s;
       }
 
-      .expand-existing-user .card_header .user-id {
+      .expand-existing-user .user-id-container {
         animation: fade-in .6s;
       }
 
-      .expand-existing-user .card_footer .expand-details-clickable {
+      .expand-existing-user .expand-details-clickable {
         background-color: #0070b7;
         transition: all .5s;
         cursor: pointer;
@@ -202,7 +202,7 @@
         visibility: hidden;
       }
 
-      .immediately-collapse-existing-user .card_header .user-id {
+      .immediately-collapse-existing-user .card_header .user-id-container {
         visibility: hidden;
       }
 
@@ -215,7 +215,7 @@
         visibility: visible;
       }
 
-      .immediately-expand-existing-user .card_header .user-id {
+      .immediately-expand-existing-user .card_header .user-id-container {
         opacity: 1;
         visibility: visible;
       }
@@ -254,7 +254,7 @@
       <header class="card_header">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <h1>[[user.lastName]], [[user.firstName]]</h1>
-          <div class="user-id" id="id">
+          <div class="user-id-container" id="id">
             <h3>ID:</h3>
             <span>[[user._id]]</span>
           </div>
