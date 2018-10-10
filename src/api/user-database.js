@@ -42,40 +42,36 @@ export class Database {
     };
   }
 
-  static getUsersSortedBy(sortFilterArray) {
+  static async getUsersSortedBy(sortFilterArray) {
     sortSettings.lastSort = sortFilterArray;
-
     const databaseUrl = `http://iop-db.herokuapp.com/users`;
 
-    fetch(databaseUrl)
-      .then(response => response.json())
-      .then(users => {
-        const sorted = this.sortUsers(sortFilterArray, users);
-        this.sendUsers(sorted);
-      })
-      .catch((response) => {
-        console.log(response);
-      });
+    const response = await fetch(databaseUrl);
+    const users = await response.json();
+    const sorted = this.sortUsers(sortFilterArray, users);
+
+   this.sendUsers(sorted);
   }
 
   static sendRequest(method, user) {
     const databaseUrl = `http://iop-db.herokuapp.com/users`;
     const requestUrl = user._id ? `${databaseUrl}/${user._id}` : `${databaseUrl}`;
     const formattedForDatabase = this.formatUserData(user);
-    const xhr = new XMLHttpRequest();
 
-    xhr.open(method, requestUrl, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(formattedForDatabase);
+    const settings = {
+      method: method,
+      body: formattedForDatabase,
+    }
 
-    xhr.onreadystatechange = responseText => {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        this.getUsersSortedBy(sortSettings.lastSort);
-      }
-    };
+    fetch(requestUrl, settings).then(() => {
+      this.getUsersSortedBy(sortSettings.lastSort);
+    });
+
   }
 
   static sendUsers(users) {
+    console.log(users);
+
     document.dispatchEvent(
       new CustomEvent('usersLoaded', {
         bubbles: true,
