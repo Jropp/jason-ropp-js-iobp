@@ -37,7 +37,6 @@ class UserComponentElement extends PolymerElement {
       },
       userCardClass: {
         type: String,
-        value: 'default-card collapse-new-user'
       },
       classes: {
         type: Object,
@@ -100,9 +99,11 @@ class UserComponentElement extends PolymerElement {
     let isExistingUser = Boolean(this.user._id);
 
     if (isExistingUser) {
+      this.userCardClass = this.classes.ANIMATE_COLLAPSE_USER;
       this.mode = this.modes.DISPLAY;
       this.toggleEditableInputs();
     } else {
+      this.userCardClass = this.classes.COLLAPSE_NEW;
       this.mode = this.modes.CREATE_NEW;
     }
   }
