@@ -12,9 +12,8 @@
 <!-- bplint-enable no-unused-import -->
 
 <dom-module id="user-component">
-  <link rel="stylesheet" href="./user-component.css">
+  <link rel="stylesheet" href="./../design/css/shared-styles.css">
   <template>
-
     <style>
       :host {
         font-family: Arial, Helvetica, sans-serif;
@@ -258,7 +257,6 @@
         fill: black;
       }
     </style>
-
     <div id="userCard" class$="[[userCardClass]]">
       <header class="card_header">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
