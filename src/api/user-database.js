@@ -1,10 +1,12 @@
+const databaseUrl = `http://iop-db.herokuapp.com/users`;
+let popupMessage = null;
 const sortSettings = {
   // priority from right to left
   lastSort: ['firstName', 'lastName'],
   isReversedSort: false
 };
 
-let popupMessage = null;
+
 
 export class Database {
   static getUsers() {
@@ -26,55 +28,42 @@ export class Database {
     this.sendRequest('DELETE', user);
   }
 
-  static getUserById(userId) {
-    const requestUrl = `http://iop-db.herokuapp.com/users/${userId}`;
-    const xhr = new XMLHttpRequest();
+  static async getUserById(userId) {
+    const requestUrl = `${databaseUrl}/${userId}`;
+    const settings = {
+      method: "GET"
+    }
 
-    xhr.open('GET', requestUrl, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send();
+    const response = await fetch(requestUrl, settings);
+    const user = await response.json();
 
-    xhr.onreadystatechange = responseText => {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        const user = xhr.responseText;
-        this.sendUserById(JSON.parse(user));
-      }
-    };
+    this.sendUserById(user);
   }
 
-  static getUsersSortedBy(sortFilterArray) {
+  static async getUsersSortedBy(sortFilterArray) {
     sortSettings.lastSort = sortFilterArray;
-    const databaseUrl = `http://iop-db.herokuapp.com/users`;
-    const xhr = new XMLHttpRequest();
 
-    xhr.open('GET', databaseUrl, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send();
+    const response = await fetch(databaseUrl);
+    const users = await response.json();
+    const sorted = this.sortUsers(sortFilterArray, users);
 
-    xhr.onreadystatechange = responseText => {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        const users = JSON.parse(xhr.response);
-        const sorted = this.sortUsers(sortFilterArray, users);
-        this.sendUsers(sorted);
-      }
-    };
+   this.sendUsers(sorted);
   }
 
-  static sendRequest(method, user) {
-    const databaseUrl = `http://iop-db.herokuapp.com/users`;
+  static async sendRequest(method, user) {
     const requestUrl = user._id ? `${databaseUrl}/${user._id}` : `${databaseUrl}`;
     const formattedForDatabase = this.formatUserData(user);
-    const xhr = new XMLHttpRequest();
 
-    xhr.open(method, requestUrl, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(formattedForDatabase);
-
-    xhr.onreadystatechange = responseText => {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        this.getUsersSortedBy(sortSettings.lastSort);
+    const settings = {
+      method: method,
+      body: formattedForDatabase,
+      headers: {
+        "Content-Type": "application/json"
       }
-    };
+    }
+
+    await fetch(requestUrl, settings);
+    this.getUsersSortedBy(sortSettings.lastSort);
   }
 
   static sendUsers(users) {
@@ -88,7 +77,6 @@ export class Database {
         }
       })
     );
-
     popupMessage = null;
   }
 
