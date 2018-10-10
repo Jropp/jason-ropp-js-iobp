@@ -44,20 +44,25 @@ export class Database {
 
   static getUsersSortedBy(sortFilterArray) {
     sortSettings.lastSort = sortFilterArray;
+
     const databaseUrl = `http://iop-db.herokuapp.com/users`;
-    const xhr = new XMLHttpRequest();
-
-    xhr.open('GET', databaseUrl, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send();
-
-    xhr.onreadystatechange = responseText => {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        const users = JSON.parse(xhr.response);
-        const sorted = this.sortUsers(sortFilterArray, users);
-        this.sendUsers(sorted);
+    const settings = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
       }
-    };
+    }
+
+    fetch(databaseUrl, settings)
+      .then(response => response.json())
+      .then(users => {
+        const sorted = this.sortUsers(sortFilterArray, users);
+        console.log(sorted);
+        this.sendUsers(sorted);
+      })
+      .catch((response) => {
+        console.log(response);
+      });
   }
 
   static sendRequest(method, user) {
