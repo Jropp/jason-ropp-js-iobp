@@ -53,7 +53,7 @@ export class Database {
    this.sendUsers(sorted);
   }
 
-  static sendRequest(method, user) {
+  static async sendRequest(method, user) {
     const databaseUrl = `http://iop-db.herokuapp.com/users`;
     const requestUrl = user._id ? `${databaseUrl}/${user._id}` : `${databaseUrl}`;
     const formattedForDatabase = this.formatUserData(user);
@@ -61,17 +61,21 @@ export class Database {
     const settings = {
       method: method,
       body: formattedForDatabase,
+      headers: {
+        "Content-Type": "application/json"
+      }
     }
 
-    fetch(requestUrl, settings).then(() => {
-      this.getUsersSortedBy(sortSettings.lastSort);
-    });
+    let response = await fetch(requestUrl, settings);
+
+    console.log(response);
+
+
+    this.getUsersSortedBy(sortSettings.lastSort);
 
   }
 
   static sendUsers(users) {
-    console.log(users);
-
     document.dispatchEvent(
       new CustomEvent('usersLoaded', {
         bubbles: true,
@@ -82,7 +86,6 @@ export class Database {
         }
       })
     );
-
     popupMessage = null;
   }
 
