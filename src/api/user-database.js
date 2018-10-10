@@ -46,18 +46,11 @@ export class Database {
     sortSettings.lastSort = sortFilterArray;
 
     const databaseUrl = `http://iop-db.herokuapp.com/users`;
-    const settings = {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }
 
-    fetch(databaseUrl, settings)
+    fetch(databaseUrl)
       .then(response => response.json())
       .then(users => {
         const sorted = this.sortUsers(sortFilterArray, users);
-        console.log(sorted);
         this.sendUsers(sorted);
       })
       .catch((response) => {
