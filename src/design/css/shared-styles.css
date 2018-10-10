@@ -1,3 +1,10 @@
+:root {
+  --primary-color: #0070b7;
+  --secondary-color: #fca902;
+  --light-gray: #a6a7a8;
+  --dark-gray: 
+}
+
 button {
   height: 40px;
   width: 175px;
