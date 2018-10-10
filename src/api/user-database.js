@@ -26,20 +26,16 @@ export class Database {
     this.sendRequest('DELETE', user);
   }
 
-  static getUserById(userId) {
+  static async getUserById(userId) {
     const requestUrl = `http://iop-db.herokuapp.com/users/${userId}`;
-    const xhr = new XMLHttpRequest();
+    const settings = {
+      method: "GET"
+    }
 
-    xhr.open('GET', requestUrl, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send();
+    const response = await fetch(requestUrl, settings);
+    const user = await response.json();
 
-    xhr.onreadystatechange = responseText => {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        const user = xhr.responseText;
-        this.sendUserById(JSON.parse(user));
-      }
-    };
+    this.sendUserById(user);
   }
 
   static async getUsersSortedBy(sortFilterArray) {
@@ -66,13 +62,9 @@ export class Database {
       }
     }
 
-    let response = await fetch(requestUrl, settings);
-
-    console.log(response);
-
+    await fetch(requestUrl, settings);
 
     this.getUsersSortedBy(sortSettings.lastSort);
-
   }
 
   static sendUsers(users) {
