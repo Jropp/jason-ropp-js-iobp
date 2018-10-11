@@ -14,12 +14,11 @@
 <!-- bplint-enable no-unused-import -->
 
 <dom-module id="user-component">
-  <link rel="stylesheet" href="./user-component.css">
+  <link rel="stylesheet" href="./../design/css/shared-styles.css">
   <template>
-
     <style>
       :host {
-        font-family: Arial, Helvetica, sans-serif;
+         font-family: Arial, Helvetica, sans-serif;
       }
 
       .default-card {
@@ -39,7 +38,7 @@
         transition: background-color .4s;
       }
 
-      .create-user-button:hover>jha-add-person-icon {
+      button:hover jha-add-person-icon {
         fill: #0070b7;
       }
 
@@ -48,19 +47,19 @@
         width: 370px;
       }
 
+      input {
+        width: 80%;
+      }
+
       .first-name,
       .last-name {
         width: 38%;
-        margin-top: 20px;
-        font-size: 20px;
-        display: inline-block;
         margin-right: 4%;
       }
 
       .first-name {
         position: relative;
         left: 11px;
-        margin-right: 4%;
       }
 
       jha-person-icon {
@@ -68,29 +67,27 @@
         left: 14px;
       }
 
-      input:not(.name) {
-        width: 80%;
-        margin-top: 20px;
-        font-size: 20px;
-        display: inline-block;
-      }
-
       .edit-user-header {
         margin-bottom: 0px;
       }
 
-      .user-id {
+      .user-id-container {
         margin-top: -25px;
       }
 
-      .user-id>* {
+      .user-id-container * {
         display: inline-block;
         font-size: 14px;
       }
 
-      .submit-button-box {
+      .button-box {
         margin: auto;
       }
+
+      [class*="expand"] {
+        visibility: visible;
+      }
+
       /* NEW USER TRANISTIONS */
 
       .expand-new-user {
@@ -99,9 +96,8 @@
         transition: max-height .6s ease-in;
       }
 
-      .expand-new-user>.card_header>.create-user-button {
+      .expand-new-user .create-user-button {
         background-color: #0070b7;
-        font-size: 20px;
         transition: all .5s;
         padding: 0px;
         border-bottom-left-radius: 0px;
@@ -109,21 +105,17 @@
         transition: background-color .6s;
       }
 
-      .expand-new-user>.create-user-button>jha-add-person-icon {
-        fill: white;
-      }
-
-      .expand-new-user>.card_content {
+      .expand-new-user .card_content {
         animation: fade-in .7s;
       }
 
-      .create-user-button>jha-cancel-icon {
+      jha-cancel-icon {
         width: 70px;
         height: 49px;
         fill: white;
       }
 
-      .create-user-button:hover>jha-cancel-icon {
+      button:hover jha-cancel-icon {
         fill: #fca902;
       }
 
@@ -131,88 +123,57 @@
         max-height: 60px;
       }
 
-      .collapse-new-user>.card_content {
-        visibility: hidden;
-      }
-
-
-      .collapse-new-user.card_content>form>* {
+      .collapse-new-user form {
         visibility: hidden;
         opacity: 0;
         transition: all .2s;
       }
 
-      /* USER USER TRANSITIONS */
+      /* EXISTING USER TRANSITIONS */
 
-      .collapse-existing-user {
+      [class*="collapse-existing"] {
         height: 70px;
         padding: 10px 0px 30px 0px;
+      }
+
+      .collapse-existing-user {
         transition: height .4s ease-out;
       }
 
-      .collapse-existing-user>.card_content {
+      [class*="collapse-existing"] .card_content {
         height: 0px;
         visibility: hidden;
       }
 
-      .collapse-existing-user>.card_header>.user-id {
+      [class*="collapse-existing"] .user-id-container {
         visibility: hidden;
       }
 
-      .expand-existing-user {
+      [class*="expand-existing"] {
         height: 370px;
         padding: 10px 0px 30px 0px;
+      }
+
+      .expand-existing-user {
         transition: height .4s ease-in;
       }
 
-      .expand-existing-user>.card_content {
+      .expand-existing-user .card_content {
         height: auto;
         animation: fade-in .7s;
       }
 
-      .expand-existing-user>.card_header>.user-id {
+      .expand-existing-user .user-id-container {
         animation: fade-in .6s;
       }
 
-      .expand-existing-user>.card_footer>.expand-details-clickable {
+      [class*="expand-existing"] .expand-details-clickable {
         background-color: #0070b7;
         transition: all .5s;
-        cursor: pointer;
       }
 
-      /* Existing User Reset After User Is Deleted because of Dom-Repeat Class Recycling. */
-
-      .immediately-collapse-existing-user {
-        height: 70px;
-        padding: 10px 0px 30px 0px;
-      }
-
-      .immediately-collapse-existing-user>.card_content {
-        height: 0px;
-        visibility: hidden;
-      }
-
-      .immediately-collapse-existing-user>.card_header>.user-id {
-        visibility: hidden;
-      }
-
-      .immediately-expand-existing-user {
-        height: 370px;
-        padding: 10px 0px 30px 0px;
-      }
-
-      .immediately-expand-existing-user>.card_content {
-        visibility: visible;
-      }
-
-      .immediately-expand-existing-user>.card_header>.user-id {
-        opacity: 1;
-        visibility: visible;
-      }
-
-      .immediately-expand-existing-user>.card_footer>.expand-details-clickable {
-        background-color: #0070b7;
-        cursor: pointer;
+      .expand-details-clickable {
+         cursor: pointer;
       }
 
       @keyframes fade-in {
@@ -227,13 +188,11 @@
         }
       }
     </style>
-
-
     <div id="userCard" class$="[[userCardClass]]">
       <header class="card_header">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <h1>[[user.lastName]], [[user.firstName]]</h1>
-          <div class="user-id" id="id">
+          <div class="user-id-container" id="id">
             <h3>ID:</h3>
             <span>[[user._id]]</span>
           </div>
@@ -304,7 +263,8 @@
           </label>
 
           <!-- bplint-enable no-auto-binding -->
-          <div class="submit-button-box">
+          <div class="button-box">
+
             <template is="dom-if" if="[[!isMode(modes.DISPLAY, mode)]]">
               <button class="save-button" on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
