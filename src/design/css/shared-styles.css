@@ -30,8 +30,11 @@ button:disabled {
 }
 
 input {
+  display: inline-block;
   height: 40px;
   padding-left: 5px;
+  font-size: 20px;
+  margin-top: 20px;
   border: none;
   outline: none;
   border-bottom: grey solid 1px;
