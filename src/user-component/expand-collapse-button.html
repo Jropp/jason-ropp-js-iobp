@@ -1,0 +1,72 @@
+<!-- bplint-disable no-unused-import -->
+<link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
+<link rel="import" href="~@banno/polymer/polymer-element.js">
+<link rel="import" href="../design/svgs/jha-drop-arrow-icon.html">
+<link rel="import" href="../design/svgs/jha-up-arrow-icon.html">
+<!-- bplint-enable no-unused-import -->
+
+<dom-module id="user-component">
+  <link rel="stylesheet" href="./user-component.css">
+  <template>
+
+    <style>
+      :host {
+        display:inline-block
+      }
+
+      .expand-details-clickable {
+        background-color: #fca902;
+        box-sizing: border-box;
+        position: absolute;
+        height: 25px;
+        width: 100%;
+        bottom: 0px;
+        left: 0px;
+        margin-top: 10px;
+        cursor: pointer;
+      }
+
+      .expand-details-clickable:hover>jha-drop-arrow-icon {
+        fill: white;
+      }
+
+      .expand-details-clickable>jha-up-arrow-icon {
+        fill: white;
+      }
+
+      .expand-existing-user>jha-drop-arrow-icon {
+        fill: white;
+      }
+
+      .expand-details-clickable:hover>jha-up-arrow-icon {
+        fill: #fca902;
+      }
+
+      .collapse-existing-user>jha-up-arrow-icon {
+        fill: black;
+      }
+    </style>
+        <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
+          <div id="detailsButton" on-click="toggleDetailsVisibility" class="expand-details-clickable">
+            <template is="dom-if" if="[[setDetailsArrowDirection(isExpanded, userCardClass)]]">
+              <jha-drop-arrow-icon></jha-drop-arrow-icon>
+            </template>
+            <template is="dom-if" if="[[!setDetailsArrowDirection(isExpanded, userCardClass)]]">
+              <jha-up-arrow-icon></jha-up-arrow-icon>
+            </template>
+          </div>
+        </template>
+  </template>
+  <script>
+    import { Element as PolymerElement } from "@banno/polymer/polymer-element.js"; // eslint-disable-line no-unused-vars
+      // import { ValidateUtil } from './../api/utils.js';
+      class ExpandCollapseButtonElement extends PolymerElement {
+        static get is() {
+          return "expand-collapse-button";
+        }
+      }
+
+      customElements.define(ExpandCollapseButtonElement.is, ExpandCollapseButtonElement);
+      export default ExpandCollapseButtonElement;
+  </script>
+</dom-module>
