@@ -36,7 +36,7 @@
         transition: background-color .4s;
       }
 
-      .create-user-button:hover jha-add-person-icon {
+      button:hover jha-add-person-icon {
         fill: #0070b7;
       }
 
@@ -125,7 +125,7 @@
         fill: white;
       }
 
-      .create-user-button:hover jha-cancel-icon {
+      button:hover jha-cancel-icon {
         fill: #fca902;
       }
 
@@ -133,37 +133,38 @@
         max-height: 60px;
       }
 
-      .collapse-new-user .card_content {
-        visibility: hidden;
-      }
-
-
-      .collapse-new-user form * {
+      .collapse-new-user form {
         visibility: hidden;
         opacity: 0;
         transition: all .2s;
       }
 
-      /* USER USER TRANSITIONS */
+      /* EXISTING USER TRANSITIONS */
 
-      .collapse-existing-user {
+      [class*="collapse-existing"] {
         height: 70px;
         padding: 10px 0px 30px 0px;
+      }
+
+      .collapse-existing-user {
         transition: height .4s ease-out;
       }
 
-      .collapse-existing-user .card_content {
+      [class*="collapse-existing"] .card_content {
         height: 0px;
         visibility: hidden;
       }
 
-      .collapse-existing-user .user-id-container {
+      [class*="collapse-existing"] .user-id-container {
         visibility: hidden;
       }
 
-      .expand-existing-user {
+      [class*="expand-existing"] {
         height: 370px;
         padding: 10px 0px 30px 0px;
+      }
+
+      .expand-existing-user {
         transition: height .4s ease-in;
       }
 
@@ -176,45 +177,13 @@
         animation: fade-in .6s;
       }
 
-      .expand-existing-user .expand-details-clickable {
+      [class*="expand-existing"] .expand-details-clickable {
         background-color: #0070b7;
         transition: all .5s;
-        cursor: pointer;
       }
 
-      /* Existing User Reset After User Is Deleted because of Dom-Repeat Class Recycling. */
-
-      .immediately-collapse-existing-user {
-        height: 70px;
-        padding: 10px 0px 30px 0px;
-      }
-
-      .immediately-collapse-existing-user .card_content {
-        height: 0px;
-        visibility: hidden;
-      }
-
-      .immediately-collapse-existing-user .user-id-container {
-        visibility: hidden;
-      }
-
-      .immediately-expand-existing-user {
-        height: 370px;
-        padding: 10px 0px 30px 0px;
-      }
-
-      .immediately-expand-existing-user .card_content {
-        visibility: visible;
-      }
-
-      .immediately-expand-existing-user .user-id-container {
-        opacity: 1;
-        visibility: visible;
-      }
-
-      .immediately-expand-existing-user .expand-details-clickable {
-        background-color: #0070b7;
-        cursor: pointer;
+      .expand-details-clickable {
+         cursor: pointer;
       }
 
       @keyframes fade-in {
