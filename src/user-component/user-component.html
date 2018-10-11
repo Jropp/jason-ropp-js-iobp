@@ -10,6 +10,7 @@
 <link rel="import" href="../design/svgs/jha-phone-icon.html">
 <link rel="import" href="../design/svgs/jha-up-arrow-icon.html">
 <link rel="import" href="./warning-message.html">
+<link rel="import" href="./expand-collapse-button.html">
 <!-- bplint-enable no-unused-import -->
 
 <dom-module id="user-component">
@@ -90,19 +91,6 @@
       .submit-button-box {
         margin: auto;
       }
-
-      .expand-details-clickable {
-        background-color: #fca902;
-        box-sizing: border-box;
-        position: absolute;
-        height: 25px;
-        width: 100%;
-        bottom: 0px;
-        left: 0px;
-        margin-top: 10px;
-        cursor: pointer;
-      }
-
       /* NEW USER TRANISTIONS */
 
       .expand-new-user {
@@ -238,26 +226,6 @@
           opacity: 1;
         }
       }
-
-      .expand-details-clickable:hover>jha-drop-arrow-icon {
-        fill: white;
-      }
-
-      .expand-details-clickable>jha-up-arrow-icon {
-        fill: white;
-      }
-
-      .expand-existing-user>jha-drop-arrow-icon {
-        fill: white;
-      }
-
-      .expand-details-clickable:hover>jha-up-arrow-icon {
-        fill: #fca902;
-      }
-
-      .collapse-existing-user>jha-up-arrow-icon {
-        fill: black;
-      }
     </style>
 
 
@@ -359,14 +327,8 @@
       </div>
       <footer class="card_footer">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
-          <div id="detailsButton" on-click="toggleDetailsVisibility" class="expand-details-clickable">
-            <template is="dom-if" if="[[setDetailsArrowDirection(isExpanded, userCardClass)]]">
-              <jha-drop-arrow-icon></jha-drop-arrow-icon>
-            </template>
-            <template is="dom-if" if="[[!setDetailsArrowDirection(isExpanded, userCardClass)]]">
-              <jha-up-arrow-icon></jha-up-arrow-icon>
-            </template>
-          </div>
+            <expand-collapse-button on-click="toggleDetailsVisibility" arrow-up="[[setDetailsArrowDirection(isExpanded, userCardClass)]]">
+            </expand-collapse-button>
         </template>
       </footer>
     </div>
