@@ -1,0 +1,34 @@
+<!-- bplint-disable no-unused-import -->
+<link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
+<link rel="import" href="~@banno/polymer/polymer-element.js">
+<link rel="import" href="../design/svgs/jha-add-person-icon.html">
+<link rel="import" href="../design/svgs/jha-cancel-icon.html">
+<link rel="import" href="../design/svgs/jha-department-icon.html">
+<link rel="import" href="../design/svgs/jha-drop-arrow-icon.html">
+<link rel="import" href="../design/svgs/jha-email-icon.html">
+<link rel="import" href="../design/svgs/jha-person-icon.html">
+<link rel="import" href="../design/svgs/jha-phone-icon.html">
+<link rel="import" href="../design/svgs/jha-up-arrow-icon.html">
+<!-- bplint-enable no-unused-import -->
+
+<dom-module id="warning-message">
+  <template>
+
+    <style>
+      .warning ::slotted(span) {
+        margin-top: 3px;
+        color: #f44336;
+        font-size: 14px;
+        font-weight: bold;
+        display: block;
+      }
+    </style>
+
+    <div class="warning">
+      <slot>
+
+      </slot>
+    </div>
+  </template>
+  <script src="warning-message.js"></script>
+</dom-module>
