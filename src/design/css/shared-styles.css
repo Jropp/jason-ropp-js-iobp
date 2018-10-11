@@ -30,8 +30,11 @@ button:disabled {
 }
 
 input {
+  display: inline-block;
   height: 40px;
   padding-left: 5px;
+  font-size: 20px;
+  margin-top: 20px;
   border: none;
   outline: none;
   border-bottom: grey solid 1px;
@@ -49,6 +52,7 @@ input:-moz-read-only {
   border-bottom: none;
 }
 
+/* removes Google chrome's ugly yellow autofill */
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0px 1000px white inset;
 }
