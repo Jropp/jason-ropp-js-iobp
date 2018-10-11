@@ -23,6 +23,7 @@
         left: 0px;
         margin-top: 10px;
         cursor: pointer;
+        border: none;
       }
 
       .expand-button {
@@ -35,7 +36,6 @@
 
       button:focus {
         outline: 0;
-        border: none;
       }
 
       jha-up-arrow-icon {
@@ -54,28 +54,31 @@
         fill: #fca902;
       }
     </style>
+
     <template is="dom-if" if="[[arrowUp]]">
       <button class="expand-button">
         <jha-drop-arrow-icon></jha-drop-arrow-icon>
       </button>
-      <!-- <div id="detailsButton" on-click="toggleDetailsVisibility" class="expand-details-clickable">
-      </div> -->
     </template>
+
     <template is="dom-if" if="[[!arrowUp]]">
       <button class="collapse-button">
         <jha-up-arrow-icon></jha-up-arrow-icon>
       </button>
     </template>
+
   </template>
   <script>
     import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
-    // import { ValidateUtil } from './../api/utils.js';
+
     class ExpandCollapseButtonElement extends PolymerElement {
       static get is() {
         return 'expand-collapse-button';
       }
       static get properties() {
-
+        arrowUp :{
+          type: Boolean
+        }
       }
     }
 
