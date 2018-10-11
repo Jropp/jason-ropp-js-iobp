@@ -9,6 +9,7 @@
 <link rel="import" href="../design/svgs/jha-person-icon.html">
 <link rel="import" href="../design/svgs/jha-phone-icon.html">
 <link rel="import" href="../design/svgs/jha-up-arrow-icon.html">
+<link rel="import" href="./warning-message.html">
 <!-- bplint-enable no-unused-import -->
 
 <dom-module id="user-component">
@@ -259,6 +260,7 @@
       }
     </style>
 
+
     <div id="userCard" class$="[[userCardClass]]">
       <header class="card_header">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
@@ -309,7 +311,9 @@
           <br>
 
           <template is="dom-if" if="[[displayEmailWarning]]">
-            <span class="warning">[[messages.EMAIL_FORMAT]]</span>
+            <warning-message>
+              <span>[[messages.EMAIL_FORMAT]]</span>
+            </warning-message>
           </template>
 
           <label for="phone">
@@ -320,7 +324,9 @@
           <br>
 
           <template is="dom-if" if="[[displayPhoneWarning]]">
-            <span class="warning">[[messages.PHONE_FORMAT]]</span>
+            <warning-message>
+              <span>[[messages.PHONE_FORMAT]]</span>
+            </warning-message>
           </template>
 
           <label for="department">
@@ -331,7 +337,6 @@
 
           <!-- bplint-enable no-auto-binding -->
           <div class="submit-button-box">
-
             <template is="dom-if" if="[[!isMode(modes.DISPLAY, mode)]]">
               <button class="save-button" on-click="save" type="submit" disabled="[[disableSave]]">Save</button>
 
@@ -340,7 +345,9 @@
               </template>
               <br>
               <template is="dom-if" if="[[displayOpenEditMessage]]">
-                <span class="warning">[[messages.OPEN_EDIT]]</span>
+                <warning-message>
+                  <span>[[messages.OPEN_EDIT]]</span>
+                </warning-message>
               </template>
 
             </template>
