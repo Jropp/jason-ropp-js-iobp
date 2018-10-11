@@ -99,12 +99,16 @@ class UserComponentElement extends PolymerElement {
     let isExistingUser = Boolean(this.user._id);
 
     if (isExistingUser) {
-      this.userCardClass = this.classes.ANIMATE_COLLAPSE_USER;
-      this.mode = this.modes.DISPLAY;
+      this.setProperties({
+        userCardClass: this.classes.ANIMATE_COLLAPSE_USER,
+        mode: this.modes.DISPLAY
+      });
       this.toggleEditableInputs();
     } else {
-      this.userCardClass = this.classes.COLLAPSE_NEW;
-      this.mode = this.modes.CREATE_NEW;
+      this.setProperties({
+        userCardClass: this.classes.COLLAPSE_NEW,
+        mode: this.modes.CREATE_NEW
+      });
     }
   }
 
@@ -202,11 +206,15 @@ class UserComponentElement extends PolymerElement {
     const emailInProgress = this.user.email;
     const phoneInProgress = this.user.phone;
 
-    // eslint-disable-next-line no-undef
-    this.displayEmailWarning = emailInProgress && !ValidateUtil.checkEmailInput(this.user.email);
-    // eslint-disable-next-line no-undef
-    this.displayPhoneWarning = phoneInProgress && !ValidateUtil.checkPhoneInput(this.user.phone);
-    this.displayOpenEditMessage = isNewUserCard && this.editOpen;
+    const emailWarning = emailInProgress && !ValidateUtil.checkEmailInput(this.user.email);
+    const phoneWarning = phoneInProgress && !ValidateUtil.checkPhoneInput(this.user.phone);
+    const openEditMessage = isNewUserCard && this.editOpen;
+
+    this.setProperties({
+      displayEmailWarning: emailWarning,
+      displayPhoneWarning: phoneWarning,
+      displayOpenEditMessage: openEditMessage
+    });
 
     const errorMessageDisplayed = this.displayEmailWarning || this.displayPhoneWarning || this.displayOpenEditMessage;
 
@@ -216,8 +224,11 @@ class UserComponentElement extends PolymerElement {
   }
 
   clearInputFormatWarnings() {
-    this.displayEmailWarning = false;
-    this.displayPhoneWarning = false;
+    this.setProperties({
+      displayEmailWarning: false,
+      displayPhoneWarning: false,
+    });
+
     this.resizeCardForWarningMessages(false);
   }
 
