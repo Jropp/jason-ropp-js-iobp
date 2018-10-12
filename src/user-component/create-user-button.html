@@ -1,70 +1,63 @@
 <!-- bplint-disable no-unused-import -->
 <link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
 <link rel="import" href="~@banno/polymer/polymer-element.js">
-<link rel="import" href="../design/svgs/jha-drop-arrow-icon.html">
-<link rel="import" href="../design/svgs/jha-up-arrow-icon.html">
+<link rel="import" href="../design/svgs/jha-add-person-icon.html">
+<link rel="import" href="../design/svgs/jha-cancel-icon.html">
+
 <!-- bplint-enable no-unused-import -->
 
 <dom-module id="create-user-button">
   <template>
-
+    <link rel="stylesheet" href="./../design/css/shared-styles.css">
     <style>
       :host {
         display: inline-block
       }
 
-      button {
-        box-sizing: border-box;
-        position: absolute;
-        height: 25px;
+       jha-cancel-icon {
+        width: 70px;
+        height: 49px;
+        fill: white;
+      }
+
+       button {
+        top: 0px;
+        font-size: 20px;
         width: 100%;
-        bottom: 0px;
-        left: 0px;
-        margin-top: 10px;
-        cursor: pointer;
-        border: none;
+        height: 90px;
+        margin: 0;
+        transition: background-color .4s;
       }
 
-      .expand-button {
-        background-color: #fca902;
-      }
-
-      .collapse-button {
+      button[rel="false"] {
         background-color: #0070b7;
+        transition: all .5s;
+        padding: 0px;
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
+        transition: background-color .6s;
       }
 
-      button:focus {
-        outline: 0;
+      button:hover jha-add-person-icon {
+        fill: #0070b7;
       }
 
-      jha-up-arrow-icon {
-        fill: white;
-      }
-
-      jha-drop-arrow-icon {
-        fill: black;
-      }
-
-      .expand-button:hover>jha-drop-arrow-icon {
-        fill: white;
-      }
-
-      .collapse-button:hover>jha-up-arrow-icon {
+      button:hover jha-cancel-icon {
         fill: #fca902;
       }
+
+
     </style>
+    <button id="createUserButton" class="create-user-button">
 
-    <template is="dom-if" if="[[arrowUp]]">
-      <button class="expand-button">
-        <jha-drop-arrow-icon></jha-drop-arrow-icon>
-      </button>
-    </template>
+      <template is="dom-if" if="[[addUserIcon]]">
+        <jha-add-person-icon></jha-add-person-icon>
+      </template>
+      <template is="dom-if" if="[[!addUserIcon]]">
+        <jha-cancel-icon></jha-cancel-icon>
+      </template>
 
-    <template is="dom-if" if="[[!arrowUp]]">
-      <button class="collapse-button">
-        <jha-up-arrow-icon></jha-up-arrow-icon>
-      </button>
-    </template>
+    </button>
 
   </template>
   <script>
@@ -74,10 +67,18 @@
       static get is() {
         return 'create-user-button';
       }
-      static get properties() {
-        arrowUp: {
-          type: Boolean
+      static get properties(){
+        return {
+          addUserIcon: {
+            type: Boolean,
+            value: true,
+            observer: 'setColor'
+          }
         }
+      }
+      setColor(addUserIcon){
+        const turnBlue = addUserIcon;
+        this.$.createUserButton.setAttribute('rel', `${turnBlue}`);
       }
     }
 
