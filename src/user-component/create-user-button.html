@@ -67,16 +67,16 @@
       static get is() {
         return 'create-user-button';
       }
-      static get properties(){
+      static get properties() {
         return {
           addUserIcon: {
             type: Boolean,
             value: true,
             observer: 'setColor'
           }
-        }
+        };
       }
-      setColor(addUserIcon){
+      setColor(addUserIcon) {
         const turnBlue = addUserIcon;
         this.$.createUserButton.setAttribute('rel', `${turnBlue}`);
       }
