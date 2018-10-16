@@ -1,0 +1,78 @@
+<dom-module id="shared-styles">
+  <template>
+    <style>
+      /* Custom property defined in the global scope */
+      :host {
+        --primary-color:  #fca902;
+        --secondary-color: #0070b7;
+        --tertiary-color: black;
+        --app-background-color: #e4e7ea;
+        --app-card-color: white;
+        --warning-message: #f44336;
+        --default-button-color: var(--primary-color);
+        --default-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px,
+          rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
+      }
+
+      button {
+        height: 40px;
+        width: 175px;
+        margin-top: 30px;
+        border: none;
+        border-radius: 3px;
+        background-color: var(--default-button-color);
+        box-shadow: var(--default-shadow);
+        cursor: pointer;
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .default-card {
+        border-radius: 5px;
+        width: 450px;
+        background-color: var(--app-card-color);
+        box-shadow: var(--default-shadow);
+        margin-bottom: 16px;
+      }
+
+      input {
+        display: inline-block;
+        height: 40px;
+        padding-left: 5px;
+        font-size: 20px;
+        margin-top: 20px;
+        border: none;
+        outline: none;
+        border-bottom: grey solid 1px;
+      }
+
+      input:focus {
+        border-bottom: var(--primary-color) solid 2px;
+      }
+
+      input:read-only {
+        border-bottom: none;
+      }
+
+      input:-moz-read-only {
+        border-bottom: none;
+      }
+
+      /* removes Google chrome's ugly yellow autofill */
+      input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0px 1000px white inset;
+      }
+
+      .warning {
+        margin-top: 3px;
+        color: var(--warning-message);
+        font-size: 14px;
+        font-weight: bold;
+        display: block;
+      }
+    </style>
+  </template>
+</dom-module>
