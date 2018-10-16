@@ -3,7 +3,7 @@
     <style>
       /* Custom property defined in the global scope */
       :host {
-        --primary-color:  #fca902;
+        --primary-color: #fca902;
         --secondary-color: #0070b7;
         --tertiary-color: black;
         --app-background-color: #e4e7ea;
@@ -28,6 +28,15 @@
       button:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+      }
+
+      button:hover {
+        box-shadow: 0px 3px 5px #a6a7a8;
+        transform: scale(1.01);
+      }
+
+      button:focus {
+        outline: 0;
       }
 
       .default-card {
