@@ -37,7 +37,7 @@
       }
 
       button:hover jha-add-person-icon {
-        fill: #0070b7;
+        fill: var(--app-blue);
       }
 
       form {
@@ -87,7 +87,7 @@
       }
 
       .expand-details-clickable {
-        background-color: #fca902;
+        background-color: var(--primary-color);
         box-sizing: border-box;
         position: absolute;
         height: 25px;
@@ -107,7 +107,7 @@
       }
 
       .expand-new-user .create-user-button {
-        background-color: #0070b7;
+        background-color: var(--secondary-color);
         transition: all .5s;
         padding: 0px;
         border-bottom-left-radius: 0px;
@@ -126,7 +126,7 @@
       }
 
       button:hover jha-cancel-icon {
-        fill: #fca902;
+        fill: var(--primary-color);
       }
 
       .collapse-new-user {
@@ -178,7 +178,7 @@
       }
 
       [class*="expand-existing"] .expand-details-clickable {
-        background-color: #0070b7;
+        background-color: var(--secondary-color);
         transition: all .5s;
       }
 
@@ -207,12 +207,12 @@
       }
 
       .expand-details-clickable:hover jha-up-arrow-icon {
-        fill: #fca902;
+        fill: var(--primary-color);
       }
 
     </style>
     <div id="userCard" class$="[[userCardClass]]">
-      <header class="card_header">
+      <header class="card_header red">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <h1>[[user.lastName]], [[user.firstName]]</h1>
           <div class="user-id-container" id="id">
