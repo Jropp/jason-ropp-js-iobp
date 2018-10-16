@@ -7,9 +7,9 @@
         --secondary-color: #0070b7;
         --tertiary-color: black;
         --app-background-color: #e4e7ea;
-        --app-card-color: white;
         --warning-message: #f44336;
         --default-button-color: var(--primary-color);
+        --default-card-color: white;
         --default-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px,
           rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
       }
@@ -42,7 +42,7 @@
       .default-card {
         border-radius: 5px;
         width: 450px;
-        background-color: var(--app-card-color);
+        background-color: var(--default-card-color);
         box-shadow: var(--default-shadow);
         margin-bottom: 16px;
       }
@@ -72,7 +72,7 @@
 
       /* removes Google chrome's ugly yellow autofill */
       input:-webkit-autofill {
-        -webkit-box-shadow: 0 0 0px 1000px white inset;
+        --webkit-box-shadow: 0 0 0px 1000px white inset;
       }
 
       .warning {
