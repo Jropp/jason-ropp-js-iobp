@@ -34,7 +34,6 @@ class UserComponentElement extends PolymerElement {
             CREATE_NEW: 'create'
           };
         },
-        readOnly: true
       },
       userCardClass: {
         type: String,
@@ -51,7 +50,6 @@ class UserComponentElement extends PolymerElement {
             ANIMATE_EXPAND_USER: 'default-card expand-existing-user',
           };
         },
-        readOnly: true
       },
       displayOpenEditMessage: {
         type: Boolean
@@ -71,7 +69,6 @@ class UserComponentElement extends PolymerElement {
             EMAIL_FORMAT: 'Your email seems a little off. Would you mind formatting it as xxxx@xxxxx.xxx?'
           };
         },
-        readOnly: true
       },
       disableSave: {
         type: Boolean,
