@@ -1,5 +1,5 @@
 import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
-// import { ValidateUtil } from './../api/utils.js';
+
 class UserComponentElement extends PolymerElement {
   static get is() { return 'user-component'; }
   static get properties() {
