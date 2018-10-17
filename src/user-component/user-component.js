@@ -33,11 +33,10 @@ class UserComponentElement extends PolymerElement {
             EDIT_USER: 'edit',
             CREATE_NEW: 'create'
           };
-        }
+        },
       },
       userCardClass: {
         type: String,
-        value: 'default-card collapse-new-user'
       },
       classes: {
         type: Object,
@@ -50,7 +49,7 @@ class UserComponentElement extends PolymerElement {
             EXPAND_NEW: 'default-card expand-new-user',
             ANIMATE_EXPAND_USER: 'default-card expand-existing-user',
           };
-        }
+        },
       },
       displayOpenEditMessage: {
         type: Boolean
@@ -69,7 +68,7 @@ class UserComponentElement extends PolymerElement {
             PHONE_FORMAT: 'Would you mind formatting your number as (xxx) xxx-xxxx?',
             EMAIL_FORMAT: 'Your email seems a little off. Would you mind formatting it as xxxx@xxxxx.xxx?'
           };
-        }
+        },
       },
       disableSave: {
         type: Boolean,
@@ -100,10 +99,16 @@ class UserComponentElement extends PolymerElement {
     let isExistingUser = Boolean(this.user._id);
 
     if (isExistingUser) {
-      this.mode = this.modes.DISPLAY;
+      this.setProperties({
+        userCardClass: this.classes.ANIMATE_COLLAPSE_USER,
+        mode: this.modes.DISPLAY
+      });
       this.toggleEditableInputs();
     } else {
-      this.mode = this.modes.CREATE_NEW;
+      this.setProperties({
+        userCardClass: this.classes.COLLAPSE_NEW,
+        mode: this.modes.CREATE_NEW
+      });
     }
   }
 
@@ -201,11 +206,15 @@ class UserComponentElement extends PolymerElement {
     const emailInProgress = this.user.email;
     const phoneInProgress = this.user.phone;
 
-    // eslint-disable-next-line no-undef
-    this.displayEmailWarning = emailInProgress && !ValidateUtil.checkEmailInput(this.user.email);
-    // eslint-disable-next-line no-undef
-    this.displayPhoneWarning = phoneInProgress && !ValidateUtil.checkPhoneInput(this.user.phone);
-    this.displayOpenEditMessage = isNewUserCard && this.editOpen;
+    const emailWarning = emailInProgress && !ValidateUtil.checkEmailInput(this.user.email);
+    const phoneWarning = phoneInProgress && !ValidateUtil.checkPhoneInput(this.user.phone);
+    const openEditMessage = isNewUserCard && this.editOpen;
+
+    this.setProperties({
+      displayEmailWarning: emailWarning,
+      displayPhoneWarning: phoneWarning,
+      displayOpenEditMessage: openEditMessage
+    });
 
     const errorMessageDisplayed = this.displayEmailWarning || this.displayPhoneWarning || this.displayOpenEditMessage;
 
@@ -215,8 +224,11 @@ class UserComponentElement extends PolymerElement {
   }
 
   clearInputFormatWarnings() {
-    this.displayEmailWarning = false;
-    this.displayPhoneWarning = false;
+    this.setProperties({
+      displayEmailWarning: false,
+      displayPhoneWarning: false,
+    });
+
     this.resizeCardForWarningMessages(false);
   }
 

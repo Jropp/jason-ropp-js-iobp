@@ -25,7 +25,7 @@ class UserListElement extends PolymerElement {
             FIRST_NAME: 'firstName',
             DEPARTMENT: 'department'
           };
-        }
+        },
       },
       currentSortCategory: {
         type: String,
