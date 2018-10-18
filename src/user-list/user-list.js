@@ -26,7 +26,6 @@ class UserListElement extends PolymerElement {
             DEPARTMENT: 'department'
           };
         },
-        readOnly: true
       },
       currentSortCategory: {
         type: String,

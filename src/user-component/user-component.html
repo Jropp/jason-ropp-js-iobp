@@ -10,12 +10,12 @@
 <link rel="import" href="./warning-message.html">
 <link rel="import" href="./expand-collapse-button.html">
 <link rel="import" href="./create-user-button.html">
+<link rel="import" href="./../design/css/shared-styles.html">
 <!-- bplint-enable no-unused-import -->
 
 <dom-module id="user-component">
-  <link rel="stylesheet" href="./../design/css/shared-styles.css">
   <template>
-    <style>
+    <style include="shared-styles">
       :host {
          font-family: Arial, Helvetica, sans-serif;
       }
@@ -33,7 +33,7 @@
       }
 
       button:hover jha-add-person-icon {
-        fill: #0070b7;
+        fill: var(--app-blue);
       }
 
       form {
@@ -143,7 +143,7 @@
       }
 
       [class*="expand-existing"] .expand-details-clickable {
-        background-color: #0070b7;
+        background-color: var(--secondary-color);
         transition: all .5s;
       }
 
@@ -164,7 +164,7 @@
       }
     </style>
     <div id="userCard" class$="[[userCardClass]]">
-      <header class="card_header">
+      <header class="card_header red">
         <template is="dom-if" if="[[isMode(modes.DISPLAY, mode)]]">
           <h1>[[user.lastName]], [[user.firstName]]</h1>
           <div class="user-id-container" id="id">

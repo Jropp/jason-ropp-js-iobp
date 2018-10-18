@@ -3,12 +3,13 @@
 <link rel="import" href="~@banno/polymer/polymer-element.js">
 <link rel="import" href="../design/svgs/jha-drop-arrow-icon.html">
 <link rel="import" href="../design/svgs/jha-up-arrow-icon.html">
+<link rel="import" href="../design/css/shared-styles.html">
 <!-- bplint-enable no-unused-import -->
 
 <dom-module id="expand-collapse-button">
   <template>
 
-    <style>
+    <style include="shared-styles">
       :host {
         display: inline-block
       }
@@ -21,16 +22,15 @@
         bottom: 0px;
         left: 0px;
         margin-top: 10px;
-        cursor: pointer;
-        border: none;
+        border-radius: 0px 0px 3px 3px;
       }
 
       .expand-button {
-        background-color: #fca902;
+        background-color: var(--primary-color);
       }
 
       .collapse-button {
-        background-color: #0070b7;
+        background-color: var(--secondary-color);
       }
 
       button:focus {
@@ -50,7 +50,7 @@
       }
 
       .collapse-button:hover>jha-up-arrow-icon {
-        fill: #fca902;
+        fill: var(--primary-color);
       }
     </style>
 
@@ -73,6 +73,13 @@
     class ExpandCollapseButtonElement extends PolymerElement {
       static get is() {
         return 'expand-collapse-button';
+      }
+      static get properties() {
+        return {
+          arrowUp: {
+            type: Boolean
+          }
+        };
       }
     }
 
