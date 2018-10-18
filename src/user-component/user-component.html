@@ -1,8 +1,6 @@
 <!-- bplint-disable no-unused-import -->
 <link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
 <link rel="import" href="~@banno/polymer/polymer-element.js">
-<link rel="import" href="../design/svgs/jha-add-person-icon.html">
-<link rel="import" href="../design/svgs/jha-cancel-icon.html">
 <link rel="import" href="../design/svgs/jha-department-icon.html">
 <link rel="import" href="../design/svgs/jha-drop-arrow-icon.html">
 <link rel="import" href="../design/svgs/jha-email-icon.html">
@@ -11,6 +9,7 @@
 <link rel="import" href="../design/svgs/jha-up-arrow-icon.html">
 <link rel="import" href="./warning-message.html">
 <link rel="import" href="./expand-collapse-button.html">
+<link rel="import" href="./create-user-button.html">
 <link rel="import" href="./../design/css/shared-styles.html">
 <!-- bplint-enable no-unused-import -->
 
@@ -29,13 +28,8 @@
         transition: max-height 0.5s ease-out;
       }
 
-      .create-user-button {
-        top: 0px;
-        font-size: 20px;
+      create-user-button {
         width: 100%;
-        height: 90px;
-        margin: 0;
-        transition: background-color .4s;
       }
 
       button:hover jha-add-person-icon {
@@ -96,27 +90,8 @@
         transition: max-height .6s ease-in;
       }
 
-      .expand-new-user .create-user-button {
-        background-color: var(--secondary-color);
-        transition: all .5s;
-        padding: 0px;
-        border-bottom-left-radius: 0px;
-        border-bottom-right-radius: 0px;
-        transition: background-color .6s;
-      }
-
       .expand-new-user .card_content {
         animation: fade-in .7s;
-      }
-
-      jha-cancel-icon {
-        width: 70px;
-        height: 49px;
-        fill: white;
-      }
-
-      button:hover jha-cancel-icon {
-        fill: var(--primary-color);
       }
 
       .collapse-new-user {
@@ -201,16 +176,7 @@
           <h1 class="edit-user-header">[[setEditUserHeader(user)]]</h1>
         </template>
         <template is="dom-if" if="[[isMode(modes.CREATE_NEW, mode)]]">
-          <button id="createUserButton" on-click="toggleNewUserFormDisplay" class="create-user-button">
-
-            <template is="dom-if" if="[[isClass(classes.COLLAPSE_NEW, userCardClass)]]">
-              <jha-add-person-icon></jha-add-person-icon>
-            </template>
-            <template is="dom-if" if="[[isClass(classes.EXPAND_NEW, userCardClass)]]">
-              <jha-cancel-icon></jha-cancel-icon>
-            </template>
-
-          </button>
+          <create-user-button add-user-icon="[[isClass(classes.COLLAPSE_NEW, userCardClass)]]" on-click="toggleNewUserFormDisplay"></create-user-button>
         </template>
       </header>
       <div class="card_content">

@@ -1,0 +1,83 @@
+<!-- bplint-disable no-unused-import -->
+<link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
+<link rel="import" href="~@banno/polymer/polymer-element.js">
+<link rel="import" href="../design/svgs/jha-add-person-icon.html">
+<link rel="import" href="../design/svgs/jha-cancel-icon.html">
+<link rel="import" href="./../design/css/shared-styles.html">
+
+<!-- bplint-enable no-unused-import -->
+
+<dom-module id="create-user-button">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: inline-block
+      }
+
+      jha-cancel-icon {
+        width: 70px;
+        height: 49px;
+        fill: white;
+      }
+
+      button {
+        background-color: var(--primary-color);
+        top: 0px;
+        font-size: 20px;
+        width: 100%;
+        height: 90px;
+        margin: 0;
+        transition: background-color .4s;
+      }
+
+      button[rel="false"] {
+        background-color: var(--secondary-color);
+        padding: 0px;
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
+        transition: all .5s;
+      }
+
+      button:hover jha-add-person-icon {
+        fill: var(--secondary-color);
+      }
+
+      button:hover jha-cancel-icon {
+        fill: var(--primary-color);
+      }
+    </style>
+    <button id="createUserButton" class="create-user-button">
+      <template is="dom-if" if="[[addUserIcon]]">
+        <jha-add-person-icon></jha-add-person-icon>
+      </template>
+      <template is="dom-if" if="[[!addUserIcon]]">
+        <jha-cancel-icon></jha-cancel-icon>
+      </template>
+    </button>
+  </template>
+  <script>
+    import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
+
+    class CreateUserButtonElement extends PolymerElement {
+      static get is() {
+        return 'create-user-button';
+      }
+      static get properties() {
+        return {
+          addUserIcon: {
+            type: Boolean,
+            value: true,
+            observer: 'setColor'
+          }
+        };
+      }
+      setColor(addUserIcon) {
+        const turnBlue = addUserIcon;
+        this.$.createUserButton.setAttribute('rel', `${turnBlue}`);
+      }
+    }
+
+    customElements.define(CreateUserButtonElement.is, CreateUserButtonElement);
+    export default CreateUserButtonElement;
+  </script>
+</dom-module>
