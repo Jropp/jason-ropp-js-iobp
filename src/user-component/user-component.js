@@ -153,6 +153,12 @@ class UserComponentElement extends PolymerElement {
   save(e) {
     e.preventDefault();
 
+    if (this.hasInvalidFormInputs()) {
+      this.updateWarningMessageDisplay();
+      this.updateDisableSaveButton();
+      return;
+    }
+
     const user = Object.assign({}, this.user);
 
     if (this.isMode(this.modes.CREATE_NEW)) {
@@ -188,17 +194,27 @@ class UserComponentElement extends PolymerElement {
     }
   }
 
-  updateDisableSaveButton() {
-    if (!this.isFirstLoad) {
-      const editOpenAndNewUser = this.editOpen && this.isMode(this.modes.CREATE_NEW);
+  hasInvalidFormInputs() {
+    const editOpenAndNewUser =
+      this.editOpen && this.isMode(this.modes.CREATE_NEW);
       const emptyFields = !this.areFieldsFilled();
       // eslint-disable-next-line no-undef
       const improperPhoneFormat = !ValidateUtil.checkPhoneInput(this.user.phone);
       // eslint-disable-next-line no-undef
       const improperEmailFormat = !ValidateUtil.checkEmailInput(this.user.email);
 
-      this.disableSave = editOpenAndNewUser || emptyFields || improperPhoneFormat || improperEmailFormat;
+    return (
+      editOpenAndNewUser ||
+      emptyFields ||
+      improperPhoneFormat ||
+      improperEmailFormat
+    );
     }
+
+  updateDisableSaveButton() {
+    if (!this.isFirstLoad) {
+      this.disableSave = this.hasInvalidFormInputs();
+  }
   }
 
   updateWarningMessageDisplay() {
@@ -226,7 +242,7 @@ class UserComponentElement extends PolymerElement {
   clearInputFormatWarnings() {
     this.setProperties({
       displayEmailWarning: false,
-      displayPhoneWarning: false,
+      displayPhoneWarning: false
     });
 
     this.resizeCardForWarningMessages(false);
