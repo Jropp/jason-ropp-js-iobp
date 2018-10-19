@@ -104,7 +104,7 @@
       <div class="dropdown-options">
         <template is="dom-repeat" items="[[listItems]]">
           <li id="lastName" on-click="setArrow">[[item]]
-            <template is="dom-if" if="[[sortIs(item, currentSelectedItem)]]">
+            <template is="dom-if" if="[[sortIs(item, selected)]]">
               ✓
             </template>
           </li>
@@ -125,7 +125,7 @@
           listItems: {
             type: Array,
           },
-          currentSelectedItem: {
+          selected: {
             type: String,
           }
         };
