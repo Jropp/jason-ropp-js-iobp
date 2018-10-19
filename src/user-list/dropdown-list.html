@@ -130,9 +130,13 @@
           }
         };
       }
+      connectedCallback() {
+        super.connectedCallback();
+        this.selected = this.listItems[0];
+      }
 
       setArrow(e) {
-        this.currentSelectedItem = e.model.item;
+        this.selected = e.model.item;
       }
 
       sortIs(current, expected) {
