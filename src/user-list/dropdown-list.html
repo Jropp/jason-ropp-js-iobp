@@ -42,13 +42,20 @@
 
       .dropdown-container:hover>hr {
         margin-bottom: 5px;
+        animation-fill-mode: forwards;
         opacity: 1;
         transition: opacity .2s;
       }
 
+      .dropdown-options {
+        background-color: var(--tertiary-color);
+        max-height: 0px;
+        transition: max-height .3s ease-out;
+      }
+
       .dropdown-container:hover>.dropdown-options {
-        height: 80px;
-        transition: height .3s;
+        max-height: 100px;
+        transition: max-height .3s;
         opacity: 1;
       }
 
@@ -58,11 +65,6 @@
         transition: opacity .2s .1s;
       }
 
-      .dropdown-options {
-        background-color: var(--tertiary-color);
-        height: 0px;
-        transition: height .4s;
-      }
 
       .dropdown-options>li {
         margin-left: 10px;
