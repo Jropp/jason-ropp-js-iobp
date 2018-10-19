@@ -11,27 +11,18 @@
   <template>
     <style include="shared-styles">
       :host {
-        display: inline-block
+        display: inline-block;
       }
 
       .dropdown-container {
         position: relative;
-        margin-left: 25px;
         display: inline-block;
         vertical-align: top;
-        width: 42%;
+        min-width: 200px;
         background-color: var(--tertiary-color);
         border-radius: 3px;
         box-shadow: var(--default-shadow);
         cursor: default;
-      }
-
-      .sort-direction-container {
-        vertical-align: top;
-        width: 42%;
-        background-color: var(--tertiary-color);
-        border-radius: 3px;
-        box-shadow: var(--default-shadow);
       }
 
       .dropdown-container>.dropdown-header {
@@ -41,7 +32,7 @@
         color: white;
       }
 
-      .dropdown-container>hr {
+      hr {
         margin: 0px 10px 0px 10px;
         background-color: white;
         height: .5px;
@@ -59,10 +50,6 @@
         height: 80px;
         transition: height .3s;
         opacity: 1;
-      }
-
-      .dropdown-container:hover>.sort-direction-options {
-        height: 50px;
       }
 
       .dropdown-container:hover>.dropdown-options>li {
