@@ -132,6 +132,10 @@
       }
       connectedCallback() {
         super.connectedCallback();
+        this.setDefaultCheckedItem();
+      }
+
+      setDefaultCheckedItem(){
         this.selected = this.listItems[0];
       }
 
