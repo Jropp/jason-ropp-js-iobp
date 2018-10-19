@@ -91,23 +91,7 @@
         <div class="create-user-row">
           <user-component class="new-user-card" edit-open="[[editInProgress]]"></user-component>
           <div class="options-bar">
-            <dropdown-list list-items="[[sortCategoryArray]]"></dropdown-list>
-            <!-- <div class="sort-direction-container dropdown-container">
-              <div class="dropdown-header">Sort Direction:</div>
-              <hr>
-              <div class="sort-direction-options dropdown-options">
-                <li id="sortAlphabetical" on-click="sortByDirection">A-Z
-                  <template is="dom-if" if="[[!sortDirectionIsReversed]]">
-                    ✓
-                  </template>
-                </li>
-                <li id="sortReversedAlphabetical" on-click="sortByDirection">Z-A
-                  <template is="dom-if" if="[[sortDirectionIsReversed]]">
-                    ✓
-                  </template>
-                </li>
-              </div>
-            </div> -->
+            <dropdown-list on-click="dropdownSort" selected list-items="[[sortCategoryArray]]"></dropdown-list>
           </div>
         </div>
         <div class="user-list-row">
