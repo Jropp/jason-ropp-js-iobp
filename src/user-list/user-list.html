@@ -103,7 +103,8 @@
           <user-component class="new-user-card" edit-open="[[editInProgress]]"></user-component>
           <div class="options-bar">
             <dropdown-list class="sort-category-dropdown" on-click="dropdownSort" selected list-items="[[sortCategoryOptions]]"></dropdown-list>
-            <dropdown-list on-click="sortByDirection" selected list-items="[[sortDirectionOptions]]" class = "sort-direction-dropdown"></dropdown-list>
+            <dropdown-list class="sort-direction-dropdown" on-click="sortByDirection" selected list-items="[[sortDirectionOptions]]">
+            </dropdown-list>
           </div>
         </div>
         <div class="user-list-row">
