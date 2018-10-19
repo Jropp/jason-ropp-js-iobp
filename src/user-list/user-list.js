@@ -98,7 +98,7 @@ class UserListElement extends PolymerElement {
   }
 
   dropdownSort(e) {
-    const selected = e.target.selected;
+    const selected = e.target.selectedItem;
     let primarySortBy = this.getDropdownSortSelection(selected);
 
     this.setSortedUsersBy(primarySortBy);
@@ -131,7 +131,7 @@ class UserListElement extends PolymerElement {
   }
 
   sortByDirection(e) {
-    this.sortDirectionIsReversed = e.target.selected === "Z-A";
+    this.sortDirectionIsReversed = e.target.selectedItem === "Z-A";
     Database.setReversedSort(this.sortDirectionIsReversed);
 
     this.setSortedUsersBy(this.currentSortCategory);

@@ -111,7 +111,7 @@
           listItems: {
             type: Array,
           },
-          selected: {
+          selectedItem: {
             type: String,
           }
         };
@@ -121,12 +121,12 @@
         this.setDefaultCheckedItem();
       }
 
-      setDefaultCheckedItem(){
-        this.selected = this.listItems[0];
+      setDefaultCheckedItem() {
+        this.selectedItem = this.listItems[0];
       }
 
       setArrow(e) {
-        this.selected = e.model.item;
+        this.selectedItem = e.model.item;
       }
 
       sortIs(current, expected) {
