@@ -26,8 +26,15 @@
 
       dropdown-list {
         display: inline-block;
+        width: 200px;
+      }
+
+      .sort-category-dropdown {
         margin-left: 25px;
-        width: 100%;
+      }
+
+      .sort-direction-dropdown {
+        margin-left: 5px;
       }
 
       .user-list-row {
@@ -95,8 +102,8 @@
         <div class="create-user-row">
           <user-component class="new-user-card" edit-open="[[editInProgress]]"></user-component>
           <div class="options-bar">
-            <dropdown-list on-click="dropdownSort" selected list-items="[[sortCategoryOptions]]"></dropdown-list>
-            <dropdown-list on-click="sortByDirection" selected list-items="[[sortDirectionOptions]]"></dropdown-list>
+            <dropdown-list class="sort-category-dropdown" on-click="dropdownSort" selected list-items="[[sortCategoryOptions]]"></dropdown-list>
+            <dropdown-list on-click="sortByDirection" selected list-items="[[sortDirectionOptions]]" class = "sort-direction-dropdown"></dropdown-list>
           </div>
         </div>
         <div class="user-list-row">

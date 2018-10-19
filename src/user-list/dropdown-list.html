@@ -17,8 +17,8 @@
       .dropdown-container {
         position: relative;
         display: inline-block;
-        vertical-align: top;
-        min-width: 200px;
+        width: 100%;
+        padding: 10px;
         background-color: var(--tertiary-color);
         border-radius: 3px;
         box-shadow: var(--default-shadow);
@@ -26,8 +26,6 @@
       }
 
       .dropdown-container>.dropdown-header {
-        margin: 10px;
-        display: inline-block;
         font-weight: bold;
         color: white;
       }
@@ -42,7 +40,6 @@
 
       .dropdown-container:hover>hr {
         margin-bottom: 5px;
-        animation-fill-mode: forwards;
         opacity: 1;
         transition: opacity .2s;
       }
