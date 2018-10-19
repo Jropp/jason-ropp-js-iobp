@@ -95,7 +95,8 @@
         <div class="create-user-row">
           <user-component class="new-user-card" edit-open="[[editInProgress]]"></user-component>
           <div class="options-bar">
-            <dropdown-list on-click="dropdownSort" selected list-items="[[sortCategoryArray]]"></dropdown-list>
+            <dropdown-list on-click="dropdownSort" selected list-items="[[sortCategoryOptions]]"></dropdown-list>
+            <dropdown-list on-click="sortByDirection" selected list-items="[[sortDirectionOptions]]"></dropdown-list>
           </div>
         </div>
         <div class="user-list-row">

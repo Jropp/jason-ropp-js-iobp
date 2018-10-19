@@ -18,9 +18,13 @@ class UserListElement extends PolymerElement {
         type: Array,
         value: []
       },
-      sortCategoryArray: {
+      sortCategoryOptions: {
         type: Array,
         value: () => ["Last Name", "First Name", "Department"]
+      },
+      sortDirectionOptions: {
+        type: Array,
+        value: () => ["A-Z", "Z-A"]
       },
       sortCategories: {
         type: Object,
