@@ -86,22 +86,15 @@ class UserListElement extends PolymerElement {
   }
 
   getDropdownSortSelection(selected) {
-    const lastName = this.sortCategories.LAST_NAME;
-    const firstName = this.sortCategories.FIRST_NAME;
-    const department = this.sortCategories.DEPARTMENT;
-    let primarySortBy;
-
     if (selected === "Last Name") {
-      primarySortBy = lastName;
+      return this.sortCategories.LAST_NAME;
     }
     if (selected === "First Name") {
-      primarySortBy = firstName;
+      return this.sortCategories.FIRST_NAME;
     }
     if (selected === "Department") {
-      primarySortBy = department;
+      return this.sortCategories.DEPARTMENT;
     }
-
-    return primarySortBy;
   }
 
   dropdownSort(e) {
@@ -138,7 +131,7 @@ class UserListElement extends PolymerElement {
   }
 
   sortByDirection(e) {
-    this.sortDirectionIsReversed = e.target.id === "sortReversedAlphabetical";
+    this.sortDirectionIsReversed = e.target.selected === "Z-A";
     Database.setReversedSort(this.sortDirectionIsReversed);
 
     this.setSortedUsersBy(this.currentSortCategory);
