@@ -1,9 +1,10 @@
-
-import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
-import { Database } from './../api/user-database.js';
+import { Element as PolymerElement } from "@banno/polymer/polymer-element.js"; // eslint-disable-line no-unused-vars
+import { Database } from "./../api/user-database.js";
 
 class UserListElement extends PolymerElement {
-  static get is() { return 'user-list'; }
+  static get is() {
+    return "user-list";
+  }
   static get properties() {
     return {
       users: {
@@ -17,19 +18,23 @@ class UserListElement extends PolymerElement {
         type: Array,
         value: []
       },
+      sortCategoryArray: {
+        type: Array,
+        value: () => ["Last Name", "First Name", "Department"]
+      },
       sortCategories: {
         type: Object,
         value: () => {
           return {
-            LAST_NAME: 'lastName',
-            FIRST_NAME: 'firstName',
-            DEPARTMENT: 'department'
+            LAST_NAME: "lastName",
+            FIRST_NAME: "firstName",
+            DEPARTMENT: "department"
           };
-        },
+        }
       },
       currentSortCategory: {
         type: String,
-        value: 'lastName'
+        value: "lastName"
       },
       sortDirectionIsReversed: {
         type: Boolean,
@@ -43,21 +48,23 @@ class UserListElement extends PolymerElement {
     Database.setReversedSort(this.sortDirectionIsReversed);
     Database.getUsers();
 
-    document.addEventListener('usersLoaded', (response) => {
+    document.addEventListener("usersLoaded", response => {
       this.onUsersLoaded(response.detail);
     });
 
-    document.addEventListener('cancel', () => {
+    document.addEventListener("cancel", () => {
       this.toggleMode();
     });
 
-    document.addEventListener('editInProgress', e => {
+    document.addEventListener("editInProgress", e => {
       this.editInProgress = e.detail;
     });
 
-    document.addEventListener('cardDetailDisplayChanged', (e) => {
+    document.addEventListener("cardDetailDisplayChanged", e => {
       let cardIsExpanded = e.detail.expanded;
-      return cardIsExpanded ? this.addIdToExpandedList(e.detail.id) : this.removeIdFromExpandedList(e.detail.id);
+      return cardIsExpanded
+        ? this.addIdToExpandedList(e.detail.id)
+        : this.removeIdFromExpandedList(e.detail.id);
     });
   }
 
@@ -106,7 +113,7 @@ class UserListElement extends PolymerElement {
   }
 
   sortByDirection(e) {
-    this.sortDirectionIsReversed = e.target.id === 'sortReversedAlphabetical';
+    this.sortDirectionIsReversed = e.target.id === "sortReversedAlphabetical";
     Database.setReversedSort(this.sortDirectionIsReversed);
 
     this.setSortedUsersBy(this.currentSortCategory);
@@ -142,10 +149,10 @@ class UserListElement extends PolymerElement {
     const messageBox = this.$.popupBox;
 
     messageBox.textContent = `${action} Successful`;
-    messageBox.className = 'message-box show-message';
+    messageBox.className = "message-box show-message";
 
     window.setTimeout(() => {
-      messageBox.className = 'message-box';
+      messageBox.className = "message-box";
     }, animationTime);
   }
 
@@ -171,15 +178,24 @@ class UserListElement extends PolymerElement {
     const prevUserCat = users[index - 1][this.currentSortCategory];
     const curUserCat = users[index][this.currentSortCategory];
 
-    const firstLetterDifferent = this.firstLetterOf(prevUserCat) !== this.firstLetterOf(curUserCat);
+    const firstLetterDifferent =
+      this.firstLetterOf(prevUserCat) !== this.firstLetterOf(curUserCat);
     const wholeWordDifferent = prevUserCat !== curUserCat;
 
-    return this.categoryIsFirstOrLastName() ? firstLetterDifferent : wholeWordDifferent;
+    return this.categoryIsFirstOrLastName()
+      ? firstLetterDifferent
+      : wholeWordDifferent;
   }
 
   categoryIsFirstOrLastName() {
-    const isFirstName = this.sortIs(this.sortCategories.FIRST_NAME, this.currentSortCategory);
-    const isLastName = this.sortIs(this.sortCategories.LAST_NAME, this.currentSortCategory);
+    const isFirstName = this.sortIs(
+      this.sortCategories.FIRST_NAME,
+      this.currentSortCategory
+    );
+    const isLastName = this.sortIs(
+      this.sortCategories.LAST_NAME,
+      this.currentSortCategory
+    );
 
     return isFirstName || isLastName;
   }
@@ -204,10 +220,10 @@ class UserListElement extends PolymerElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener('usersLoaded');
-    document.removeEventListener('cancel');
-    document.removeEventListener('editInProgress');
-    document.removeEventListener('cardDetailDisplayChanged');
+    document.removeEventListener("usersLoaded");
+    document.removeEventListener("cancel");
+    document.removeEventListener("editInProgress");
+    document.removeEventListener("cardDetailDisplayChanged");
   }
 }
 
