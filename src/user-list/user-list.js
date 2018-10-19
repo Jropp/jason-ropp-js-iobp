@@ -81,10 +81,31 @@ class UserListElement extends PolymerElement {
     this.resetExpandedCardIds(isEditSave);
   }
 
+  getDropdownSortSelection(selected) {
+    const lastName = this.sortCategories.LAST_NAME;
+    const firstName = this.sortCategories.FIRST_NAME;
+    const department = this.sortCategories.DEPARTMENT;
+    let primarySortBy;
+
+    if (selected === "Last Name") {
+      primarySortBy = lastName;
+    }
+    if (selected === "First Name") {
+      primarySortBy = firstName;
+    }
+    if (selected === "Department") {
+      primarySortBy = department;
+    }
+
+    return primarySortBy;
+  }
+
   dropdownSort(e) {
-    const primarySortBy = e.target.id;
+    const selected = e.target.selected;
+    let primarySortBy = this.getDropdownSortSelection(selected);
 
     this.setSortedUsersBy(primarySortBy);
+
     this.resetExpandedCardIds(true);
   }
 
