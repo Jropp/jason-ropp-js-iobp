@@ -1,0 +1,140 @@
+<!-- bplint-disable no-unused-import -->
+<link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
+<link rel="import" href="~@banno/polymer/polymer-element.js">
+<link rel="import" href="../design/svgs/jha-add-person-icon.html">
+<link rel="import" href="../design/svgs/jha-cancel-icon.html">
+<link rel="import" href="./../design/css/shared-styles.html">
+
+<!-- bplint-enable no-unused-import -->
+
+<dom-module id="dropdown-list">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: inline-block;
+      }
+
+      .dropdown-container {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        padding: 10px;
+        background-color: var(--tertiary-color);
+        border-radius: 3px;
+        box-shadow: var(--default-shadow);
+        cursor: default;
+      }
+
+      .dropdown-container>.dropdown-header {
+        font-weight: bold;
+        color: white;
+      }
+
+      hr {
+        margin: 0px 10px 0px 0px;
+        background-color: white;
+        height: .5px;
+        opacity: 0;
+        transition: opacity .3s;
+      }
+
+      .dropdown-container:hover>hr {
+        margin-bottom: 5px;
+        opacity: 1;
+        transition: opacity .2s;
+      }
+
+      .dropdown-options {
+        background-color: var(--tertiary-color);
+        max-height: 0px;
+        transition: max-height .3s ease-out;
+      }
+
+      .dropdown-container:hover>.dropdown-options {
+        max-height: 100px;
+        transition: max-height .3s;
+        opacity: 1;
+      }
+
+      .dropdown-container:hover>.dropdown-options>li {
+        list-style: none;
+        opacity: 1;
+        transition: opacity .2s .1s;
+      }
+
+
+      .dropdown-options>li {
+        margin-left: 10px;
+        margin-bottom: 3px;
+        color: white;
+        margin-right: 10px;
+        list-style: none;
+        opacity: 0;
+      }
+
+      li:hover {
+        text-decoration: underline;
+        margin-bottom: 2;
+        cursor: pointer;
+      }
+
+      li:active {
+        color: gray;
+      }
+    </style>
+
+    <div class="dropdown-container">
+      <div class="dropdown-header">Sort Users By:
+      </div>
+      <hr>
+      <div class="dropdown-options">
+        <template is="dom-repeat" items="[[listItems]]">
+          <li id="lastName" on-click="setArrow">[[item]]
+            <template is="dom-if" if="[[sortIs(item, selected)]]">
+              ✓
+            </template>
+          </li>
+        </template>
+      </div>
+    </div>
+
+  </template>
+  <script>
+    import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
+
+    class DropdownListElement extends PolymerElement {
+      static get is() {
+        return 'dropdown-list';
+      }
+      static get properties() {
+        return {
+          listItems: {
+            type: Array,
+          },
+          selectedItem: {
+            type: String,
+          }
+        };
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        this.setDefaultCheckedItem();
+      }
+
+      setDefaultCheckedItem() {
+        this.selectedItem = this.listItems[0];
+      }
+
+      setArrow(e) {
+        this.selectedItem = e.model.item;
+      }
+
+      sortIs(current, expected) {
+        return current === expected;
+      }
+    }
+
+    customElements.define(DropdownListElement.is, DropdownListElement);
+    export default DropdownListElement;
+  </script>
+</dom-module>
