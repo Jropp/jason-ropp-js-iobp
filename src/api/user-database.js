@@ -32,7 +32,7 @@ export class Database {
     const requestUrl = `${databaseUrl}/${userId}`;
     const settings = {
       method: "GET"
-    }
+    };
 
     const response = await fetch(requestUrl, settings);
     const user = await response.json();
@@ -44,6 +44,12 @@ export class Database {
     sortSettings.lastSort = sortFilterArray;
 
     const response = await fetch(databaseUrl);
+
+    if (response.status === 404) {
+      this.sendUserDatabaseError();
+      return;
+    }
+
     const users = await response.json();
     const sorted = this.sortUsers(sortFilterArray, users);
 
@@ -78,6 +84,14 @@ export class Database {
       })
     );
     popupMessage = null;
+  }
+
+  static sendUserDatabaseError() {
+    document.dispatchEvent(
+    new CustomEvent('usersFailedToLoad', {
+      bubbles: true,
+      composed: true
+    }));
   }
 
   // not currently connected to user-list
