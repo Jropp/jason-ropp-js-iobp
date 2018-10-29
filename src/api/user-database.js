@@ -42,9 +42,8 @@ export class Database {
     sortSettings.lastSort = sortFilterArray;
 
     const response = await fetch(databaseUrl);
-    const firstNumOfResponse = String(response.status)[0];
 
-    if (firstNumOfResponse !== '2') {
+    if (response.status !== 200) {
       this.sendUserDatabaseError();
       return;
     }
