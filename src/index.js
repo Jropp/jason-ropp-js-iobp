@@ -1,1 +1,1 @@
-import "./my-app.html";
+import './my-app.html';
