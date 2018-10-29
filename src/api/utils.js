@@ -2,16 +2,16 @@ export class ValidateUtil {
   static formatPhoneNumber(phoneNumber) {
     const domesticPhoneLength = 10;
     const isInternationalNumber = phoneNumber.length > domesticPhoneLength;
-    const reversedPhoneArray = phoneNumber.split("").reverse();
+    const reversedPhoneArray = phoneNumber.split('').reverse();
 
     const domFormatted = this.insertDomesticSymbols(reversedPhoneArray);
     let displayFormat;
 
     if (isInternationalNumber) {
       const intFormatted = this.insertInternationalSymbols(domFormatted);
-      displayFormat = intFormatted.reverse().join("");
+      displayFormat = intFormatted.reverse().join('');
     } else {
-      displayFormat = domFormatted.reverse().join("");
+      displayFormat = domFormatted.reverse().join('');
     }
 
     return displayFormat;
@@ -19,10 +19,10 @@ export class ValidateUtil {
 
   static insertDomesticSymbols(reversedPhoneArray) {
     const domesticSymbols = [
-      { name: "dash", loc: 4, text: "-" },
-      { name: "spaceLoc", loc: 8, text: " " },
-      { name: "leftParLoc", loc: 9, text: ")" },
-      { name: "rightParLoc", loc: 13, text: "(" }
+      { name: 'dash', loc: 4, text: '-' },
+      { name: 'spaceLoc', loc: 8, text: ' ' },
+      { name: 'leftParLoc', loc: 9, text: ')' },
+      { name: 'rightParLoc', loc: 13, text: '(' }
     ];
 
     domesticSymbols.forEach(symbol => {
@@ -34,8 +34,8 @@ export class ValidateUtil {
 
   static insertInternationalSymbols(reversedPhoneArray) {
     const internationalSymbols = [
-      { name: "intPre", loc: reversedPhoneArray.length, text: "+" },
-      { name: "intSpace", loc: 14, text: " " }
+      { name: 'intPre', loc: reversedPhoneArray.length, text: '+' },
+      { name: 'intSpace', loc: 14, text: ' ' }
     ];
 
     internationalSymbols.forEach(symbol => {
@@ -46,7 +46,7 @@ export class ValidateUtil {
   }
 
   static checkPhoneInput(phone) {
-    const phoneDigits = phone.replace(/\D/g, "");
+    const phoneDigits = phone.replace(/\D/g, '');
     const internationalDigitMax = 13;
     const domesticDigitLength = 10;
     const validNumberLength =

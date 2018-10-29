@@ -29,8 +29,8 @@ export class Database {
   static async getUserById(userId) {
     const requestUrl = `${databaseUrl}/${userId}`;
     const settings = {
-      method: 'GET'
-    };
+      method: "GET"
+    }
 
     const response = await fetch(requestUrl, settings);
     const user = await response.json();
@@ -64,7 +64,8 @@ export class Database {
       method: method,
       body: formattedForDatabase,
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
+      }
     }
     };
 
