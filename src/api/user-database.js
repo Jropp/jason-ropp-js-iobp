@@ -12,17 +12,17 @@ export class Database {
   }
 
   static editUser(user) {
-    popupMessage = `Edits to ${user.firstName}, ${user.lastName} saved.`;
+    popupMessage = `Edits to ${user.firstName} ${user.lastName} saved.`;
     this.sendRequest('PUT', user);
   }
 
   static saveUser(user) {
-    popupMessage = `${user.firstName}, ${user.lastName} added.`;
+    popupMessage = `${user.firstName} ${user.lastName} added.`;
     this.sendRequest('POST', user);
   }
 
   static deleteUser(user) {
-    popupMessage = `${user.firstName}, ${user.lastName} deleted.`;
+    popupMessage = `${user.firstName} ${user.lastName} deleted.`;
     this.sendRequest('DELETE', user);
   }
 
