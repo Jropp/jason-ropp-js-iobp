@@ -44,8 +44,9 @@ export class Database {
     sortSettings.lastSort = sortFilterArray;
 
     const response = await fetch(databaseUrl);
+    const firstNumOfResponse = String(response.status)[0];
 
-    if (response.status === 404) {
+    if (firstNumOfResponse !== '2') {
       this.sendUserDatabaseError();
       return;
     }
@@ -57,7 +58,9 @@ export class Database {
   }
 
   static async sendRequest(method, user) {
-    const requestUrl = user._id ? `${databaseUrl}/${user._id}` : `${databaseUrl}`;
+    const requestUrl = user._id
+      ? `${databaseUrl}/${user._id}`
+      : `${databaseUrl}`;
     const formattedForDatabase = this.formatUserData(user);
 
     const settings = {
