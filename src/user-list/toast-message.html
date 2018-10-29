@@ -16,7 +16,7 @@
 
       .message-box {
         background-color: #455564;
-        padding: 10px;
+        padding: 5px;
         font-family: Arial, Helvetica, sans-serif;
         font-size: 16px;
         color: #eef1f4;
@@ -27,6 +27,11 @@
         z-index: 1;
       }
 
+      span {
+        position: relative;
+        top: -10px;
+      }
+
       .show-message {
         transform: none;
         opacity: 0.9;
@@ -34,6 +39,7 @@
 
       jha-add-person-icon,
       jha-cancel-icon {
+        margin: 7px;
         height: 20px;
         width: 20px;
         fill: white;
@@ -41,13 +47,13 @@
     </style>
 
     <div id="popupBox" class="message-box">
-      <template is="dom-if" if="[[setIcon(icons.ADD_PERSON_ICON)]]">
+      <template is="dom-if" if="[[addPersonIcon]]">
         <jha-add-person-icon></jha-add-person-icon>
       </template>
-      <template is="dom-if" if="[[setIcon(icons.CANCEL_ICON)]]">
+      <template is="dom-if" if="[[!addPersonIcon]]">
         <jha-cancel-icon></jha-cancel-icon>
       </template>
-      <span>[[message]]</span>
+      <span class="message">[[message]]</span>
     </div>
 
   </template>
@@ -67,6 +73,9 @@
             type: String,
             observer: 'popupMessage'
           },
+          currentIcon: {
+            type: String
+          },
           icons: {
             type: Object,
             value: () => {
@@ -82,13 +91,14 @@
         return icon === this.icons.ADD_PERSON_ICON;
       }
 
-      popupMessage(action) {
+      popupMessage(message) {
         const animationTime = 3000;
         const messageBox = this.$.popupBox;
 
         messageBox.className = 'message-box show-message';
 
-        // if toast message contains failed, then display is red and cancel button shown
+        const isDeleteMessage = /delete/.test(message);
+        this.addPersonIcon = !isDeleteMessage;
 
         window.setTimeout(() => {
           messageBox.className = 'message-box';
