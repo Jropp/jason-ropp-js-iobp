@@ -5,6 +5,7 @@ const sortSettings = {
   lastSort: ['firstName', 'lastName'],
   isReversedSort: false
 };
+
 export class Database {
   static getUsers() {
     this.getUsersSortedBy(sortSettings.lastSort);
@@ -28,7 +29,7 @@ export class Database {
   static async getUserById(userId) {
     const requestUrl = `${databaseUrl}/${userId}`;
     const settings = {
-      method: 'GET'
+      method: "GET"
     }
 
     const response = await fetch(requestUrl, settings);
@@ -41,6 +42,12 @@ export class Database {
     sortSettings.lastSort = sortFilterArray;
 
     const response = await fetch(databaseUrl);
+
+    if (response.status !== 200) {
+      this.sendUserDatabaseError();
+      return;
+    }
+
     const users = await response.json();
     const sorted = this.sortUsers(sortFilterArray, users);
 
@@ -48,16 +55,18 @@ export class Database {
   }
 
   static async sendRequest(method, user) {
-    const requestUrl = user._id ? `${databaseUrl}/${user._id}` : `${databaseUrl}`;
+    const requestUrl = user._id
+      ? `${databaseUrl}/${user._id}`
+      : `${databaseUrl}`;
     const formattedForDatabase = this.formatUserData(user);
 
     const settings = {
       method: method,
       body: formattedForDatabase,
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       }
-    }
+    };
 
     await fetch(requestUrl, settings);
     this.getUsersSortedBy(sortSettings.lastSort);
@@ -75,6 +84,14 @@ export class Database {
       })
     );
     popupMessage = null;
+  }
+
+  static sendUserDatabaseError() {
+    document.dispatchEvent(
+    new CustomEvent('usersFailedToLoad', {
+      bubbles: true,
+      composed: true
+    }));
   }
 
   // not currently connected to user-list

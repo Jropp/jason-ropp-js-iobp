@@ -108,6 +108,11 @@
           </div>
         </div>
         <div class="user-list-row">
+          <template is="dom-if" if="[[noServerResponse]]">
+            <div class="no-users">
+              <p>There seems to be a problem reaching the server. Please try again later.</p>
+            </div>
+          </template>
           <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
             <div class="no-users">
               <p>There aren't any users in the database at the moment. Would you mind creating one to get started?</p>

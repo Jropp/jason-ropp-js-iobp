@@ -10,6 +10,10 @@ class UserListElement extends PolymerElement {
       users: {
         type: Array
       },
+      noServerResponse: {
+        type: Boolean,
+        value: false
+      },
       editInProgress: {
         type: Boolean,
         value: false
@@ -53,9 +57,12 @@ class UserListElement extends PolymerElement {
     Database.getUsers();
 
     document.addEventListener('usersLoaded', response => {
+      this.noServerResponse = false;
       this.onUsersLoaded(response.detail);
     });
-
+    document.addEventListener('usersFailedToLoad', response => {
+      this.noServerResponse = true;
+    });
     document.addEventListener('cancel', () => {
       this.toggleMode();
     });
