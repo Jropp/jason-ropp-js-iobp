@@ -34,6 +34,8 @@
 
       jha-add-person-icon,
       jha-cancel-icon {
+        height: 20px;
+        width: 20px;
         fill: white;
       }
     </style>
@@ -63,9 +65,6 @@
           },
           message: {
             type: String,
-          },
-          action: {
-            type: String,
             observer: 'popupMessage'
           },
           icons: {
@@ -84,13 +83,12 @@
       }
 
       popupMessage(action) {
-        console.log('should pop up');
-
         const animationTime = 3000;
         const messageBox = this.$.popupBox;
 
-        this.message = `${action} Successful`;
         messageBox.className = 'message-box show-message';
+
+        // if toast message contains failed, then display is red and cancel button shown
 
         window.setTimeout(() => {
           messageBox.className = 'message-box';

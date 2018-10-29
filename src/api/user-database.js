@@ -12,17 +12,17 @@ export class Database {
   }
 
   static editUser(user) {
-    popupMessage = 'Edit Save';
+    popupMessage = `Edits to ${user.firstName}, ${user.lastName} saved.`;
     this.sendRequest('PUT', user);
   }
 
   static saveUser(user) {
-    popupMessage = 'Save New User';
+    popupMessage = `${user.firstName}, ${user.lastName} added.`;
     this.sendRequest('POST', user);
   }
 
   static deleteUser(user) {
-    popupMessage = 'Delete User';
+    popupMessage = `${user.firstName}, ${user.lastName} deleted.`;
     this.sendRequest('DELETE', user);
   }
 
@@ -51,7 +51,7 @@ export class Database {
     const users = await response.json();
     const sorted = this.sortUsers(sortFilterArray, users);
 
-   this.sendUsers(sorted);
+    this.sendUsers(sorted);
   }
 
   static async sendRequest(method, user) {
@@ -88,22 +88,22 @@ export class Database {
 
   static sendUserDatabaseError() {
     document.dispatchEvent(
-    new CustomEvent('usersFailedToLoad', {
-      bubbles: true,
-      composed: true
-    }));
+      new CustomEvent('usersFailedToLoad', {
+        bubbles: true,
+        composed: true
+      }));
   }
 
   // not currently connected to user-list
   static sendUserById(user) {
     document.dispatchEvent(
       new CustomEvent('userByIdLoaded', {
-      bubbles: true,
-      composed: true,
-      detail: {
+        bubbles: true,
+        composed: true,
+        detail: {
           user: user
-      }
-    })
+        }
+      })
     );
   }
 
