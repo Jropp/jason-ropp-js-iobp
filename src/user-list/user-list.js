@@ -146,11 +146,7 @@ class UserListElement extends PolymerElement {
   }
 
   resetExpandedCardIds(reset) {
-    if (reset) {
-      this.expandedCardIds = [];
-    } else {
-      this.expandedCardIds = this.expandedCardIds;
-    }
+    this.expandedCardIds = reset ? [] : this.expandedCardIds;
   }
 
   addIdToExpandedList(id) {
