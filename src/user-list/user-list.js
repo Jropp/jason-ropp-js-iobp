@@ -165,18 +165,6 @@ class UserListElement extends PolymerElement {
     return !users.length;
   }
 
-  popupMessage(action) {
-    const animationTime = 3000;
-    const messageBox = this.$.popupBox;
-
-    messageBox.textContent = `${action} Successful`;
-    messageBox.className = 'message-box show-message';
-
-    window.setTimeout(() => {
-      messageBox.className = 'message-box';
-    }, animationTime);
-  }
-
   isUserCardDisplayExpanded(userId) {
     let isExpanded = false;
     this.expandedCardIds.forEach(id => {
