@@ -66,7 +66,6 @@ export class Database {
       headers: {
         "Content-Type": "application/json"
       }
-    }
     };
 
     await fetch(requestUrl, settings);
