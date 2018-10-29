@@ -38,7 +38,7 @@
       }
     </style>
 
-    <div class$="[[setClass(message)]]">
+    <div class="message-box">
       <template is="dom-if" if="[[setIcon(icons.ADD_PERSON_ICON)]]">
         <jha-add-person-icon></jha-add-person-icon>
       </template>
@@ -63,10 +63,10 @@
           },
           message: {
             type: String,
-            value: 'hey'
           },
           action: {
-            type: String
+            type: String,
+            observer: 'popupMessage'
           },
           icons: {
             type: Object,
@@ -81,9 +81,6 @@
       }
       setIcon(icon) {
         return icon === this.icons.ADD_PERSON_ICON;
-      }
-      setClass() {
-        return 'message-box show-message';
       }
 
       popupMessage(action) {
