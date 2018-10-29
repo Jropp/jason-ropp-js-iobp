@@ -1,4 +1,4 @@
-const databaseUrl = `http://iop-db.herokuapp.com/users`;
+const databaseUrl = `http://iop-db.herokuapp.com/api`;
 let popupMessage = null;
 const sortSettings = {
   // priority from right to left
