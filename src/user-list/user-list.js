@@ -14,6 +14,9 @@ class UserListElement extends PolymerElement {
         type: Boolean,
         value: false
       },
+      toastMessage: {
+        type: String
+      },
       editInProgress: {
         type: Boolean,
         value: false
@@ -84,7 +87,7 @@ class UserListElement extends PolymerElement {
     let isEditSave = false;
 
     if (response.message) {
-      this.popupMessage(response.message);
+      this.toastMessage = response.message;
       const editInMessage = /edit/gi;
       isEditSave = editInMessage.test(response.message);
     }

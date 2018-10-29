@@ -38,7 +38,7 @@
       }
     </style>
 
-    <div class="message-box">
+    <div id="popupBox" class="message-box">
       <template is="dom-if" if="[[setIcon(icons.ADD_PERSON_ICON)]]">
         <jha-add-person-icon></jha-add-person-icon>
       </template>
@@ -84,10 +84,12 @@
       }
 
       popupMessage(action) {
+        console.log('should pop up');
+
         const animationTime = 3000;
         const messageBox = this.$.popupBox;
 
-        messageBox.textContent = `${action} Successful`;
+        this.message = `${action} Successful`;
         messageBox.className = 'message-box show-message';
 
         window.setTimeout(() => {
