@@ -1,0 +1,105 @@
+<!-- bplint-disable no-unused-import -->
+<link rel="import" href="~@banno/polymer/lib/elements/dom-if.js">
+<link rel="import" href="~@banno/polymer/polymer-element.js">
+<link rel="import" href="../design/css/shared-styles.html">
+<link rel="import" href="../design/svgs/jha-add-person-icon.html">
+<link rel="import" href="../design/svgs/jha-cancel-icon.html">
+<!-- bplint-enable no-unused-import -->
+
+<dom-module id="toast-message">
+  <template>
+
+    <style include="shared-styles">
+      :host {
+        display: inline-block
+      }
+
+      .message-box {
+        background-color: #455564;
+        padding: 10px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        color: #eef1f4;
+        text-align: left;
+        opacity: 0;
+        transform: translateY(100%);
+        transition: all 600ms cubic-bezier(0.77, 0, 0.175, 1);
+        z-index: 1;
+      }
+
+      .show-message {
+        transform: none;
+        opacity: 0.9;
+      }
+
+      jha-add-person-icon,
+      jha-cancel-icon {
+        fill: white;
+      }
+    </style>
+
+    <div class$="[[setClass(message)]]">
+      <template is="dom-if" if="[[setIcon(icons.ADD_PERSON_ICON)]]">
+        <jha-add-person-icon></jha-add-person-icon>
+      </template>
+      <template is="dom-if" if="[[setIcon(icons.CANCEL_ICON)]]">
+        <jha-cancel-icon></jha-cancel-icon>
+      </template>
+      <span>[[message]]</span>
+    </div>
+
+  </template>
+  <script>
+    import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
+
+    class ToastMessageElement extends PolymerElement {
+      static get is() {
+        return 'toast-message';
+      }
+      static get properties() {
+        return {
+          arrowUp: {
+            type: Boolean
+          },
+          message: {
+            type: String,
+            value: 'hey'
+          },
+          action: {
+            type: String
+          },
+          icons: {
+            type: Object,
+            value: () => {
+              return {
+                ADD_PERSON_ICON: 'jha-add-person-icon',
+                CANCEL_ICON: 'jha-cancel-icon',
+              }
+            }
+          }
+        };
+      }
+      setIcon(icon) {
+        return icon === this.icons.ADD_PERSON_ICON;
+      }
+      setClass() {
+        return 'message-box show-message';
+      }
+
+      popupMessage(action) {
+        const animationTime = 3000;
+        const messageBox = this.$.popupBox;
+
+        messageBox.textContent = `${action} Successful`;
+        messageBox.className = 'message-box show-message';
+
+        window.setTimeout(() => {
+          messageBox.className = 'message-box';
+        }, animationTime);
+      }
+    }
+
+    customElements.define(ToastMessageElement.is, ToastMessageElement);
+    export default ToastMessageElement;
+  </script>
+</dom-module>
