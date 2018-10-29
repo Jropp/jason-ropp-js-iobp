@@ -6,8 +6,6 @@ const sortSettings = {
   isReversedSort: false
 };
 
-
-
 export class Database {
   static getUsers() {
     this.getUsersSortedBy(sortSettings.lastSort);
@@ -31,7 +29,7 @@ export class Database {
   static async getUserById(userId) {
     const requestUrl = `${databaseUrl}/${userId}`;
     const settings = {
-      method: "GET"
+      method: 'GET'
     };
 
     const response = await fetch(requestUrl, settings);
@@ -67,9 +65,9 @@ export class Database {
       method: method,
       body: formattedForDatabase,
       headers: {
-        "Content-Type": "application/json"
-      }
+        'Content-Type': 'application/json'
     }
+    };
 
     await fetch(requestUrl, settings);
     this.getUsersSortedBy(sortSettings.lastSort);
