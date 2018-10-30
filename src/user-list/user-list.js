@@ -14,6 +14,9 @@ class UserListElement extends PolymerElement {
         type: Boolean,
         value: false
       },
+      toastMessage: {
+        type: String
+      },
       editInProgress: {
         type: Boolean,
         value: false
@@ -84,7 +87,7 @@ class UserListElement extends PolymerElement {
     let isEditSave = false;
 
     if (response.message) {
-      this.popupMessage(response.message);
+      this.toastMessage = response.message;
       const editInMessage = /edit/gi;
       isEditSave = editInMessage.test(response.message);
     }
@@ -163,18 +166,6 @@ class UserListElement extends PolymerElement {
 
   noUsersHeaderMessage(users) {
     return !users.length;
-  }
-
-  popupMessage(action) {
-    const animationTime = 3000;
-    const messageBox = this.$.popupBox;
-
-    messageBox.textContent = `${action} Successful`;
-    messageBox.className = 'message-box show-message';
-
-    window.setTimeout(() => {
-      messageBox.className = 'message-box';
-    }, animationTime);
   }
 
   isUserCardDisplayExpanded(userId) {
