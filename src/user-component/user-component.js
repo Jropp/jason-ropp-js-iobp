@@ -291,10 +291,6 @@ class UserComponentElement extends PolymerElement {
     return arrowIsDown;
   }
 
-  setEditUserHeader() {
-    return `Edit: ${this.user.lastName}, ${this.user.firstName}`;
-  }
-
   editInProgress(bool) {
     this.dispatchEvent(new CustomEvent('editInProgress', {
       bubbles: true,
