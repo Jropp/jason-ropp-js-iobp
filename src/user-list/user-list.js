@@ -112,18 +112,16 @@ class UserListElement extends PolymerElement {
   }
 
   dropdownSort(e) {
-    const selected = e.target.selectedItem;
-    let primarySortBy = this.getDropdownSortSelection(selected);
+    const selectedSortCategory = e.target.selectedItem;
 
-    this.setSortedUsersBy(primarySortBy);
+    this.setSortedUsersBy(selectedSortCategory);
 
     this.resetExpandedCardIds(true);
   }
 
-  setSortedUsersBy(sortFirstBy) {
-    const sortBy = this.getSortArray(sortFirstBy);
-    this.currentSortCategory = sortFirstBy;
-
+  setSortedUsersBy(sortBy) {
+    this.currentSortCategory = sortBy;
+    
     Database.getUsersSortedBy(sortBy);
   }
 
