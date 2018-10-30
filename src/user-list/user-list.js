@@ -56,7 +56,7 @@ class UserListElement extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
 
-    Database.setReversedSort(this.sortDirectionIsReversed);
+    Database.setReversedSort(false);
     Database.getUsers();
 
     document.addEventListener('usersLoaded', response => {
