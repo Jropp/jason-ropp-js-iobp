@@ -173,7 +173,7 @@
           </div>
         </template>
         <template is="dom-if" if="[[isMode(modes.EDIT_USER, mode)]]">
-          <h1 class="edit-user-header">[[setEditUserHeader(user)]]</h1>
+          <h1 class="edit-user-header">Edit: [[user.lastName]], [[user.firstName]]</h1>
         </template>
         <template is="dom-if" if="[[isMode(modes.CREATE_NEW, mode)]]">
           <create-user-button add-user-icon="[[isClass(classes.COLLAPSE_NEW, userCardClass)]]" on-click="toggleNewUserFormDisplay"></create-user-button>
