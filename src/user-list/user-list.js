@@ -181,55 +181,44 @@ class UserListElement extends PolymerElement {
     return isExpanded;
   }
 
-  setDisplayOfSortHeader(users, index) {
-    const isFirstUser = index === 0;
-    const deletedLastUser = index === users.length;
+  setDisplayOfSortHeader(users, user, index, category) {
+    let isFirstOrLastUserDeleted = index === 0 || index === users.length;
 
-    if (isFirstUser || deletedLastUser) {
+    if (isFirstOrLastUserDeleted) {
       return true;
     }
 
-    const prevUserCat = users[index - 1][this.currentSortCategory];
-    const curUserCat = users[index][this.currentSortCategory];
+    let currentUser = user[category];
+    let previousUser = users[index - 1][category];
 
-    const firstLetterDifferent =
-      this.firstLetterOf(prevUserCat) !== this.firstLetterOf(curUserCat);
-    const wholeWordDifferent = prevUserCat !== curUserCat;
+    if (this.dipslayFirstLetterOnly()) {
+      const currentFirstLetter = currentUser[0];
+      const previousFirstLetter = previousUser[0];
 
-    return this.categoryIsFirstOrLastName()
-      ? firstLetterDifferent
-      : wholeWordDifferent;
-  }
-
-  categoryIsFirstOrLastName() {
-    const isFirstName = this.sortIs(
-      this.sortCategories.FIRST_NAME,
-      this.currentSortCategory
-    );
-    const isLastName = this.sortIs(
-      this.sortCategories.LAST_NAME,
-      this.currentSortCategory
-    );
-
-    return isFirstName || isLastName;
-  }
-
-  firstLetterOf(wordToSlice) {
-    if (wordToSlice) {
-      return wordToSlice.slice(0, 1);
+      return currentFirstLetter !== previousFirstLetter;
     }
+
+    const displayWholeCategory = currentUser !== previousUser;
+
+    return displayWholeCategory;
+  }
+
+  dipslayFirstLetterOnly() {
+    return (
+      this.sortIs(this.sortCategories.FIRST_NAME, this.currentSortCategory) ||
+      this.sortIs(this.sortCategories.LAST_NAME, this.currentSortCategory)
+    );
   }
 
   sortIs(expectedSortCategory, currentSortCategory) {
     return expectedSortCategory === currentSortCategory;
   }
 
-  setNewGroupHeader(user) {
-    const category = this.currentSortCategory || this.sortCategories.LAST_NAME;
-    const firstLetter = `${this.firstLetterOf(user[category])}`;
+  setNewGroupHeader(user, category = this.sortCategories.LAST_NAME) {
+    const firstLetter = `${user[category][0]}`;
     const wholeCategory = `${user[category]}`;
 
-    return this.categoryIsFirstOrLastName() ? firstLetter : wholeCategory;
+    return this.dipslayFirstLetterOnly() ? firstLetter : wholeCategory;
   }
 
   disconnectedCallback() {
