@@ -66,29 +66,14 @@
       }
       static get properties() {
         return {
-          arrowUp: {
-            type: Boolean
-          },
           message: {
             type: String,
             observer: 'popupMessage'
           },
-          currentIcon: {
-            type: String
-          },
-          icons: {
-            type: Object,
-            value: () => {
-              return {
-                ADD_PERSON_ICON: 'jha-add-person-icon',
-                CANCEL_ICON: 'jha-cancel-icon',
-              };
-            }
+          addPersonIcon: {
+            type: Boolean
           }
         };
-      }
-      setIcon(icon) {
-        return icon === this.icons.ADD_PERSON_ICON;
       }
 
       popupMessage(message) {
@@ -97,12 +82,16 @@
 
         messageBox.className = 'message-box show-message';
 
-        const isDeleteMessage = /delete/.test(message);
-        this.addPersonIcon = !isDeleteMessage;
+        this.setToastIcon(message);
 
         window.setTimeout(() => {
           messageBox.className = 'message-box';
         }, animationTime);
+      }
+
+      setToastIcon(message) {
+        const isDeleteMessage = /delete/.test(message);
+        this.addPersonIcon = !isDeleteMessage;
       }
     }
 
