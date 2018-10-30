@@ -82,12 +82,16 @@
 
         messageBox.className = 'message-box show-message';
 
-        const isDeleteMessage = /delete/.test(message);
-        this.addPersonIcon = !isDeleteMessage;
+        this.setToastIcon(message);
 
         window.setTimeout(() => {
           messageBox.className = 'message-box';
         }, animationTime);
+      }
+
+      setToastIcon(message) {
+        const isDeleteMessage = /delete/.test(message);
+        this.addPersonIcon = !isDeleteMessage;
       }
     }
 
