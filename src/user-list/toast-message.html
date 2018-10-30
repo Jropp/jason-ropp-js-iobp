@@ -79,7 +79,7 @@
       popupMessage(message) {
         const animationTime = 3000;
         const messageBox = this.$.popupBox;
-
+        messageBox.className = 'message-box';
         messageBox.className = 'message-box show-message';
 
         this.setToastIcon(message);

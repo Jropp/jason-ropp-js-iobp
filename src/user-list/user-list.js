@@ -87,6 +87,8 @@ class UserListElement extends PolymerElement {
     let isEditSave = false;
 
     if (response.message) {
+      const toastReset = '';
+      this.toastMessage = toastReset;
       this.toastMessage = response.message;
       const editInMessage = /edit/gi;
       isEditSave = editInMessage.test(response.message);
