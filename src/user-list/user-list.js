@@ -63,9 +63,11 @@ class UserListElement extends PolymerElement {
       this.noServerResponse = false;
       this.onUsersLoaded(response.detail);
     });
+
     document.addEventListener('usersFailedToLoad', response => {
       this.noServerResponse = true;
     });
+
     document.addEventListener('cancel', () => {
       this.toggleMode();
     });
