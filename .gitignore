@@ -5,3 +5,5 @@ src/nav-bar/auto-navbar.html
 polymer
 dist/
 .vscode/
+.prettierrc
+
