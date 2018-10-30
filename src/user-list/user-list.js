@@ -181,7 +181,7 @@ class UserListElement extends PolymerElement {
     return isExpanded;
   }
 
-  setDisplayOfSortHeader(users, user, index, category) {
+  setDisplayOfSortHeader(users, user, index, category = this.sortCategories.LAST_NAME) {
     let isFirstOrLastUserDeleted = index === 0 || index === users.length;
 
     if (isFirstOrLastUserDeleted) {
