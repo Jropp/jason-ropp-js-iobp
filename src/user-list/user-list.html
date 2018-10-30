@@ -96,9 +96,9 @@
             </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
-            <template is="dom-if" if="[[setDisplayOfSortHeader(users, index, currentSortCategory)]]">
+            <template is="dom-if" if="[[setDisplayOfSortHeader(users, user, index, currentSortCategory)]]">
               <div class="category-header">
-                <div class="category-text">[[setNewGroupHeader(user, index, users)]]</div>
+                <div class="category-text">[[setNewGroupHeader(user, currentSortCategory)]]</div>
               </div>
             </template>
             <user-component edit-open="[[editInProgress]]" is-expanded="[[isUserCardDisplayExpanded(user._id, users, expandedCardIds)]]"
