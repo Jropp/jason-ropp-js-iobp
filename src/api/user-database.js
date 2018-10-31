@@ -3,9 +3,9 @@ let popupMessage = null;
 const sortSettings = {
   // priority from right to left
   lastSort: 'lastName',
-  FIRST_NAME_SORT_ARRAY: ['firstName', 'lastName'],
-  LAST_NAME_SORT_ARRAY: ['lastName', 'firstName'],
-  DEPARTMENT_SORT_ARRAY: ['department', 'lastName', 'firstName'],
+  FIRST_NAME_SORT_ARRAY: ['lastName', 'firstName'],
+  LAST_NAME_SORT_ARRAY: ['firstName', 'lastName'],
+  DEPARTMENT_SORT_ARRAY: ['firstName', 'lastName', 'department'],
   isReversedSort: false
 };
 
@@ -47,7 +47,8 @@ export class Database {
     this.sendUserById(user);
   }
 
-  static async getUsersSortedBy(sortBy) {
+  static async getUsersSortedBy(sortBy, isReverse) {
+    sortSettings.isReversedSort = Boolean(isReverse);
     const response = await fetch(databaseUrl);
 
     if (response.status !== 200) {
@@ -69,13 +70,13 @@ export class Database {
 
     if (sortFirstBy === lastName) {
       // sort priority goes right to left
-      return sortSettings.LAST_NAME_SORT_ARRAY.reverse();
+      return sortSettings.LAST_NAME_SORT_ARRAY;
     }
     if (sortFirstBy === firstName) {
-      return sortSettings.FIRST_NAME_SORT_ARRAY.reverse();
+      return sortSettings.FIRST_NAME_SORT_ARRAY;
     }
     if (sortFirstBy === department) {
-      return sortSettings.DEPARTMENT_SORT_ARRAY.reverse();
+      return sortSettings.DEPARTMENT_SORT_ARRAY;
     }
   }
 
@@ -164,10 +165,6 @@ export class Database {
       }
     });
     return compared;
-  }
-
-  static setReversedSort(bool) {
-    sortSettings.isReversedSort = bool;
   }
 
   static formatUserData(user) {

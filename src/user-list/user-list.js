@@ -116,15 +116,16 @@ class UserListElement extends PolymerElement {
       e.target.selectedItem
     );
 
-    Database.getUsersSortedBy(this.currentSortCategory);
+    Database.getUsersSortedBy(
+      this.currentSortCategory,
+      this.sortDirectionIsReversed
+    );
 
     this.resetExpandedCardIds(true);
   }
 
   sortByDirection(e) {
     this.sortDirectionIsReversed = e.target.selectedItem === 'Z-A';
-    Database.setReversedSort(this.sortDirectionIsReversed);
-
     this.dropdownSort(e);
   }
 
@@ -159,7 +160,12 @@ class UserListElement extends PolymerElement {
     return isExpanded;
   }
 
-  setDisplayOfSortHeader(users, user, index, category = this.sortCategories.LAST_NAME) {
+  setDisplayOfSortHeader(
+    users,
+    user,
+    index,
+    category = this.sortCategories.LAST_NAME
+  ) {
     let isFirstOrLastUserDeleted = index === 0 || index === users.length;
 
     if (isFirstOrLastUserDeleted) {
