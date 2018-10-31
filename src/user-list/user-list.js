@@ -211,7 +211,6 @@ class UserListElement extends PolymerElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     document.removeEventListener('usersLoaded');
-    document.removeEventListener('cancel');
     document.removeEventListener('editInProgress');
     document.removeEventListener('cardDetailDisplayChanged');
   }
