@@ -2,8 +2,17 @@ const databaseUrl = `http://iop-db.herokuapp.com/api`;
 let popupMessage = null;
 const sortSettings = {
   // priority from right to left
-  lastSort: ['firstName', 'lastName'],
+  lastSort: 'lastName',
+  FIRST_NAME_SORT_ARRAY: ['lastName', 'firstName'],
+  LAST_NAME_SORT_ARRAY: ['firstName', 'lastName'],
+  DEPARTMENT_SORT_ARRAY: ['firstName', 'lastName', 'department'],
   isReversedSort: false
+};
+
+const sortCategories = {
+  FIRST_NAME: 'firstName',
+  LAST_NAME: 'lastName',
+  DEPARTMENT: 'department'
 };
 
 export class Database {
@@ -29,8 +38,8 @@ export class Database {
   static async getUserById(userId) {
     const requestUrl = `${databaseUrl}/${userId}`;
     const settings = {
-      method: "GET"
-    }
+      method: 'GET'
+    };
 
     const response = await fetch(requestUrl, settings);
     const user = await response.json();
@@ -38,9 +47,9 @@ export class Database {
     this.sendUserById(user);
   }
 
-  static async getUsersSortedBy(sortFilterArray) {
-    sortSettings.lastSort = sortFilterArray;
-
+  static async getUsersSortedBy(sortBy, isReverse) {
+    sortSettings.lastSort = sortBy;
+    sortSettings.isReversedSort = Boolean(isReverse);
     const response = await fetch(databaseUrl);
 
     if (response.status !== 200) {
@@ -49,9 +58,27 @@ export class Database {
     }
 
     const users = await response.json();
+    const sortFilterArray = this.getSortArray(sortBy);
     const sorted = this.sortUsers(sortFilterArray, users);
 
     this.sendUsers(sorted);
+  }
+
+  static getSortArray(sortFirstBy) {
+    const firstName = sortCategories.FIRST_NAME;
+    const lastName = sortCategories.LAST_NAME;
+    const department = sortCategories.DEPARTMENT;
+
+    if (sortFirstBy === lastName) {
+      // sort priority goes right to left
+      return sortSettings.LAST_NAME_SORT_ARRAY;
+    }
+    if (sortFirstBy === firstName) {
+      return sortSettings.FIRST_NAME_SORT_ARRAY;
+    }
+    if (sortFirstBy === department) {
+      return sortSettings.DEPARTMENT_SORT_ARRAY;
+    }
   }
 
   static async sendRequest(method, user) {
@@ -64,7 +91,7 @@ export class Database {
       method: method,
       body: formattedForDatabase,
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json'
       }
     };
 
@@ -91,7 +118,8 @@ export class Database {
       new CustomEvent('usersFailedToLoad', {
         bubbles: true,
         composed: true
-      }));
+      })
+    );
   }
 
   // not currently connected to user-list
@@ -128,7 +156,8 @@ export class Database {
 
     sortFilterArray.forEach(filter => {
       const categoryIsDifferent = a[filter] !== b[filter];
-      const reverseSort = sortSettings.isReversedSort && filter === primarySortFilter;
+      const reverseSort =
+        sortSettings.isReversedSort && filter === primarySortFilter;
       const aFirst = a[filter] > b[filter] ? 1 : -1;
       const bFirst = a[filter] < b[filter] ? 1 : -1;
 
@@ -137,10 +166,6 @@ export class Database {
       }
     });
     return compared;
-  }
-
-  static setReversedSort(bool) {
-    sortSettings.isReversedSort = bool;
   }
 
   static formatUserData(user) {

@@ -96,7 +96,7 @@
             </div>
           </template>
           <template is="dom-repeat" items="[[users]]" as="user">
-            <template is="dom-if" if="[[setDisplayOfSortHeader(users, user, index, currentSortCategory)]]">
+            <template is="dom-if" if="[[setDisplayOfSortHeader(users, user, index, currentSortCategory, sortDirectionIsReversed)]]">
               <div class="category-header">
                 <div class="category-text">[[setNewGroupHeader(user, currentSortCategory)]]</div>
               </div>

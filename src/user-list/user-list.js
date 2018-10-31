@@ -56,8 +56,10 @@ class UserListElement extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
 
-    Database.setReversedSort(false);
-    Database.getUsers();
+    Database.getUsersSortedBy(
+      this.currentSortCategory,
+      this.sortDirectionIsReversed
+    );
 
     document.addEventListener('usersLoaded', response => {
       this.noServerResponse = false;
@@ -99,7 +101,7 @@ class UserListElement extends PolymerElement {
     this.resetExpandedCardIds(isEditSave);
   }
 
-  getDropdownSortSelection(selected) {
+  formatSortSelectionForDatabase(selected) {
     if (selected === 'Last Name') {
       return this.sortCategories.LAST_NAME;
     }
@@ -112,43 +114,26 @@ class UserListElement extends PolymerElement {
   }
 
   dropdownSort(e) {
-    const selected = e.target.selectedItem;
-    let primarySortBy = this.getDropdownSortSelection(selected);
+    this.currentSortCategory = this.formatSortSelectionForDatabase(
+      e.target.selectedItem
+    );
 
-    this.setSortedUsersBy(primarySortBy);
+    Database.getUsersSortedBy(
+      this.currentSortCategory,
+      this.sortDirectionIsReversed
+    );
 
     this.resetExpandedCardIds(true);
   }
 
-  setSortedUsersBy(sortFirstBy) {
-    const sortBy = this.getSortArray(sortFirstBy);
-    this.currentSortCategory = sortFirstBy;
-
-    Database.getUsersSortedBy(sortBy);
-  }
-
-  getSortArray(sortFirstBy) {
-    const firstName = this.sortCategories.FIRST_NAME;
-    const lastName = this.sortCategories.LAST_NAME;
-    const department = this.sortCategories.DEPARTMENT;
-
-    if (sortFirstBy === lastName) {
-      // sort priority goes right to left
-      return [firstName, lastName];
-    }
-    if (sortFirstBy === firstName) {
-      return [lastName, firstName];
-    }
-    if (sortFirstBy === department) {
-      return [firstName, lastName, department];
-    }
-  }
-
   sortByDirection(e) {
     this.sortDirectionIsReversed = e.target.selectedItem === 'Z-A';
-    Database.setReversedSort(this.sortDirectionIsReversed);
 
-    this.setSortedUsersBy(this.currentSortCategory);
+    Database.getUsersSortedBy(
+      this.currentSortCategory,
+      this.sortDirectionIsReversed
+    );
+
     this.resetExpandedCardIds(true);
   }
 
@@ -183,7 +168,7 @@ class UserListElement extends PolymerElement {
     return isExpanded;
   }
 
-  setDisplayOfSortHeader(users, user, index, category = this.sortCategories.LAST_NAME) {
+  setDisplayOfSortHeader(users, user, index, category) {
     let isFirstOrLastUserDeleted = index === 0 || index === users.length;
 
     if (isFirstOrLastUserDeleted) {
@@ -216,7 +201,7 @@ class UserListElement extends PolymerElement {
     return expectedSortCategory === currentSortCategory;
   }
 
-  setNewGroupHeader(user, category = this.sortCategories.LAST_NAME) {
+  setNewGroupHeader(user, category) {
     const firstLetter = `${user[category][0]}`;
     const wholeCategory = `${user[category]}`;
 
