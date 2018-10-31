@@ -74,12 +74,8 @@ class UserListElement extends PolymerElement {
       this.noServerResponse = true;
     });
 
-    document.addEventListener('cancel', () => {
-      this.toggleMode();
-    });
-
-    document.addEventListener('editInProgress', e => {
-      this.editInProgress = e.detail;
+    document.addEventListener('editButtonClicked', e => {
+      this.editInProgress = e.detail.editInProgress;
     });
 
     document.addEventListener('cardDetailDisplayChanged', e => {
