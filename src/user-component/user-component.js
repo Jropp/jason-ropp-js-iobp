@@ -292,10 +292,10 @@ class UserComponentElement extends PolymerElement {
   }
 
   editInProgress(bool) {
-    this.dispatchEvent(new CustomEvent('editInProgress', {
+    this.dispatchEvent(new CustomEvent('editButtonClicked', {
       bubbles: true,
       composed: true,
-      detail: bool
+      detail: {editInProgress: bool}
     }));
   }
 

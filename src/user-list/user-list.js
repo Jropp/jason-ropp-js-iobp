@@ -56,11 +56,15 @@ class UserListElement extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
 
+    this.addEventListeners();
+
     Database.getUsersSortedBy(
       this.currentSortCategory,
       this.sortDirectionIsReversed
     );
+  }
 
+  addEventListeners() {
     document.addEventListener('usersLoaded', response => {
       this.noServerResponse = false;
       this.onUsersLoaded(response.detail);
@@ -70,12 +74,8 @@ class UserListElement extends PolymerElement {
       this.noServerResponse = true;
     });
 
-    document.addEventListener('cancel', () => {
-      this.toggleMode();
-    });
-
-    document.addEventListener('editInProgress', e => {
-      this.editInProgress = e.detail;
+    document.addEventListener('editButtonClicked', e => {
+      this.editInProgress = e.detail.editInProgress;
     });
 
     document.addEventListener('cardDetailDisplayChanged', e => {
@@ -153,7 +153,7 @@ class UserListElement extends PolymerElement {
     this.expandedCardIds.splice(idIndex, 1);
   }
 
-  noUsersHeaderMessage(users) {
+  noUsersInDatabase(users) {
     return !users.length;
   }
 
@@ -211,7 +211,6 @@ class UserListElement extends PolymerElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     document.removeEventListener('usersLoaded');
-    document.removeEventListener('cancel');
     document.removeEventListener('editInProgress');
     document.removeEventListener('cardDetailDisplayChanged');
   }
