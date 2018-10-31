@@ -153,7 +153,7 @@ class UserListElement extends PolymerElement {
     this.expandedCardIds.splice(idIndex, 1);
   }
 
-  noUsersHeaderMessage(users) {
+  noUsersInDatabase(users) {
     return !users.length;
   }
 
