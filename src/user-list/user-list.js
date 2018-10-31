@@ -56,11 +56,15 @@ class UserListElement extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
 
+    this.addEventListeners();
+
     Database.getUsersSortedBy(
       this.currentSortCategory,
       this.sortDirectionIsReversed
     );
+  }
 
+  addEventListeners() {
     document.addEventListener('usersLoaded', response => {
       this.noServerResponse = false;
       this.onUsersLoaded(response.detail);
