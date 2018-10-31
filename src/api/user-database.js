@@ -48,6 +48,7 @@ export class Database {
   }
 
   static async getUsersSortedBy(sortBy, isReverse) {
+    sortSettings.lastSort = sortBy;
     sortSettings.isReversedSort = Boolean(isReverse);
     const response = await fetch(databaseUrl);
 
