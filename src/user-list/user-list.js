@@ -112,34 +112,15 @@ class UserListElement extends PolymerElement {
   }
 
   dropdownSort(e) {
-    const selectedSortCategory = e.target.selectedItem;
+    const selectedSortCategory = this.getDropdownSortSelection(
+      e.target.selectedItem
+    );
 
-    this.setSortedUsersBy(selectedSortCategory);
+    this.currentSortCategory = selectedSortCategory;
+
+    Database.getUsersSortedBy(selectedSortCategory);
 
     this.resetExpandedCardIds(true);
-  }
-
-  setSortedUsersBy(sortBy) {
-    this.currentSortCategory = sortBy;
-    
-    Database.getUsersSortedBy(sortBy);
-  }
-
-  getSortArray(sortFirstBy) {
-    const firstName = this.sortCategories.FIRST_NAME;
-    const lastName = this.sortCategories.LAST_NAME;
-    const department = this.sortCategories.DEPARTMENT;
-
-    if (sortFirstBy === lastName) {
-      // sort priority goes right to left
-      return [firstName, lastName];
-    }
-    if (sortFirstBy === firstName) {
-      return [lastName, firstName];
-    }
-    if (sortFirstBy === department) {
-      return [firstName, lastName, department];
-    }
   }
 
   sortByDirection(e) {

@@ -2,7 +2,7 @@ const databaseUrl = `http://iop-db.herokuapp.com/api`;
 let popupMessage = null;
 const sortSettings = {
   // priority from right to left
-  lastSort: ['firstName', 'lastName'],
+  lastSort: 'lastName',
   FIRST_NAME_SORT_ARRAY: ['firstName', 'lastName'],
   LAST_NAME_SORT_ARRAY: ['lastName', 'firstName'],
   DEPARTMENT_SORT_ARRAY: ['department', 'lastName', 'firstName'],
@@ -10,14 +10,14 @@ const sortSettings = {
 };
 
 const sortCategories = {
-  FIRST_NAME: 'First Name',
-  LAST_NAME: 'Last Name',
-  DEPARTMENT: 'Department',
-}
+  FIRST_NAME: 'firstName',
+  LAST_NAME: 'lastName',
+  DEPARTMENT: 'department'
+};
 
 export class Database {
-  static getUsers(sortBy = sortCategories.LAST_NAME) {
-    this.getUsersSortedBy(sortBy);
+  static getUsers() {
+    this.getUsersSortedBy(sortSettings.lastSort);
   }
 
   static editUser(user) {
@@ -56,7 +56,6 @@ export class Database {
     }
 
     const users = await response.json();
-
     const sortFilterArray = this.getSortArray(sortBy);
     const sorted = this.sortUsers(sortFilterArray, users);
 
@@ -70,13 +69,13 @@ export class Database {
 
     if (sortFirstBy === lastName) {
       // sort priority goes right to left
-      return sortSettings.LAST_NAME_SORT_ARRAY;
+      return sortSettings.LAST_NAME_SORT_ARRAY.reverse();
     }
     if (sortFirstBy === firstName) {
-      return sortSettings.FIRST_NAME_SORT_ARRAY;
+      return sortSettings.FIRST_NAME_SORT_ARRAY.reverse();
     }
     if (sortFirstBy === department) {
-      return sortSettings.DEPARTMENT_SORT_ARRAY;
+      return sortSettings.DEPARTMENT_SORT_ARRAY.reverse();
     }
   }
 
