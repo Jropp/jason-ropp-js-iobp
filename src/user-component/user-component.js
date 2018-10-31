@@ -142,8 +142,9 @@ class UserComponentElement extends PolymerElement {
   formatUserData(newUser) {
     const user = newUser ? newUser : Object.assign({}, this.user);
     const isExistingUser = this.user._id;
+    const phoneNumHasSymbols = user.phone.match(/\D/);
 
-    if (!user.phone.match(/\D/) && isExistingUser) {
+    if (!phoneNumHasSymbols && isExistingUser) {
       user.phone = ValidateUtil.formatPhoneNumber(user.phone); // eslint-disable-line no-undef
     }
 
@@ -209,12 +210,12 @@ class UserComponentElement extends PolymerElement {
       improperPhoneFormat ||
       improperEmailFormat
     );
-    }
+  }
 
   updateDisableSaveButton() {
     if (!this.isFirstLoad) {
       this.disableSave = this.hasInvalidFormInputs();
-  }
+    }
   }
 
   updateWarningMessageDisplay() {
