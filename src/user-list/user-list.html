@@ -90,7 +90,7 @@
               <p>There seems to be a problem reaching the server. Please try again later.</p>
             </div>
           </template>
-          <template is="dom-if" if="[[noUsersHeaderMessage(users)]]">
+          <template is="dom-if" if="[[noUsersInDatabase(users)]]">
             <div class="no-users">
               <p>There aren't any users in the database at the moment. Would you mind creating one to get started?</p>
             </div>
