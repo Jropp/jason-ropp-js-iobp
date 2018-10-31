@@ -202,8 +202,6 @@ class UserListElement extends PolymerElement {
   }
 
   setNewGroupHeader(user, category) {
-    console.log(category);
-
     const firstLetter = `${user[category][0]}`;
     const wholeCategory = `${user[category]}`;
 
