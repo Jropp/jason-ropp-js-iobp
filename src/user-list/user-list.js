@@ -99,7 +99,7 @@ class UserListElement extends PolymerElement {
     this.resetExpandedCardIds(isEditSave);
   }
 
-  getDropdownSortSelection(selected) {
+  formatSortSelectionForDatabase(selected) {
     if (selected === 'Last Name') {
       return this.sortCategories.LAST_NAME;
     }
@@ -112,13 +112,11 @@ class UserListElement extends PolymerElement {
   }
 
   dropdownSort(e) {
-    const selectedSortCategory = this.getDropdownSortSelection(
+    this.currentSortCategory = this.formatSortSelectionForDatabase(
       e.target.selectedItem
     );
 
-    this.currentSortCategory = selectedSortCategory;
-
-    Database.getUsersSortedBy(selectedSortCategory);
+    Database.getUsersSortedBy(this.currentSortCategory);
 
     this.resetExpandedCardIds(true);
   }
@@ -127,8 +125,7 @@ class UserListElement extends PolymerElement {
     this.sortDirectionIsReversed = e.target.selectedItem === 'Z-A';
     Database.setReversedSort(this.sortDirectionIsReversed);
 
-    this.setSortedUsersBy(this.currentSortCategory);
-    this.resetExpandedCardIds(true);
+    this.dropdownSort(e);
   }
 
   resetExpandedCardIds(reset) {
