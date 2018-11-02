@@ -1,8 +1,8 @@
 const databaseUrl = `http://iop-db.herokuapp.com/api`;
 let popupMessage = null;
 const sortSettings = {
-  // priority from right to left
   lastSort: 'lastName',
+  // priority from right to left
   FIRST_NAME_SORT_ARRAY: ['lastName', 'firstName'],
   LAST_NAME_SORT_ARRAY: ['firstName', 'lastName'],
   DEPARTMENT_SORT_ARRAY: ['firstName', 'lastName', 'department'],
@@ -165,6 +165,7 @@ export class Database {
         compared = reverseSort ? bFirst : aFirst;
       }
     });
+    
     return compared;
   }
 

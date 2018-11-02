@@ -53,6 +53,7 @@ class UserListElement extends PolymerElement {
       }
     };
   }
+  
   connectedCallback() {
     super.connectedCallback();
 
