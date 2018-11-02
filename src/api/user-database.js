@@ -50,7 +50,13 @@ export class Database {
   static async getUsersSortedBy(sortBy, isReverse) {
     sortSettings.lastSort = sortBy;
     sortSettings.isReversedSort = Boolean(isReverse);
-    const response = await fetch(databaseUrl);
+
+    const settings = {
+      headers: {
+        Authorization: 'Basic ' + btoa('intern:polymer')
+      }
+    };
+    const response = await fetch(databaseUrl, settings);
 
     if (response.status !== 200) {
       this.sendUserDatabaseError();
@@ -91,6 +97,7 @@ export class Database {
       method: method,
       body: formattedForDatabase,
       headers: {
+        Authorization: 'Basic ' + btoa('intern:polymer'),
         'Content-Type': 'application/json'
       }
     };
@@ -165,7 +172,7 @@ export class Database {
         compared = reverseSort ? bFirst : aFirst;
       }
     });
-    
+
     return compared;
   }
 
