@@ -1,5 +1,11 @@
-const databaseUrl = `http://iop-db.herokuapp.com/api`;
-let popupMessage = null;
+const databaseSettings = {
+  DATABASE_URL: `http://iop-db.herokuapp.com/api`,
+  HEADERS: {
+    Authorization: 'Basic ' + btoa('intern:polymer'),
+    'Content-Type': 'application/json'
+  }
+};
+
 const sortSettings = {
   lastSort: 'lastName',
   // priority from right to left
@@ -14,6 +20,8 @@ const sortCategories = {
   LAST_NAME: 'lastName',
   DEPARTMENT: 'department'
 };
+
+let popupMessage = null;
 
 export class Database {
   static getUsers() {
@@ -36,9 +44,10 @@ export class Database {
   }
 
   static async getUserById(userId) {
-    const requestUrl = `${databaseUrl}/${userId}`;
+    const requestUrl = `${databaseSettings.DATABASE_URL}/${userId}`;
     const settings = {
-      method: 'GET'
+      method: 'GET',
+      headers: databaseSettings.HEADERS
     };
 
     const response = await fetch(requestUrl, settings);
@@ -50,7 +59,9 @@ export class Database {
   static async getUsersSortedBy(sortBy, isReverse) {
     sortSettings.lastSort = sortBy;
     sortSettings.isReversedSort = Boolean(isReverse);
-    const response = await fetch(databaseUrl);
+
+    const settings = { headers: databaseSettings.HEADERS };
+    const response = await fetch(databaseSettings.DATABASE_URL, settings);
 
     if (response.status !== 200) {
       this.sendUserDatabaseError();
@@ -82,17 +93,14 @@ export class Database {
   }
 
   static async sendRequest(method, user) {
-    const requestUrl = user._id
-      ? `${databaseUrl}/${user._id}`
-      : `${databaseUrl}`;
+    const dbUrl = databaseSettings.DATABASE_URL;
+    const requestUrl = user._id ? `${dbUrl}/${user._id}` : `${dbUrl}`;
     const formattedForDatabase = this.formatUserData(user);
 
     const settings = {
       method: method,
       body: formattedForDatabase,
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      headers: databaseSettings.HEADERS
     };
 
     await fetch(requestUrl, settings);
@@ -165,7 +173,7 @@ export class Database {
         compared = reverseSort ? bFirst : aFirst;
       }
     });
-    
+
     return compared;
   }
 
