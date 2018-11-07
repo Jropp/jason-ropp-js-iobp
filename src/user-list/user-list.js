@@ -119,7 +119,7 @@ class UserListElement extends PolymerElement {
       this.sortDirectionIsReversed
     );
 
-    this.resetExpandedCardIds(true);
+    this.resetExpandedCardIds();
   }
 
   sortByDirection(e) {
@@ -130,11 +130,11 @@ class UserListElement extends PolymerElement {
       this.sortDirectionIsReversed
     );
 
-    this.resetExpandedCardIds(true);
+    this.resetExpandedCardIds();
   }
 
-  resetExpandedCardIds(reset) {
-    this.expandedCardIds = reset ? [] : this.expandedCardIds;
+  resetExpandedCardIds() {
+    this.expandedCardIds = [];
   }
 
   addIdToExpandedList(id) {
