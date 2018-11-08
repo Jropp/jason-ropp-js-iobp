@@ -171,10 +171,7 @@ class UserListElement extends PolymerElement {
     let previousUser = users[index - 1][category];
 
     if (this.dipslayFirstLetterOnly()) {
-      const currentFirstLetter = currentUser[0];
-      const previousFirstLetter = previousUser[0];
-
-      return currentFirstLetter !== previousFirstLetter;
+      return currentUser[0] !== previousUser[0];
     }
 
     const displayWholeCategory = currentUser !== previousUser;
