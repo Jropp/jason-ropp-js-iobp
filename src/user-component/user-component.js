@@ -278,13 +278,11 @@ class UserComponentElement extends PolymerElement {
   }
 
   setUserDetailsDisplay(event) {
-    const eventIsUserListUpdate = (typeof event === 'boolean');
-    const animationStyle = eventIsUserListUpdate ? 'IMMEDIATELY' : 'ANIMATE';
+    const isSort = typeof event === 'boolean';
+    const animationStyle = isSort ? 'IMMEDIATELY' : 'ANIMATE';
+    const displayStyle = this.isExpanded ? 'EXPAND' : 'COLLAPSE';
 
-    const expand = this.classes[`${animationStyle}_EXPAND_USER`];
-    const collapse = this.classes[`${animationStyle}_COLLAPSE_USER`];
-
-    this.userCardClass = this.isExpanded ? expand : collapse;
+    this.userCardClass = this.classes[`${animationStyle}_${displayStyle}_USER`];
   }
 
   setDetailsArrowDirection() {
