@@ -193,7 +193,7 @@ class UserListElement extends PolymerElement {
     return expectedSortCategory === currentSortCategory;
   }
 
-  setNewGroupHeader(user, category) {
+  setNewGroupHeaderText(user, category) {
     const firstLetter = `${user[category][0]}`;
     const wholeCategory = `${user[category]}`;
 
