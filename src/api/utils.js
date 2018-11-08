@@ -1,13 +1,25 @@
+const phoneSettings = {
+  DOMESTIC_LENGTH: 10,
+  INTERNATIONAL_MAX_LENGTH: 13,
+  INTERNATIONAL_LENGTH: (length) => {return length > this.DOMESTIC_LENGTH},
+  DOMESTIC_SYMBOLS: [
+    { name: 'dash', loc: 4, text: '-' },
+    { name: 'spaceLoc', loc: 8, text: ' ' },
+    { name: 'leftParLoc', loc: 9, text: ')' },
+    { name: 'rightParLoc', loc: 13, text: '(' }
+  ],
+  INTERNATIONAL_SYMBOLS: [
+    { name: 'intPre', loc: reversedPhoneArray.length, text: '+' },
+    { name: 'intSpace', loc: 14, text: ' ' }
+  ]
+}
 export class ValidateUtil {
   static formatPhoneNumber(phoneNumber) {
-    const domesticPhoneLength = 10;
-    const isInternationalNumber = phoneNumber.length > domesticPhoneLength;
     const reversedPhoneArray = phoneNumber.split('').reverse();
-
     const domFormatted = this.insertDomesticSymbols(reversedPhoneArray);
     let displayFormat;
 
-    if (isInternationalNumber) {
+    if (this.INTERNATIONAL_LENGTH(phoneNumber.length)) {
       const intFormatted = this.insertInternationalSymbols(domFormatted);
       displayFormat = intFormatted.reverse().join('');
     } else {
@@ -18,14 +30,7 @@ export class ValidateUtil {
   }
 
   static insertDomesticSymbols(reversedPhoneArray) {
-    const domesticSymbols = [
-      { name: 'dash', loc: 4, text: '-' },
-      { name: 'spaceLoc', loc: 8, text: ' ' },
-      { name: 'leftParLoc', loc: 9, text: ')' },
-      { name: 'rightParLoc', loc: 13, text: '(' }
-    ];
-
-    domesticSymbols.forEach(symbol => {
+    this.phoneSettings.DOMESTIC_SYMBOLS.forEach(symbol => {
       reversedPhoneArray.splice(symbol.loc, 0, symbol.text);
     });
 
@@ -33,12 +38,7 @@ export class ValidateUtil {
   }
 
   static insertInternationalSymbols(reversedPhoneArray) {
-    const internationalSymbols = [
-      { name: 'intPre', loc: reversedPhoneArray.length, text: '+' },
-      { name: 'intSpace', loc: 14, text: ' ' }
-    ];
-
-    internationalSymbols.forEach(symbol => {
+    this.phoneSettings.INTERNATIONAL_SYMBOLS.forEach(symbol => {
       reversedPhoneArray.splice(symbol.loc, 0, symbol.text);
     });
 
