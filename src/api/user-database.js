@@ -75,21 +75,17 @@ export class Database {
     this.sendUsers(sorted);
   }
 
-  static getSortArray(sortFirstBy) {
-    const firstName = sortCategories.FIRST_NAME;
-    const lastName = sortCategories.LAST_NAME;
-    const department = sortCategories.DEPARTMENT;
+  static getSortArray(primarySort) {
+    let sortArray;
 
-    if (sortFirstBy === lastName) {
-      // sort priority goes right to left
-      return sortSettings.LAST_NAME_SORT_ARRAY;
-    }
-    if (sortFirstBy === firstName) {
-      return sortSettings.FIRST_NAME_SORT_ARRAY;
-    }
-    if (sortFirstBy === department) {
-      return sortSettings.DEPARTMENT_SORT_ARRAY;
-    }
+    Object.keys(sortCategories).forEach(category => {
+      if (primarySort === sortCategories[category]) {
+        sortArray = sortSettings[`${category}_SORT_ARRAY`];
+        return;
+      }
+    });
+
+    return sortArray;
   }
 
   static async sendRequest(method, user) {
@@ -164,12 +160,13 @@ export class Database {
 
     sortFilterArray.forEach(filter => {
       const categoryIsDifferent = a[filter] !== b[filter];
-      const reverseSort =
-        sortSettings.isReversedSort && filter === primarySortFilter;
-      const aFirst = a[filter] > b[filter] ? 1 : -1;
-      const bFirst = a[filter] < b[filter] ? 1 : -1;
 
       if (categoryIsDifferent) {
+        const aFirst = a[filter] > b[filter] ? 1 : -1;
+        const bFirst = a[filter] < b[filter] ? 1 : -1;
+
+        const reverseSort = sortSettings.isReversedSort && filter === primarySortFilter;
+
         compared = reverseSort ? bFirst : aFirst;
       }
     });
