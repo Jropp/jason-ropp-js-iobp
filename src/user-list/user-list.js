@@ -91,10 +91,14 @@ class UserListElement extends PolymerElement {
     this.users = response.users;
 
     if (response.message) {
-      const toastReset = '';
-      this.toastMessage = toastReset;
-      this.toastMessage = response.message;
+      this.sendToast(response.message);
     }
+  }
+
+  sendToast(message) {
+    const toastReset = '';
+    this.toastMessage = toastReset;
+    this.toastMessage = message;
   }
 
   formatSortSelectionForDatabase(selected) {
@@ -156,9 +160,10 @@ class UserListElement extends PolymerElement {
   }
 
   setDisplayOfSortHeader(users, user, index, category) {
-    let isFirstOrLastUserDeleted = index === 0 || index === users.length;
+    let isFirstUser = index === 0
+    let deletedLastUser = index === users.length;
 
-    if (isFirstOrLastUserDeleted) {
+    if (isFirstUser || deletedLastUser) {
       return true;
     }
 
