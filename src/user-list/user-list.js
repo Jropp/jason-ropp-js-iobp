@@ -142,9 +142,7 @@ class UserListElement extends PolymerElement {
   }
 
   removeIdFromExpandedList(idToDelete) {
-    const idIndex = this.expandedCardIds.findIndex(id => {
-      return id === idToDelete;
-    });
+    const idIndex = this.expandedCardIds.indexOf(idToDelete);
 
     this.expandedCardIds.splice(idIndex, 1);
   }
@@ -154,14 +152,7 @@ class UserListElement extends PolymerElement {
   }
 
   isUserCardDisplayExpanded(userId) {
-    let isExpanded = false;
-    this.expandedCardIds.forEach(id => {
-      if (id === userId) {
-        isExpanded = true;
-      }
-    });
-
-    return isExpanded;
+    return this.expandedCardIds.includes(userId);
   }
 
   setDisplayOfSortHeader(users, user, index, category) {
