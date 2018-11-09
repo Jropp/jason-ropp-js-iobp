@@ -53,7 +53,7 @@ class UserListElement extends PolymerElement {
       }
     };
   }
-  
+
   connectedCallback() {
     super.connectedCallback();
 
@@ -89,17 +89,12 @@ class UserListElement extends PolymerElement {
 
   onUsersLoaded(response) {
     this.users = response.users;
-    let isEditSave = false;
 
     if (response.message) {
       const toastReset = '';
       this.toastMessage = toastReset;
       this.toastMessage = response.message;
-      const editInMessage = /edit/gi;
-      isEditSave = editInMessage.test(response.message);
     }
-
-    this.resetExpandedCardIds(isEditSave);
   }
 
   formatSortSelectionForDatabase(selected) {
@@ -124,7 +119,7 @@ class UserListElement extends PolymerElement {
       this.sortDirectionIsReversed
     );
 
-    this.resetExpandedCardIds(true);
+    this.resetExpandedCardIds();
   }
 
   sortByDirection(e) {
@@ -135,11 +130,11 @@ class UserListElement extends PolymerElement {
       this.sortDirectionIsReversed
     );
 
-    this.resetExpandedCardIds(true);
+    this.resetExpandedCardIds();
   }
 
-  resetExpandedCardIds(reset) {
-    this.expandedCardIds = reset ? [] : this.expandedCardIds;
+  resetExpandedCardIds() {
+    this.expandedCardIds = [];
   }
 
   addIdToExpandedList(id) {
