@@ -1,3 +1,5 @@
+export {sortCategories, Database}
+
 const databaseSettings = {
   DATABASE_URL: `http://iop-db.herokuapp.com/api`,
   HEADERS: {
@@ -23,7 +25,7 @@ const sortCategories = {
 
 let popupMessage = null;
 
-export class Database {
+const Database = class Database {
   static getUsers() {
     this.getUsersSortedBy(sortSettings.lastSort);
   }

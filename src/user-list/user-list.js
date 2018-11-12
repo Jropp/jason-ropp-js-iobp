@@ -1,5 +1,5 @@
 import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
-import { Database } from './../api/user-database.js';
+import { Database, sortCategories } from './../api/user-database.js';
 
 class UserListElement extends PolymerElement {
   static get is() {
@@ -32,16 +32,6 @@ class UserListElement extends PolymerElement {
       sortDirectionOptions: {
         type: Array,
         value: () => ['A-Z', 'Z-A']
-      },
-      sortCategories: {
-        type: Object,
-        value: () => {
-          return {
-            LAST_NAME: 'lastName',
-            FIRST_NAME: 'firstName',
-            DEPARTMENT: 'department'
-          };
-        }
       },
       currentSortCategory: {
         type: String,
@@ -103,13 +93,13 @@ class UserListElement extends PolymerElement {
 
   formatSortSelectionForDatabase(selected) {
     if (selected === 'Last Name') {
-      return this.sortCategories.LAST_NAME;
+      return sortCategories.LAST_NAME;
     }
     if (selected === 'First Name') {
-      return this.sortCategories.FIRST_NAME;
+      return sortCategories.FIRST_NAME;
     }
     if (selected === 'Department') {
-      return this.sortCategories.DEPARTMENT;
+      return sortCategories.DEPARTMENT;
     }
   }
 
@@ -181,8 +171,8 @@ class UserListElement extends PolymerElement {
 
   dipslayFirstLetterOnly() {
     return (
-      this.sortIs(this.sortCategories.FIRST_NAME, this.currentSortCategory) ||
-      this.sortIs(this.sortCategories.LAST_NAME, this.currentSortCategory)
+      this.sortIs(sortCategories.FIRST_NAME, this.currentSortCategory) ||
+      this.sortIs(sortCategories.LAST_NAME, this.currentSortCategory)
     );
   }
 
