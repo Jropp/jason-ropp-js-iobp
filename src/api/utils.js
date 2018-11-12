@@ -1,31 +1,33 @@
-const phoneSettings = {
-  DOMESTIC_LENGTH: 10,
-  INTERNATIONAL_MAX_LENGTH: 13,
-  INTERNATIONAL_LENGTH: (length) => {return length > this.DOMESTIC_LENGTH},
-  DOMESTIC_SYMBOLS: [
-    { name: 'dash', loc: 4, text: '-' },
-    { name: 'spaceLoc', loc: 8, text: ' ' },
-    { name: 'leftParLoc', loc: 9, text: ')' },
-    { name: 'rightParLoc', loc: 13, text: '(' }
-  ],
-  INTERNATIONAL_SYMBOLS: [
-    { name: 'intPre', loc: reversedPhoneArray.length, text: '+' },
-    { name: 'intSpace', loc: 14, text: ' ' }
-  ]
-}
 export class ValidateUtil {
+  static get phoneSettings() {
+    return {
+      DOMESTIC_LENGTH: 10,
+      INTERNATIONAL_MAX_LENGTH: 13,
+      DOMESTIC_SYMBOLS: [
+        { name: 'dash', loc: 4, text: '-' },
+        { name: 'spaceLoc', loc: 8, text: ' ' },
+        { name: 'leftParLoc', loc: 9, text: ')' },
+        { name: 'rightParLoc', loc: 13, text: '(' }
+      ],
+      INTERNATIONAL_SYMBOLS: [
+        { name: 'intSpace', loc: 14, text: ' ' }
+      ],
+      _isInternational: length => {
+        return length > this.phoneSettings.DOMESTIC_LENGTH;
+      }
+    };
+  }
   static formatPhoneNumber(phoneNumber) {
     const reversedPhoneArray = phoneNumber.split('').reverse();
     const domFormatted = this.insertDomesticSymbols(reversedPhoneArray);
     let displayFormat;
 
-    if (this.INTERNATIONAL_LENGTH(phoneNumber.length)) {
+    if (this.phoneSettings._isInternational(11)) {
       const intFormatted = this.insertInternationalSymbols(domFormatted);
       displayFormat = intFormatted.reverse().join('');
     } else {
       displayFormat = domFormatted.reverse().join('');
     }
-
     return displayFormat;
   }
 
@@ -61,5 +63,3 @@ export class ValidateUtil {
     return emailFormat.test(email);
   }
 }
-
-// module.exports = ValidateUtil;
