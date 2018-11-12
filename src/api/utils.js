@@ -9,25 +9,25 @@ export class ValidateUtil {
         { name: 'leftParLoc', loc: 9, text: ')' },
         { name: 'rightParLoc', loc: 13, text: '(' }
       ],
-      INTERNATIONAL_SYMBOLS: [
-        { name: 'intSpace', loc: 14, text: ' ' }
-      ],
+      INTERNATIONAL_SYMBOLS: [{ name: 'intSpace', loc: 14, text: ' ' }],
       _isInternational: length => {
         return length > this.phoneSettings.DOMESTIC_LENGTH;
       }
     };
   }
+
   static formatPhoneNumber(phoneNumber) {
     const reversedPhoneArray = phoneNumber.split('').reverse();
     const domFormatted = this.insertDomesticSymbols(reversedPhoneArray);
-    let displayFormat;
 
-    if (this.phoneSettings._isInternational(11)) {
+    let displayFormat;
+    if (this.phoneSettings._isInternational(phoneNumber.length)) {
       const intFormatted = this.insertInternationalSymbols(domFormatted);
       displayFormat = intFormatted.reverse().join('');
     } else {
       displayFormat = domFormatted.reverse().join('');
     }
+
     return displayFormat;
   }
 
@@ -49,11 +49,10 @@ export class ValidateUtil {
 
   static checkPhoneInput(phone) {
     const phoneDigits = phone.replace(/\D/g, '');
-    const internationalDigitMax = 13;
-    const domesticDigitLength = 10;
+
     const validNumberLength =
-      phoneDigits.length >= domesticDigitLength &&
-      phoneDigits.length <= internationalDigitMax;
+      phoneDigits.length >= this.phoneSettings.DOMESTIC_LENGTH &&
+      phoneDigits.length <= this.phoneSettings.INTERNATIONAL_MAX_LENGTH;
 
     return validNumberLength;
   }
