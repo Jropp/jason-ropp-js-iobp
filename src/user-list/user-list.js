@@ -1,5 +1,5 @@
 import { Element as PolymerElement } from '@banno/polymer/polymer-element.js'; // eslint-disable-line no-unused-vars
-import { Database } from './../api/user-database.js';
+import { Database, sortCategories } from './../api/user-database.js';
 
 class UserListElement extends PolymerElement {
   static get is() {
@@ -32,16 +32,6 @@ class UserListElement extends PolymerElement {
       sortDirectionOptions: {
         type: Array,
         value: () => ['A-Z', 'Z-A']
-      },
-      sortCategories: {
-        type: Object,
-        value: () => {
-          return {
-            LAST_NAME: 'lastName',
-            FIRST_NAME: 'firstName',
-            DEPARTMENT: 'department'
-          };
-        }
       },
       currentSortCategory: {
         type: String,
@@ -91,21 +81,25 @@ class UserListElement extends PolymerElement {
     this.users = response.users;
 
     if (response.message) {
-      const toastReset = '';
-      this.toastMessage = toastReset;
-      this.toastMessage = response.message;
+      this.sendToast(response.message);
     }
+  }
+
+  sendToast(message) {
+    const toastReset = '';
+    this.toastMessage = toastReset;
+    this.toastMessage = message;
   }
 
   formatSortSelectionForDatabase(selected) {
     if (selected === 'Last Name') {
-      return this.sortCategories.LAST_NAME;
+      return sortCategories.LAST_NAME;
     }
     if (selected === 'First Name') {
-      return this.sortCategories.FIRST_NAME;
+      return sortCategories.FIRST_NAME;
     }
     if (selected === 'Department') {
-      return this.sortCategories.DEPARTMENT;
+      return sortCategories.DEPARTMENT;
     }
   }
 
@@ -142,9 +136,7 @@ class UserListElement extends PolymerElement {
   }
 
   removeIdFromExpandedList(idToDelete) {
-    const idIndex = this.expandedCardIds.findIndex(id => {
-      return id === idToDelete;
-    });
+    const idIndex = this.expandedCardIds.indexOf(idToDelete);
 
     this.expandedCardIds.splice(idIndex, 1);
   }
@@ -154,20 +146,14 @@ class UserListElement extends PolymerElement {
   }
 
   isUserCardDisplayExpanded(userId) {
-    let isExpanded = false;
-    this.expandedCardIds.forEach(id => {
-      if (id === userId) {
-        isExpanded = true;
-      }
-    });
-
-    return isExpanded;
+    return this.expandedCardIds.includes(userId);
   }
 
   setDisplayOfSortHeader(users, user, index, category) {
-    let isFirstOrLastUserDeleted = index === 0 || index === users.length;
+    let isFirstUser = index === 0
+    let deletedLastUser = index === users.length;
 
-    if (isFirstOrLastUserDeleted) {
+    if (isFirstUser || deletedLastUser) {
       return true;
     }
 
@@ -175,10 +161,7 @@ class UserListElement extends PolymerElement {
     let previousUser = users[index - 1][category];
 
     if (this.dipslayFirstLetterOnly()) {
-      const currentFirstLetter = currentUser[0];
-      const previousFirstLetter = previousUser[0];
-
-      return currentFirstLetter !== previousFirstLetter;
+      return currentUser[0] !== previousUser[0];
     }
 
     const displayWholeCategory = currentUser !== previousUser;
@@ -188,8 +171,8 @@ class UserListElement extends PolymerElement {
 
   dipslayFirstLetterOnly() {
     return (
-      this.sortIs(this.sortCategories.FIRST_NAME, this.currentSortCategory) ||
-      this.sortIs(this.sortCategories.LAST_NAME, this.currentSortCategory)
+      this.sortIs(sortCategories.FIRST_NAME, this.currentSortCategory) ||
+      this.sortIs(sortCategories.LAST_NAME, this.currentSortCategory)
     );
   }
 
@@ -197,7 +180,7 @@ class UserListElement extends PolymerElement {
     return expectedSortCategory === currentSortCategory;
   }
 
-  setNewGroupHeader(user, category) {
+  setNewGroupHeaderText(user, category) {
     const firstLetter = `${user[category][0]}`;
     const wholeCategory = `${user[category]}`;
 
