@@ -1,13 +1,27 @@
 export class ValidateUtil {
+  static get phoneSettings() {
+    return {
+      DOMESTIC_LENGTH: 10,
+      INTERNATIONAL_MAX_LENGTH: 13,
+      DOMESTIC_SYMBOLS: [
+        { name: 'dash', loc: 4, text: '-' },
+        { name: 'spaceLoc', loc: 8, text: ' ' },
+        { name: 'leftParLoc', loc: 9, text: ')' },
+        { name: 'rightParLoc', loc: 13, text: '(' }
+      ],
+      INTERNATIONAL_SYMBOLS: [{ name: 'intSpace', loc: 14, text: ' ' }],
+      _isInternational: length => {
+        return length > this.phoneSettings.DOMESTIC_LENGTH;
+      }
+    };
+  }
+
   static formatPhoneNumber(phoneNumber) {
-    const domesticPhoneLength = 10;
-    const isInternationalNumber = phoneNumber.length > domesticPhoneLength;
     const reversedPhoneArray = phoneNumber.split('').reverse();
-
     const domFormatted = this.insertDomesticSymbols(reversedPhoneArray);
-    let displayFormat;
 
-    if (isInternationalNumber) {
+    let displayFormat;
+    if (this.phoneSettings._isInternational(phoneNumber.length)) {
       const intFormatted = this.insertInternationalSymbols(domFormatted);
       displayFormat = intFormatted.reverse().join('');
     } else {
@@ -18,14 +32,7 @@ export class ValidateUtil {
   }
 
   static insertDomesticSymbols(reversedPhoneArray) {
-    const domesticSymbols = [
-      { name: 'dash', loc: 4, text: '-' },
-      { name: 'spaceLoc', loc: 8, text: ' ' },
-      { name: 'leftParLoc', loc: 9, text: ')' },
-      { name: 'rightParLoc', loc: 13, text: '(' }
-    ];
-
-    domesticSymbols.forEach(symbol => {
+    this.phoneSettings.DOMESTIC_SYMBOLS.forEach(symbol => {
       reversedPhoneArray.splice(symbol.loc, 0, symbol.text);
     });
 
@@ -33,12 +40,7 @@ export class ValidateUtil {
   }
 
   static insertInternationalSymbols(reversedPhoneArray) {
-    const internationalSymbols = [
-      { name: 'intPre', loc: reversedPhoneArray.length, text: '+' },
-      { name: 'intSpace', loc: 14, text: ' ' }
-    ];
-
-    internationalSymbols.forEach(symbol => {
+    this.phoneSettings.INTERNATIONAL_SYMBOLS.forEach(symbol => {
       reversedPhoneArray.splice(symbol.loc, 0, symbol.text);
     });
 
@@ -47,11 +49,10 @@ export class ValidateUtil {
 
   static checkPhoneInput(phone) {
     const phoneDigits = phone.replace(/\D/g, '');
-    const internationalDigitMax = 13;
-    const domesticDigitLength = 10;
+
     const validNumberLength =
-      phoneDigits.length >= domesticDigitLength &&
-      phoneDigits.length <= internationalDigitMax;
+      phoneDigits.length >= this.phoneSettings.DOMESTIC_LENGTH &&
+      phoneDigits.length <= this.phoneSettings.INTERNATIONAL_MAX_LENGTH;
 
     return validNumberLength;
   }
@@ -61,5 +62,3 @@ export class ValidateUtil {
     return emailFormat.test(email);
   }
 }
-
-// module.exports = ValidateUtil;
