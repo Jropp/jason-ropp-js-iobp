@@ -110,27 +110,31 @@ class UserListElement extends PolymerElement {
   }
 
   dropdownSort(e) {
-    this.currentSortCategory = this.formatSortSelectionForDatabase(
-      e.target.selectedItem
-    );
+    if (!this.editInProgress) {
+      this.currentSortCategory = this.formatSortSelectionForDatabase(
+        e.target.selectedItem
+      );
 
-    Database.getUsersSortedBy(
-      this.currentSortCategory,
-      this.sortDirectionIsReversed
-    );
+      Database.getUsersSortedBy(
+        this.currentSortCategory,
+        this.sortDirectionIsReversed
+      );
 
-    this.resetExpandedCardIds();
+      this.resetExpandedCardIds();
+    }
   }
 
   sortByDirection(e) {
-    this.sortDirectionIsReversed = e.target.selectedItem === 'Z-A';
+    if (!this.editInProgress) {
+      this.sortDirectionIsReversed = e.target.selectedItem === 'Z-A';
 
-    Database.getUsersSortedBy(
-      this.currentSortCategory,
-      this.sortDirectionIsReversed
-    );
+      Database.getUsersSortedBy(
+        this.currentSortCategory,
+        this.sortDirectionIsReversed
+      );
 
-    this.resetExpandedCardIds();
+      this.resetExpandedCardIds();
+    }
   }
 
   resetExpandedCardIds() {
