@@ -38,7 +38,16 @@
         transition: opacity .3s;
       }
 
-      .dropdown-container:hover>hr {
+      .dropdown-container[rel*="disabled"] {
+        opacity: .5;
+      }
+      .dropdown-container[rel*="disabled"]>.dropdown-options>li {
+        visibility: hidden;
+      }
+
+
+
+      [rel="dropdown-enabled"]:hover>hr {
         margin-bottom: 5px;
         opacity: 1;
         transition: opacity .2s;
@@ -50,13 +59,13 @@
         transition: max-height .3s ease-out;
       }
 
-      .dropdown-container:hover>.dropdown-options {
+      [rel="dropdown-enabled"]:hover>.dropdown-options {
         max-height: 100px;
         transition: max-height .3s;
         opacity: 1;
       }
 
-      .dropdown-container:hover>.dropdown-options>li {
+      [rel="dropdown-enabled"]:hover>.dropdown-options>li {
         list-style: none;
         opacity: 1;
         transition: opacity .2s .1s;
