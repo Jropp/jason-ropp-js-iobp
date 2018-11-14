@@ -100,7 +100,7 @@ export class Database {
     };
 
     await fetch(requestUrl, settings);
-    this.getUsersSortedBy(sortSettings.lastSort);
+    this.getUsersSortedBy(sortSettings.lastSort, sortSettings.isReversedSort);
   }
 
   static sendUsers(users) {
