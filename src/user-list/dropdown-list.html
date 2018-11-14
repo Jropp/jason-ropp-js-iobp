@@ -38,7 +38,16 @@
         transition: opacity .3s;
       }
 
-      .dropdown-container:hover>hr {
+      .dropdown-container[rel*="disabled"] {
+        opacity: .5;
+      }
+      .dropdown-container[rel*="disabled"]>.dropdown-options>li {
+        visibility: hidden;
+      }
+
+
+
+      [rel="dropdown-enabled"]:hover>hr {
         margin-bottom: 5px;
         opacity: 1;
         transition: opacity .2s;
@@ -50,13 +59,13 @@
         transition: max-height .3s ease-out;
       }
 
-      .dropdown-container:hover>.dropdown-options {
+      [rel="dropdown-enabled"]:hover>.dropdown-options {
         max-height: 100px;
         transition: max-height .3s;
         opacity: 1;
       }
 
-      .dropdown-container:hover>.dropdown-options>li {
+      [rel="dropdown-enabled"]:hover>.dropdown-options>li {
         list-style: none;
         opacity: 1;
         transition: opacity .2s .1s;
@@ -83,13 +92,13 @@
       }
     </style>
 
-    <div class="dropdown-container">
+    <div rel$="[[isDisabled(disabled)]]" class="dropdown-container">
       <div class="dropdown-header">Sort Users By:
       </div>
       <hr>
       <div class="dropdown-options">
         <template is="dom-repeat" items="[[listItems]]">
-          <li id="lastName" on-click="setArrow">[[item]]
+          <li id="lastName" on-click="setCheckedItem">[[item]]
             <template is="dom-if" if="[[sortIs(item, selectedItem)]]">
               ✓
             </template>
@@ -114,6 +123,9 @@
           },
           selectedItem: {
             type: String,
+          },
+          disabled: {
+            type: Boolean,
           }
         };
       }
@@ -127,12 +139,16 @@
         this.selectedItem = this.listItems[0];
       }
 
-      setArrow(e) {
+      setCheckedItem(e) {
         this.selectedItem = e.model.item;
       }
 
       sortIs(current, expected) {
         return current === expected;
+      }
+
+      isDisabled() {
+        return this.disabled ? 'dropdown-disabled' : 'dropdown-enabled';
       }
     }
 
